@@ -1,0 +1,67 @@
+// ─ Design tokens allineati all'app ──────────────────────────────────
+$font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$accent: #3AABDB;
+$brand:  #15425C;
+$muted:  #64748B;
+$bg:     #F0F4F8;
+
+:host { display: block; }
+
+ion-content { --background: #{$bg}; }
+
+.nf-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 85vh;
+  gap: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  font-family: $font;
+}
+
+.nf-code {
+  font-size: clamp(4rem, 20vw, 7rem);
+  font-weight: 900;
+  color: $accent;
+  line-height: 1;
+  letter-spacing: -4px;
+  opacity: 0.85;
+}
+
+.nf-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: $brand;
+}
+
+.nf-sub {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: $muted;
+  line-height: 1.65;
+  max-width: 300px;
+}
+
+.nf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border: none;
+  border-radius: 50px;
+  background: $accent;
+  color: #fff;
+  font-family: $font;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(58, 171, 219, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 8px;
+  ion-icon { font-size: 1.05rem; }
+  &:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(58,171,219,0.42); }
+}

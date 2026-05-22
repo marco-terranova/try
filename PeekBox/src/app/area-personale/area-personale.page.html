@@ -1,0 +1,219 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="profile-header">
+      <img src="assets/icon/logoTitolo1.png" class="top-left-logo" alt="PeekBox" />
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-wrapper">
+
+    <!-- ======================== VISTA PROFILO ======================== -->
+    <ng-container *ngIf="vistaCorrente === 'profilo'">
+
+      <div class="profile-layout">
+
+        <!-- ===== COLONNA SINISTRA: Scheda Utente ===== -->
+        <div class="sidebar-card">
+
+          <div class="avatar-wrap">
+            <div class="avatar-circle-large">
+              {{ nomeUtente ? nomeUtente.charAt(0).toUpperCase() : 'U' }}
+            </div>
+            <div class="avatar-glow"></div>
+          </div>
+
+          <h2 class="user-name">{{ nomeUtente || 'Utente' }}</h2>
+          <p class="user-email">{{ emailUtente || '—' }}</p>
+
+          <div class="user-badge" *ngIf="isAdmin">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+            Amministratore
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-item">
+              <span class="stat-num">{{ totaleBox }}</span>
+              <span class="stat-lbl">Box</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-num">{{ totaleArticoli }}</span>
+              <span class="stat-lbl">Articoli</span>
+            </div>
+          </div>
+
+          <button class="logout-btn" (click)="confermaLogout()">
+            <ion-icon name="log-out-outline"></ion-icon>
+            Esci dall'account
+          </button>
+
+        </div>
+
+        <!-- ===== COLONNA DESTRA: Actions Grid ===== -->
+        <div class="actions-grid">
+
+          <div class="action-card" (click)="navForward('/informazioni-account')">
+            <div class="option-icon-wrap" style="background: rgba(58,171,219,0.12);">
+              <ion-icon name="information-circle-outline" style="color: #3AABDB;"></ion-icon>
+            </div>
+            <div class="option-text">
+              <span class="option-title">Informazioni Account</span>
+              <span class="option-sub">Visualizza e modifica i tuoi dati personali</span>
+            </div>
+            <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
+          </div>
+
+          <div class="action-card" (click)="navForward('/cestino')">
+            <div class="option-icon-wrap" style="background: rgba(220,53,69,0.10);">
+              <ion-icon name="trash-outline" style="color: #dc3545;"></ion-icon>
+            </div>
+            <div class="option-text">
+              <span class="option-title">Box Eliminate</span>
+              <span class="option-sub">Recupera o cancella definitivamente le tue scatole</span>
+            </div>
+            <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
+          </div>
+
+          <div class="action-card" (click)="navForward('/transit-zone')">
+            <div class="option-icon-wrap" style="background: rgba(125,199,64,0.12);">
+              <ion-icon name="time-outline" style="color: #7DC740;"></ion-icon>
+            </div>
+            <div class="option-text">
+              <span class="option-title">Transit Zone</span>
+              <span class="option-sub">Gestisci le spedizioni e i pacchi in transito</span>
+            </div>
+            <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
+          </div>
+
+          <div class="action-card" (click)="navForward('/gestione-spazi')">
+            <div class="option-icon-wrap" style="background: rgba(102,126,234,0.12);">
+              <ion-icon name="location-outline" style="color: #667EEA;"></ion-icon>
+            </div>
+            <div class="option-text">
+              <span class="option-title">Gestione Spazi</span>
+              <span class="option-sub">Aggiungi, modifica o elimina i tuoi spazi</span>
+            </div>
+            <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
+          </div>
+
+          <div class="action-card" (click)="navForward('/esporta-archivio')">
+            <div class="option-icon-wrap" style="background: rgba(245,166,35,0.12);">
+              <ion-icon name="cube-outline" style="color: #F5A623;"></ion-icon>
+            </div>
+            <div class="option-text">
+              <span class="option-title">Esporta Archivio</span>
+              <span class="option-sub">Scarica una copia completa del tuo inventario</span>
+            </div>
+            <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
+          </div>
+
+          <div class="action-card action-card--admin" *ngIf="isAdmin" (click)="vaiAdmin()">
+            <div class="option-icon-wrap" style="background: rgba(21,66,92,0.12);">
+              <ion-icon name="shield-checkmark-outline" style="color: #15425C;"></ion-icon>
+            </div>
+            <div class="option-text">
+              <span class="option-title">Pannello Admin</span>
+              <span class="option-sub">Accedi al pannello di controllo amministrativo</span>
+            </div>
+            <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
+          </div>
+
+          <div class="action-card action-card--placeholder" *ngIf="!isAdmin">
+            <div class="option-icon-wrap" style="background: rgba(100,116,139,0.08);">
+              <ion-icon name="person-circle-outline" style="color: #94A3B8;"></ion-icon>
+            </div>
+            <div class="option-text">
+              <span class="option-title" style="color: #94A3B8;">Area Riservata</span>
+              <span class="option-sub">Accesso disponibile solo per amministratori</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </ng-container>
+
+    <!-- ======================== VISTA BOX ELIMINATE ======================== -->
+    <ng-container *ngIf="vistaCorrente === 'box-eliminate'">
+
+      <div class="elim-page-wrapper">
+
+        <div class="floating-box-card">
+
+          <h1 class="titolo-eliminate"><ion-icon name="trash-outline" class="elim-title-icon"></ion-icon> BOX ELIMINATE</h1>
+          <p class="info-text">Le box vengono rimosse definitivamente dopo 30 giorni dall'eliminazione.</p>
+
+          <div class="box-list-container">
+
+            <div *ngIf="isLoadingEliminate" class="loading-state">
+              <div class="spinner"></div>
+              <p>Caricamento in corso...</p>
+            </div>
+
+            <div *ngIf="!isLoadingEliminate && boxEliminate.length === 0" class="empty-state">
+              <div class="empty-icon">✅</div>
+              <h3>Nessuna box eliminata</h3>
+              <p>Il tuo cestino è vuoto. Le box eliminate appariranno qui per 30 giorni.</p>
+            </div>
+
+            <div *ngIf="!isLoadingEliminate && boxEliminate.length > 0" class="eliminated-grid">
+              <div *ngFor="let box of boxEliminate" class="eliminated-card">
+                <div class="elim-card-header">
+                  <h3 class="elim-box-name">{{ box.nome }}</h3>
+                  <span class="elim-badge" [ngClass]="badgeClass(box.data_eliminazione)">
+                    {{ giorniRimasti(box.data_eliminazione) }} gg rimasti
+                  </span>
+                </div>
+                <div class="elim-progress-bar">
+                  <div class="elim-progress-fill" [style.width.%]="percentualeScadenza(box.data_eliminazione)"></div>
+                </div>
+                <p class="elim-date">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Eliminata il {{ box.data_eliminazione | date:'dd/MM/yyyy' }}
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+
+  </div>
+</ion-content>
+
+<!-- FLOATING BOTTOM NAV — identica alla homepage -->
+<div class="floating-nav">
+  <div class="nav-glow"></div>
+
+  <div class="nav-item" (click)="vaiHome()">
+    <ion-icon name="home"></ion-icon>
+    <span>Home</span>
+  </div>
+
+  <div class="nav-item" (click)="navTo('/box-ricevute')">
+    <ion-icon name="share-social-outline"></ion-icon>
+    <span>Condividi</span>
+  </div>
+
+  <div class="nav-fab-wrapper">
+    <button class="nav-fab" (click)="navTo('/crea-box')">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </div>
+
+  <div class="nav-item" (click)="navTo('/scan-qr')">
+    <ion-icon name="qr-code-outline"></ion-icon>
+    <span>Scan</span>
+  </div>
+
+  <div class="nav-item active">
+    <div class="avatar-circle-nav active">
+      {{ nomeUtente ? nomeUtente.charAt(0).toUpperCase() : 'U' }}
+    </div>
+    <span>Profilo</span>
+  </div>
+</div>

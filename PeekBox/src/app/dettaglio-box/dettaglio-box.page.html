@@ -1,0 +1,321 @@
+<ion-content [fullscreen]="true">
+
+  <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       FLOATING LOGO (firma sullo sfondo)
+  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+  <div class="floating-logo" *ngIf="!isLoading">
+    <img src="assets/logoTitolo.png" alt="PeekBox" />
+  </div>
+
+  <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       LOADING STATE
+  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+  <div class="page-loading" *ngIf="isLoading">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p>Caricamento box...</p>
+  </div>
+
+  <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       MAIN CONTENT
+  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+  <div class="bento-root" *ngIf="!isLoading">
+
+    <!-- ── HEADER CARD ───────────────────────────────────────── -->
+    <div class="bento-header">
+      <button class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+
+      <div class="header-info">
+        <h1 class="header-title">{{ box?.nome || '—' }}</h1>
+        <span class="header-sub">
+          <ion-icon name="layers-outline"></ion-icon>
+          {{ box?.nome_armadio || '—' }}
+        </span>
+      </div>
+
+      <div class="header-badges">
+        <!-- Preferito: heart-outline → heart pieno animato -->
+        <button
+          class="badge-btn"
+          [class.badge-btn--active]="box?.is_preferito"
+          (click)="togglePreferito()"
+          title="Preferito">
+          <ion-icon [name]="box?.is_preferito ? 'heart-outline' : 'heart-outline'"
+            [class.heart-active]="box?.is_preferito"></ion-icon>
+        </button>
+
+        <!-- Moving Mode -->
+        <span class="badge-tag" [class.badge-tag--moving]="box?.moving_mode">
+          <ion-icon name="paper-plane-outline"></ion-icon>
+          {{ box?.moving_mode ? 'Moving' : 'Statico' }}
+        </span>
+
+        <!-- Fragili -->
+        <span class="badge-tag badge-tag--fragile" *ngIf="numFragili > 0">
+          <ion-icon name="warning-outline"></ion-icon>
+          {{ numFragili }} fragili
+        </span>
+      </div>
+    </div>
+
+    <!-- ── BENTO GRID ──────────────────────────────────────────── -->
+    <div class="bento-grid">
+
+      <!-- ╔═══════════════════════════════════╗
+           ║  COLONNA SINISTRA – Inventario 65% ║
+           ╚═══════════════════════════════════╝ -->
+      <div class="bento-col bento-col--left">
+        <div class="bento-card inventory-card">
+
+          <!-- Header inventario: solo testo, niente emoji -->
+          <div class="inventory-header">
+            <div class="inventory-title">
+              <ion-icon name="cube-outline"></ion-icon>
+              <span>Inventario</span>
+              <span class="inventory-count">{{ oggetti.length }}</span>
+            </div>
+          </div>
+
+          <!-- Lista oggetti -->
+          <div class="inventory-list" *ngIf="oggetti.length > 0">
+            <div class="inventory-item" *ngFor="let o of oggetti">
+              <!-- Avatar -->
+              <div class="item-avatar">
+                <img *ngIf="o.foto" [src]="o.foto" [alt]="o.nome" />
+                <div class="item-avatar-placeholder" *ngIf="!o.foto">
+                  <ion-icon name="cube-outline"></ion-icon>
+                </div>
+              </div>
+
+              <!-- Info -->
+              <div class="item-info">
+                <strong class="item-name">{{ o.nome }}</strong>
+                <!-- Tag categoria: verde neon se "vestiti" -->
+                <small class="item-type"
+                  *ngIf="o.tipo"
+                  [class.item-type--vestiti]="isVestiti(o.tipo)">
+                  {{ o.tipo }}
+                </small>
+              </div>
+
+              <!-- Destra: quantità + fragile + azioni -->
+              <div class="item-right">
+                <span class="item-qty">&times;&thinsp;{{ o.quantita || 1 }}</span>
+                <span class="item-fragile" *ngIf="o.fragile == 1" title="Fragile">
+                  <ion-icon name="warning-outline"></ion-icon>
+                </span>
+                <!-- Bottone modifica -->
+                <button class="item-btn item-btn--edit" (click)="apriModificaOggetto(o)" title="Modifica">
+                  <ion-icon name="create-outline"></ion-icon>
+                </button>
+                <!-- Cestino: trash-outline (filiforme) -->
+                <button class="item-btn item-btn--delete" (click)="eliminaOggetto(o)" title="Elimina">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty state -->
+          <div class="inventory-empty" *ngIf="oggetti.length === 0">
+            <div class="empty-illustration">📦</div>
+            <p class="empty-title">Nessun oggetto trovato in questo box</p>
+            <p class="empty-sub">Aggiungi il tuo primo oggetto!</p>
+            <button class="empty-cta" (click)="apriModale('aggiungi')">
+              <!-- Plus: add-circle-outline pulito -->
+              <ion-icon name="add-circle-outline"></ion-icon>
+              Aggiungi oggetto
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ╔═══════════════════════════════════╗
+           ║  COLONNA DESTRA – Funzionalità 35% ║
+           ╚═══════════════════════════════════╝ -->
+      <div class="bento-col bento-col--right">
+
+        <!-- Griglia azioni -->
+        <div class="actions-grid">
+
+          <!-- Aggiungi: add-circle-outline -->
+          <button class="action-tile action-tile--add" (click)="apriModale('aggiungi')">
+            <div class="tile-icon">
+              <ion-icon name="add-circle-outline"></ion-icon>
+            </div>
+            <span class="tile-label">Aggiungi<br>Oggetto</span>
+          </button>
+
+          <!-- QR Code -->
+          <button class="action-tile action-tile--qr" (click)="apriModale('qr')">
+            <div class="tile-icon">
+              <ion-icon name="qr-code-outline"></ion-icon>
+            </div>
+            <span class="tile-label">QR Code<br>Box</span>
+          </button>
+
+          <!-- Geofencing -->
+          <button class="action-tile action-tile--geo" (click)="apriGeofence()">
+            <div class="tile-icon">
+              <ion-icon name="location-outline"></ion-icon>
+            </div>
+            <span class="tile-label">Posizione<br>Geofence</span>
+          </button>
+
+          <!-- Svuota: trash-outline -->
+          <button class="action-tile action-tile--clear" (click)="svuotaBox()">
+            <div class="tile-icon">
+              <ion-icon name="trash-outline"></ion-icon>
+            </div>
+            <span class="tile-label">Svuota<br>Box</span>
+          </button>
+
+        </div>
+
+        <!-- Saturazione (rimane solo qui a destra) -->
+        <div class="bento-card saturation-card">
+          <div class="sat-row">
+            <span class="sat-title">
+              <ion-icon name="bar-chart-outline"></ion-icon>
+              Saturazione box
+            </span>
+            <span class="sat-percent"
+              [class.sat-percent--warn]="saturazionePercent >= 75"
+              [class.sat-percent--full]="saturazionePercent >= 95">
+              {{ saturazionePercent }}%
+            </span>
+          </div>
+          <div class="sat-bar-big">
+            <div class="sat-fill"
+              [style.width.%]="saturazionePercent"
+              [class.sat-fill--warn]="saturazionePercent >= 75"
+              [class.sat-fill--full]="saturazionePercent >= 95"></div>
+          </div>
+          <div class="sat-meta">
+            <span>{{ oggetti.length }} oggetti</span>
+            <span>max stimato {{ MAX_OGGETTI }}</span>
+          </div>
+        </div>
+
+        <!-- Note box -->
+        <div class="bento-card info-card" *ngIf="box?.descrizione">
+          <div class="info-header">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>Note</span>
+          </div>
+          <p class="info-desc">{{ box?.descrizione }}</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔══════════════════════════════════════════════╗
+       ║  MODALE: AGGIUNGI / MODIFICA OGGETTO          ║
+       ╚══════════════════════════════════════════════╝ -->
+  <div class="fullscreen-modal" *ngIf="modaleAperta === 'aggiungi' || modaleAperta === 'modifica'">
+    <div class="modal-shell">
+      <div class="modal-topbar">
+        <button class="modal-back" (click)="chiudiModale()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+        <h2>{{ modaleAperta === 'modifica' ? 'Modifica Oggetto' : 'Nuovo Oggetto' }}</h2>
+        <span></span>
+      </div>
+      <div class="modal-body">
+        <div class="modal-form">
+
+          <div class="form-group">
+            <label class="form-label">Foto</label>
+            <button class="photo-btn" type="button" (click)="scattaFoto()">
+              <ion-icon name="camera"></ion-icon>
+              {{ fotoOggetto ? 'Cambia foto' : 'Aggiungi foto' }}
+            </button>
+            <img *ngIf="fotoOggetto" [src]="fotoOggetto" alt="anteprima" class="photo-preview" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nome oggetto *</label>
+            <ion-input class="form-input" [(ngModel)]="nomeOggetto"
+              placeholder="Es. Lampada da terra, Libri cucina..."
+              [clearInput]="true"></ion-input>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Categoria</label>
+            <ion-input class="form-input" [(ngModel)]="tipoOggetto"
+              placeholder="Es. Elettronica, Vestiti..."></ion-input>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Quantità</label>
+            <ion-input class="form-input" type="number" [(ngModel)]="quantitaOggetto"
+              [min]="1" placeholder="1"></ion-input>
+          </div>
+
+          <div class="form-group form-group--toggle">
+            <div>
+              <span class="form-label" style="margin:0">Fragile</span>
+              <small style="color:#94A3B8;font-size:0.72rem;display:block">Contrassegna se l'oggetto può rompersi</small>
+            </div>
+            <ion-toggle [(ngModel)]="fragileOggetto" color="primary"></ion-toggle>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Note (opzionale)</label>
+            <ion-textarea class="form-input" [(ngModel)]="descrizioneOggetto"
+              placeholder="Dettagli aggiuntivi..." [rows]="3" [autoGrow]="true"></ion-textarea>
+          </div>
+
+          <button class="save-btn" (click)="salvaOggetto()" [disabled]="isSaving">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            {{ isSaving ? 'Salvataggio...' : (modaleAperta === 'modifica' ? 'Aggiorna Oggetto' : 'Aggiungi al Box') }}
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔══════════════════════════════════════════════╗
+       ║  MODALE: QR CODE                              ║
+       ╚══════════════════════════════════════════════╝ -->
+  <div class="fullscreen-modal" *ngIf="modaleAperta === 'qr'">
+    <div class="modal-shell modal-shell--centered">
+      <div class="modal-topbar">
+        <button class="modal-back" (click)="chiudiModale()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+        <h2>QR Code Box</h2>
+        <span></span>
+      </div>
+      <div class="modal-body modal-body--center">
+        <div class="qr-wrap">
+          <div class="qr-loading" *ngIf="isLoadingQr">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Generazione QR...</p>
+          </div>
+          <div class="qr-content" *ngIf="!isLoadingQr">
+            <p class="qr-title">{{ box?.nome }}</p>
+            <div class="qr-frame">
+              <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" class="qr-image" />
+              <div class="qr-placeholder" *ngIf="!qrDataUrl">
+                <ion-icon name="qr-code-outline"></ion-icon>
+              </div>
+            </div>
+            <p class="qr-hint">Scansiona per identificare il box</p>
+            <button class="save-btn" style="max-width:280px;margin:0 auto" (click)="stampaQr()">
+              <ion-icon name="cloud-download-outline"></ion-icon>
+              Stampa / Scarica
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
