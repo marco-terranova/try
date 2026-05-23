@@ -1,22 +1,13 @@
 import {
   menuController
-} from "./chunk-JQBAGQVZ.js";
+} from "./chunk-6VYIHBVA.js";
 import {
   getTimeGivenProgression
 } from "./chunk-TA2MDBQV.js";
 import {
-  iosTransitionAnimation
-} from "./chunk-CKQDUJOS.js";
-import {
-  mdTransitionAnimation
-} from "./chunk-E7HY7GIS.js";
-import {
-  getIonPageElement
-} from "./chunk-TH5CRTG4.js";
-import {
   IonicSafeString,
   setupConfig
-} from "./chunk-OCSYGDPG.js";
+} from "./chunk-RD7FBT6O.js";
 import {
   actionSheetController,
   alertController,
@@ -25,29 +16,38 @@ import {
   pickerController,
   popoverController,
   toastController
-} from "./chunk-BU2H77SL.js";
-import "./chunk-TCDCKYXU.js";
+} from "./chunk-L5OKC6OS.js";
+import "./chunk-PV5OHNPJ.js";
 import {
   openURL
 } from "./chunk-CWFJQ66L.js";
 import {
+  iosTransitionAnimation
+} from "./chunk-3E5G2B7Y.js";
+import {
+  mdTransitionAnimation
+} from "./chunk-VRIFNUTZ.js";
+import {
+  getIonPageElement
+} from "./chunk-Q53UDO4V.js";
+import {
   createAnimation
-} from "./chunk-DAEUVOCA.js";
+} from "./chunk-XIQF73JU.js";
 import {
   getPlatforms,
   initialize,
   isPlatform
-} from "./chunk-QL67TOWK.js";
-import "./chunk-HEMJQAUK.js";
+} from "./chunk-T7JOWV6Q.js";
+import "./chunk-WQGIX73M.js";
 import {
   createGesture
 } from "./chunk-W2DH2WGQ.js";
 import "./chunk-D32SLB5J.js";
-import "./chunk-GZ2G2JPC.js";
+import "./chunk-DPHUWX7H.js";
 import "./chunk-DWC2MENN.js";
 import {
   bootstrapLazy
-} from "./chunk-G7JHB44L.js";
+} from "./chunk-BQ34NSWD.js";
 import {
   AngularDelegate,
   Config,
@@ -72,13 +72,13 @@ import {
   provideComponentInputBinding,
   raf,
   setIonicClasses
-} from "./chunk-RHMLV4ZB.js";
-import "./chunk-OE6MR5NH.js";
+} from "./chunk-AUZL4GWY.js";
+import "./chunk-GHQMJS3L.js";
+import "./chunk-AF5L426C.js";
+import "./chunk-IDSU2GGJ.js";
+import "./chunk-TBEOIZAN.js";
 import "./chunk-Q7PV5YUG.js";
 import "./chunk-JBFBWIQB.js";
-import "./chunk-SE5TKJNU.js";
-import "./chunk-IPZGAUHZ.js";
-import "./chunk-TBEOIZAN.js";
 import "./chunk-FBOO75ZN.js";
 import "./chunk-H2ROQFOO.js";
 import {
