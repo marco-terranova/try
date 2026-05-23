@@ -550,7 +550,7 @@
 <script>
   const BOX_ID = new URLSearchParams(window.location.search).get('box') || 'DEMO-42';
   const TOKEN = new URLSearchParams(window.location.search).get('t') || null;
-  const API_BASE = 'https://api.peekbox.app';
+  const API_BASE = window.location.origin;
 
   let gpsData = null;
   let gpsSectionOpen = false;

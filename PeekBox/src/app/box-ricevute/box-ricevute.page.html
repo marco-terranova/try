@@ -1,144 +1,338 @@
 <!-- ============================================================ -->
 <!-- FILE: PeekBox/src/app/box-ricevute/box-ricevute.page.html  -->
-<!-- Schermata "Box Ricevute" — Accetta / Rifiuta condivisioni  -->
 <!-- ============================================================ -->
 
 <ion-header class="ion-no-border">
   <ion-toolbar class="peek-toolbar">
-    <ion-buttons slot="start">
-      <ion-button (click)="tornaHome()" class="back-btn">
-        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title class="peek-title">
-      Box Ricevute
-      <ion-badge *ngIf="richiestePending.length > 0" color="warning" class="pending-badge">
-        {{ richiestePending.length }}
-      </ion-badge>
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="caricaTutto()" class="refresh-btn">
-        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="tornaHome()" style="cursor: pointer;" />
+          <h1 class="header-greeting">CENTRO DI <span class="nome-verde">CONTROLLO</span></h1>
+        </div>
+        <button class="action-btn-refresh" (click)="caricaTutto()">
+          <ion-icon name="refresh-outline"></ion-icon>
+        </button>
+      </div>
+
+      <!-- Segment dei tab del Centro di Controllo -->
+      <div class="tabs-segment-container">
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'richieste'"
+          (click)="activeTab = 'richieste'"
+        >
+          <span>Richieste</span>
+          <span *ngIf="richiestePending.length > 0" class="badge-count badge-warning">
+            {{ richiestePending.length }}
+          </span>
+        </button>
+
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'spazi'"
+          (click)="activeTab = 'spazi'"
+        >
+          <span>I Miei Spazi</span>
+        </button>
+
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'geofence'"
+          (click)="activeTab = 'geofence'"
+        >
+          <span>Geofencing</span>
+          <span *ngIf="contatoreNonLette > 0" class="badge-count badge-danger animate-pulse">
+            {{ contatoreNonLette }}
+          </span>
+        </button>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="peek-content">
+  <div class="content-inner">
 
-  <!-- Loading spinner -->
-  <div *ngIf="isLoading" class="loading-wrap">
-    <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p class="loading-text">Caricamento...</p>
+    <!-- Loading spinner -->
+    <div *ngIf="isLoading" class="loading-wrap">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p class="loading-text">Caricamento Centro di Controllo...</p>
+    </div>
+
+    <ng-container *ngIf="!isLoading">
+
+      <!-- ===================================================== -->
+      <!-- TAB 1: RICHIESTE & SPAZI RICEVUTI                     -->
+      <!-- ===================================================== -->
+      <div *ngIf="activeTab === 'richieste'" class="tab-content animate-fade-in">
+        
+        <!-- Sotto-sezione: Inviti in attesa -->
+        <div class="sub-section">
+          <h2 class="sub-section-title">RICHIESTE IN ATTESA</h2>
+          
+          <div *ngIf="richiestePending.length === 0" class="empty-card">
+            <div class="empty-card-icon">📬</div>
+            <h3 class="empty-card-title">Nessun invito in attesa</h3>
+            <p class="empty-card-desc">Quando qualcuno condivide un archivio con te, comparirà qui.</p>
+          </div>
+
+          <div *ngFor="let r of richiestePending" class="control-card control-card--pending">
+            <div class="card-glow"></div>
+            <div class="control-card__header">
+              <ion-icon name="mail-open-outline" class="card-icon icon-pending"></ion-icon>
+              <div class="card-info">
+                <h3 class="card-title">{{ r.armadio_nome || r.nome_archivio }}</h3>
+                <div class="card-meta">
+                  <ion-icon name="person-outline"></ion-icon>
+                  <span>Da: {{ r.proprietario_username }}</span>
+                </div>
+                <div class="card-meta">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>Ricevuto il: {{ formattaData(r.creato_il) }}</span>
+                </div>
+              </div>
+              <span class="role-badge" [class.role-editor]="r.ruolo === 'editor'">
+                {{ r.ruolo === 'editor' ? 'Editor' : 'Viewer' }}
+              </span>
+            </div>
+
+            <div class="control-card__actions">
+              <button class="btn-action btn-action--danger" (click)="rifiuta(r)">
+                <ion-icon name="close-circle-outline"></ion-icon>
+                <span>Rifiuta</span>
+              </button>
+              <button class="btn-action btn-action--success" (click)="accetta(r)">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                <span>Accetta</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sotto-sezione: Archivi condivisi con me -->
+        <div class="sub-section">
+          <h2 class="sub-section-title">ARCHIVI CONDIVISI CON TE</h2>
+          
+          <div *ngIf="archiviAccettati.length === 0" class="empty-card">
+            <div class="empty-card-icon">📂</div>
+            <h3 class="empty-card-title">Nessun archivio condiviso</h3>
+            <p class="empty-card-desc">Non hai ancora accesso ad archivi condivisi da altri utenti.</p>
+          </div>
+
+          <div *ngFor="let a of archiviAccettati" class="control-card control-card--accepted" (click)="apriArchivioCondiviso(a)">
+            <div class="control-card__header">
+              <ion-icon name="archive-outline" class="card-icon icon-accepted"></ion-icon>
+              <div class="card-info">
+                <h3 class="card-title">{{ a.armadio_nome }}</h3>
+                <div class="card-meta">
+                  <ion-icon name="person-outline"></ion-icon>
+                  <span>Proprietario: {{ a.proprietario_username }}</span>
+                </div>
+              </div>
+              <span class="role-badge" [class.role-editor]="a.ruolo === 'editor'">
+                {{ a.ruolo === 'editor' ? 'Editor' : 'Viewer' }}
+              </span>
+            </div>
+            <p class="tap-hint-text">Tocca per esplorare l'archivio condiviso <ion-icon name="chevron-forward-outline"></ion-icon></p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- TAB 2: I MIEI SPAZI (GESTIONE E INVITI)               -->
+      <!-- ===================================================== -->
+      <div *ngIf="activeTab === 'spazi'" class="tab-content animate-fade-in">
+        
+        <!-- Form Condividi un Archivio -->
+        <div class="sub-section">
+          <div class="invite-form-card">
+            <h2 class="invite-form-title">
+              <ion-icon name="person-add-outline"></ion-icon>
+              <span>Condividi un Archivio</span>
+            </h2>
+            
+            <div class="form-group">
+              <label class="form-label">Seleziona Archivio</label>
+              <ion-item lines="none" class="form-item-select">
+                <ion-select placeholder="Scegli un archivio..." [(ngModel)]="armadioSelezionato" class="custom-select">
+                  <ion-select-option *ngFor="let armadio of mieiArmadi" [value]="armadio.id">
+                    {{ armadio.nome }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email dell'Ospite</label>
+              <div class="input-icon-wrapper">
+                <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+                <input type="email" placeholder="esempio@email.com" [(ngModel)]="emailOspite" class="custom-input" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Ruolo da Assegnare</label>
+              <ion-item lines="none" class="form-item-select">
+                <ion-select [(ngModel)]="ruoloSelezionato" class="custom-select">
+                  <ion-select-option value="viewer">Sola Lettura (Viewer)</ion-select-option>
+                  <ion-select-option value="editor">Lettura e Scrittura (Editor)</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+
+            <button class="btn-submit-invite" (click)="invitaNuovoOspite()" [disabled]="isInviting">
+              <ion-spinner name="crescent" *ngIf="isInviting"></ion-spinner>
+              <ion-icon name="share-social-outline" *ngIf="!isInviting"></ion-icon>
+              <span>{{ isInviting ? 'Invio in corso...' : 'Invia Invito' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista dei miei armadi e gestione ospiti -->
+        <div class="sub-section">
+          <h2 class="sub-section-title">GESTIONE DEI TUOI SPAZI</h2>
+          
+          <div *ngIf="mieiArmadi.length === 0" class="empty-card">
+            <div class="empty-card-icon">🗄️</div>
+            <h3 class="empty-card-title">Nessun archivio creato</h3>
+            <p class="empty-card-desc">Crea un archivio nella home per poterlo condividere.</p>
+          </div>
+
+          <div *ngFor="let armadio of mieiArmadi" class="space-card">
+            <div class="space-card__header">
+              <div class="space-card__title-row">
+                <ion-icon name="archive-outline" class="space-icon"></ion-icon>
+                <h3 class="space-name">{{ armadio.nome }}</h3>
+              </div>
+              <div class="space-actions">
+                <button class="btn-space-setting btn-space-setting--geo" (click)="apriConfigGeofence(armadio)" title="Configura Geofence">
+                  <ion-icon name="location-outline"></ion-icon>
+                  <span>Geofence</span>
+                </button>
+                <button class="btn-space-setting btn-space-setting--config" (click)="apriDettagliSpazio(armadio)" title="Gestisci Spazio">
+                  <ion-icon name="options-outline"></ion-icon>
+                  <span>Gestisci</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Ospiti attivi per questo armadio -->
+            <div class="space-guests">
+              <h4 class="guests-title">Ospiti con accesso ({{ activeGuestsMap[armadio.id]?.length || 0 }})</h4>
+              
+              <div *ngIf="!activeGuestsMap[armadio.id] || activeGuestsMap[armadio.id].length === 0" class="no-guests-hint">
+                Nessun ospite per questo archivio. Usa il form sopra per invitare qualcuno.
+              </div>
+
+              <div *ngFor="let guest of activeGuestsMap[armadio.id]" class="guest-row">
+                <div class="guest-info">
+                  <div class="guest-avatar">
+                    {{ guest.ospite_username ? guest.ospite_username.charAt(0).toUpperCase() : 'O' }}
+                  </div>
+                  <div class="guest-details">
+                    <span class="guest-name">{{ guest.ospite_username }}</span>
+                    <span class="guest-email">{{ guest.ospite_email || 'Ospite' }}</span>
+                  </div>
+                </div>
+                <div class="guest-actions">
+                  <span class="guest-status-badge" [class.status-accepted]="guest.stato === 'accettata'" [class.status-pending]="guest.stato === 'in_attesa'">
+                    {{ guest.stato === 'accettata' ? (guest.ruolo === 'editor' ? 'Editor' : 'Viewer') : 'In attesa' }}
+                  </span>
+                  <button class="btn-revoke-guest" (click)="revocaOspite(guest.id)" title="Revoca accesso">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- TAB 3: NOTIFICHE GEOFENCING                           -->
+      <!-- ===================================================== -->
+      <div *ngIf="activeTab === 'geofence'" class="tab-content animate-fade-in">
+        
+        <h2 class="sub-section-title">ALLERTE DI SICUREZZA</h2>
+
+        <div *ngIf="notificheGeofence.length === 0" class="empty-card empty-card--secure">
+          <div class="empty-card-icon empty-card-icon--secure">🛡️</div>
+          <h3 class="empty-card-title text-secure">Tutti gli asset sono al sicuro</h3>
+          <p class="empty-card-desc">Nessuna anomalia GPS o violazione del perimetro geofence rilevata.</p>
+        </div>
+
+        <div *ngFor="let n of notificheGeofence" class="alert-card" [class.alert-card--unread]="!n.letto" (click)="segnaComeLetta(n)">
+          <span class="alert-unread-dot" *ngIf="!n.letto"></span>
+          
+          <div class="alert-card__header">
+            <div class="alert-icon-wrapper">
+              <ion-icon name="warning-outline" class="alert-icon"></ion-icon>
+            </div>
+            <div class="alert-card-info">
+              <div class="alert-title-row">
+                <span class="alert-scope">{{ n.nome_archivio }}</span>
+                <span class="alert-time">{{ formattaData(n.timestamp) }}</span>
+              </div>
+              <p class="alert-message">{{ n.messaggio }}</p>
+              
+              <div class="alert-coordinates" *ngIf="n.latitudine">
+                <ion-icon name="location-outline"></ion-icon>
+                <span>Lat: {{ n.latitudine.toFixed(6) }}, Lng: {{ n.longitudine.toFixed(6) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-card__actions">
+            <button class="btn-alert-action btn-alert-action--map" (click)="mostraInMappa(n, $event)">
+              <ion-icon name="location-outline"></ion-icon>
+              <span>Mostra in Mappa</span>
+            </button>
+            <button class="btn-alert-action btn-alert-action--delete" (click)="eliminaNotifica(n.id, $event)">
+              <ion-icon name="trash-outline"></ion-icon>
+              <span>Archivia</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </ng-container>
+
   </div>
-
-  <ng-container *ngIf="!isLoading">
-
-    <!-- ===================================================== -->
-    <!-- SEZIONE 1: IN ATTESA DI RISPOSTA                       -->
-    <!-- ===================================================== -->
-    <div class="section-block">
-      <div class="section-header">
-        <ion-icon name="mail-open-outline" class="section-icon section-icon--pending"></ion-icon>
-        <span class="section-title">In attesa di risposta</span>
-        <ion-badge *ngIf="richiestePending.length > 0" color="warning">
-          {{ richiestePending.length }}
-        </ion-badge>
-      </div>
-
-      <!-- Empty state pending -->
-      <div *ngIf="richiestePending.length === 0" class="empty-state">
-        <div class="empty-icon">✅</div>
-        <p class="empty-text">Nessuna richiesta in attesa</p>
-      </div>
-
-      <!-- Lista richieste pending -->
-      <div *ngFor="let r of richiestePending" class="request-card request-card--pending">
-        <div class="request-card__header">
-          <ion-icon name="archive-outline" class="request-icon"></ion-icon>
-          <div class="request-info">
-            <div class="request-nome">{{ r.armadio_nome }}</div>
-            <div class="request-meta">
-              <ion-icon name="person-outline"></ion-icon>
-              <span>{{ r.proprietario_username }}</span>
-            </div>
-            <div class="request-meta">
-              <ion-icon name="time-outline"></ion-icon>
-              <span>{{ formattaData(r.creato_il) }}</span>
-            </div>
-          </div>
-          <div class="request-ruolo" [class.ruolo--editor]="r.ruolo === 'editor'">
-            {{ r.ruolo === 'editor' ? 'Editor' : 'Sola lettura' }}
-          </div>
-        </div>
-
-        <!-- Bottoni Accetta / Rifiuta -->
-        <div class="request-card__actions">
-          <ion-button
-            expand="block"
-            fill="outline"
-            color="danger"
-            class="btn-rifiuta"
-            (click)="rifiuta(r)">
-            <ion-icon name="close-circle-outline" slot="start"></ion-icon>
-            Rifiuta
-          </ion-button>
-          <ion-button
-            expand="block"
-            fill="solid"
-            color="success"
-            class="btn-accetta"
-            (click)="accetta(r)">
-            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-            Accetta
-          </ion-button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===================================================== -->
-    <!-- SEZIONE 2: ARCHIVI GIÀ ACCETTATI (consultabili)       -->
-    <!-- ===================================================== -->
-    <div class="section-block" *ngIf="archiviAccettati.length > 0">
-      <div class="section-header">
-        <ion-icon name="archive-outline" class="section-icon section-icon--accepted"></ion-icon>
-        <span class="section-title">Archivi condivisi con te</span>
-      </div>
-
-      <div *ngFor="let a of archiviAccettati"
-           class="request-card request-card--accepted"
-           (click)="apriArchivioCondiviso(a)">
-        <div class="request-card__header">
-          <ion-icon name="archive-outline" class="request-icon request-icon--green"></ion-icon>
-          <div class="request-info">
-            <div class="request-nome">{{ a.armadio_nome }}</div>
-            <div class="request-meta">
-              <ion-icon name="person-outline"></ion-icon>
-              <span>{{ a.proprietario_username }}</span>
-            </div>
-          </div>
-          <div class="request-ruolo" [class.ruolo--editor]="a.ruolo === 'editor'">
-            {{ a.ruolo === 'editor' ? 'Editor' : 'Sola lettura' }}
-          </div>
-        </div>
-        <p class="tap-hint">Tocca per aprire l'archivio →</p>
-      </div>
-    </div>
-
-  </ng-container>
-
 </ion-content>
 
-<!-- Footer nav (coerente con la home) -->
-<ion-footer class="peek-footer">
-  <div class="footer-nav">
-    <button class="footer-btn" (click)="tornaHome()">
-      <ion-icon name="home-outline"></ion-icon>
-      <span>Home</span>
-    </button>
-    <button class="footer-btn footer-btn--active">
-      <ion-icon name="mail-open-outline"></ion-icon>
-      <span>Ricevute</span>
+<!-- FLOATING BOTTOM NAV (Coerente con Home) -->
+<div class="floating-nav">
+  <div class="nav-glow"></div>
+
+  <div class="nav-item" (click)="tornaHome()">
+    <ion-icon name="home"></ion-icon>
+    <span>Home</span>
+  </div>
+
+  <div class="nav-item active">
+    <ion-icon name="share-social-outline"></ion-icon>
+    <span>Condividi</span>
+  </div>
+
+  <div class="nav-fab-wrapper">
+    <button class="nav-fab" (click)="navTo('/crea-box')">
+      <ion-icon name="add"></ion-icon>
     </button>
   </div>
-</ion-footer>
+
+  <div class="nav-item" (click)="apriScanner()">
+    <ion-icon name="qr-code-outline"></ion-icon>
+    <span>Scan</span>
+  </div>
+
+  <div class="nav-item" (click)="navTo('/area-personale')">
+    <div class="avatar-circle">
+      {{ nomeUtente ? nomeUtente.charAt(0).toUpperCase() : 'U' }}
+    </div>
+    <span>Profilo</span>
+  </div>
+</div>

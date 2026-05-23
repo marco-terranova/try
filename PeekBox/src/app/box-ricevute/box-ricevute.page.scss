@@ -1,240 +1,981 @@
-// ============================================================
-// FILE: PeekBox/src/app/box-ricevute/box-ricevute.page.scss
-// ============================================================
+@import '../../theme/variables';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&display=swap');
 
-// ─── Toolbar ──────────────────────────────────────────────
-.peek-toolbar {
-  --background: #1a1a2e;
-  --color: #ffffff;
+// === DESIGN TOKENS ===
+$bg-page:      $page;
+$bg-card:      $white;
+$text-primary: $dark;
+$text-muted:   $mid;
+$accent-blue:  $blue;
+$accent-green: $green;
+$accent-red:   #EF4444;
+$accent-orange:#F59E0B;
+$brand-dark:   $blue-dk;
+$radius-card:  20px;
+$shadow-card:  0 4px 20px rgba(0,0,0,0.06);
+
+:host {
+  display: block;
 }
 
-.peek-title {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
+// ─── Toolbar & Header ─────────────────────────────────────
+ion-header {
+  --background: #{$page};
+}
+
+ion-toolbar.peek-toolbar {
+  --background: #{$page};
+  --border-width: 0;
+  padding: 0;
+}
+
+.header-inner {
+  padding: 16px 16px 10px;
+}
+
+.header-top {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 14px;
 }
 
-.pending-badge {
-  font-size: 0.7rem;
-  padding: 2px 7px;
-  border-radius: 20px;
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .header-logo {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+  }
 }
 
-.back-btn, .refresh-btn {
-  --color: rgba(255,255,255,0.8);
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $text-primary;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 900 !important;
+  text-shadow: 0px 4px 10px rgba(125, 199, 64, 0.3);
+}
+
+.action-btn-refresh {
+  background: $white;
+  border: 1px solid $brd-light;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent-blue;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba($blue, 0.08);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba($blue, 0.18);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  ion-icon {
+    font-size: 1.15rem;
+  }
+}
+
+// ─── Tabs Segment Selector ──────────────────────────────
+.tabs-segment-container {
+  display: flex;
+  background: $surf;
+  padding: 4px;
+  border-radius: 50px;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  outline: none;
+
+  &.active {
+    background: $white;
+    color: $accent-blue;
+    box-shadow: 0 4px 12px rgba($blue, 0.12);
+  }
+}
+
+.badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: $white;
+  line-height: 1;
+
+  &.badge-warning {
+    background: $accent-orange;
+  }
+
+  &.badge-danger {
+    background: $accent-red;
+  }
 }
 
 // ─── Content ──────────────────────────────────────────────
 .peek-content {
-  --background: #f0f2f8;
+  --background: #{$page};
+  --padding-bottom: 110px;
 }
 
-// ─── Loading ──────────────────────────────────────────────
+.content-inner {
+  padding: 16px 16px 24px;
+}
+
+// ─── Loading spinner ──────────────────────────────────────
 .loading-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 80px;
-  gap: 16px;
-}
-.loading-text {
-  color: #888;
-  font-size: 0.9rem;
-}
+  padding: 60px 20px;
+  gap: 12px;
 
-// ─── Section block ────────────────────────────────────────
-.section-block {
-  padding: 16px;
-
-  & + .section-block {
-    margin-top: 8px;
+  .loading-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    color: $text-muted;
+    margin: 0;
   }
 }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+// ─── Sub Section Titles ──────────────────────────────────
+.sub-section {
+  margin-bottom: 24px;
+}
+
+.sub-section-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   margin-bottom: 14px;
+  padding-left: 4px;
 }
 
-.section-title {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #1a1a2e;
-  flex: 1;
+// ─── Empty state cards ────────────────────────────────────
+.empty-card {
+  background: $white;
+  border-radius: $radius-card;
+  padding: 28px 16px;
+  text-align: center;
+  box-shadow: $shadow-card;
+  border: 2px dashed rgba($blue, 0.15);
+  margin-bottom: 16px;
+
+  &--secure {
+    border-color: rgba($green, 0.2);
+    background: rgba($green, 0.02);
+  }
+
+  .empty-card-icon {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+
+    &--secure {
+      animation: floatBox 4s ease-in-out infinite;
+    }
+  }
+
+  .empty-card-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: $text-primary;
+    margin: 0 0 6px 0;
+
+    &.text-secure {
+      color: $green-d;
+    }
+  }
+
+  .empty-card-desc {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    color: $text-muted;
+    margin: 0;
+    line-height: 1.45;
+  }
 }
 
-.section-icon {
-  font-size: 1.2rem;
-  &--pending { color: #f4a200; }
-  &--accepted { color: #2dc653; }
-}
-
-// ─── Request card ─────────────────────────────────────────
-.request-card {
-  background: #ffffff;
-  border-radius: 16px;
+// ─── Control Cards (Tab 1: Richieste) ──────────────────────
+.control-card {
+  background: $white;
+  border-radius: $radius-card;
   padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin-bottom: 14px;
+  box-shadow: $shadow-card;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid $brd-light;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &--pending {
-    border-left: 4px solid #f4a200;
+    border-left: 4px solid $accent-orange;
   }
 
   &--accepted {
-    border-left: 4px solid #2dc653;
+    border-left: 4px solid $accent-green;
     cursor: pointer;
 
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
     &:active {
       transform: scale(0.98);
-      box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+    }
+  }
+
+  .card-glow {
+    position: absolute;
+    top: -30%; right: -30%;
+    width: 60%; height: 60%;
+    background: radial-gradient(circle, rgba($blue, 0.06), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .control-card__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    z-index: 1;
+    position: relative;
+  }
+
+  .card-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+
+    &.icon-pending { color: $accent-orange; }
+    &.icon-accepted { color: $accent-green; }
+  }
+
+  .card-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .card-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: $text-primary;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.75rem;
+    color: $text-muted;
+    margin-bottom: 3px;
+
+    ion-icon {
+      font-size: 0.85rem;
+      color: $accent-blue;
+    }
+  }
+
+  .role-badge {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba($blue, 0.1);
+    color: $accent-blue;
+    padding: 3px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+
+    &.role-editor {
+      background: rgba($green, 0.1);
+      color: $green-d;
+    }
+  }
+
+  .control-card__actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    position: relative;
+    z-index: 2;
+
+    .btn-action {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      ion-icon { font-size: 1.1rem; }
+
+      &--danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: $accent-red;
+
+        &:hover {
+          background: $accent-red;
+          color: $white;
+        }
+      }
+
+      &--success {
+        background: rgba($green, 0.1);
+        color: $green-d;
+
+        &:hover {
+          background: $accent-green;
+          color: $white;
+        }
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+
+  .tap-hint-text {
+    margin: 10px 0 0 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: $accent-green;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
+
+    ion-icon { font-size: 0.8rem; }
+  }
+}
+
+// ─── Invite Form Card (Tab 2: Spazi) ──────────────────────
+.invite-form-card {
+  background: $white;
+  border-radius: $radius-card;
+  padding: 20px;
+  box-shadow: $shadow-card;
+  border: 1px solid $brd-light;
+  margin-bottom: 24px;
+
+  .invite-form-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: $accent-blue;
+    margin: 0 0 16px 0;
+
+    ion-icon {
+      font-size: 1.2rem;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+
+    &:last-of-type {
+      margin-bottom: 18px;
+    }
+  }
+
+  .form-label {
+    display: block;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .form-item-select {
+    --background: #{$surf};
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --border-radius: 12px;
+    margin-top: 4px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+
+    &:focus-within {
+      --background: #{$white};
+      border-color: $accent-blue;
+      box-shadow: 0 4px 12px rgba($blue, 0.08);
+    }
+
+    .custom-select {
+      --placeholder-color: #94A3B8;
+      --placeholder-opacity: 1;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: $text-primary;
+      width: 100%;
+      padding: 0;
+    }
+  }
+
+  .input-icon-wrapper {
+    display: flex;
+    align-items: center;
+    background: $surf;
+    border-radius: 12px;
+    padding: 4px 12px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+
+    &:focus-within {
+      background-color: $white;
+      border-color: $accent-blue;
+      box-shadow: 0 4px 12px rgba($blue, 0.08);
+    }
+
+    .input-icon {
+      color: $text-muted;
+      font-size: 1.1rem;
+      margin-right: 8px;
+    }
+  }
+
+  .custom-input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    color: $text-primary;
+    padding: 8px 0;
+
+    &::placeholder {
+      color: #94A3B8;
+    }
+  }
+
+  .btn-submit-invite {
+    background: linear-gradient(135deg, $blue, $blue-d);
+    color: $white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba($blue, 0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+    outline: none;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    &:not(:disabled):active {
+      transform: scale(0.97);
+    }
+
+    &:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba($blue, 0.35);
+    }
+
+    ion-spinner {
+      margin-right: 4px;
     }
   }
 }
 
-.request-card__header {
+// ─── Space Card (Tab 2: Gestione Spazi) ───────────────────
+.space-card {
+  background: $white;
+  border-radius: $radius-card;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: $shadow-card;
+  border: 1px solid $brd-light;
+}
+
+.space-card__header {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid $brd-light;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
 }
 
-.request-icon {
-  font-size: 1.8rem;
-  color: #8888aa;
-  margin-top: 2px;
+.space-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+
+  .space-icon {
+    font-size: 1.3rem;
+    color: $accent-blue;
+    flex-shrink: 0;
+  }
+
+  .space-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: $text-primary;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.space-actions {
+  display: flex;
+  gap: 6px;
   flex-shrink: 0;
-
-  &--green { color: #2dc653; }
 }
 
-.request-info {
-  flex: 1;
-}
-
-.request-nome {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #1a1a2e;
-  margin-bottom: 4px;
-}
-
-.request-meta {
+.btn-space-setting {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.8rem;
-  color: #666;
-  margin-bottom: 2px;
-
-  ion-icon {
-    font-size: 0.85rem;
-    color: #999;
-  }
-}
-
-.request-ruolo {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: #e8eaf6;
-  color: #3949ab;
-  padding: 4px 10px;
-  border-radius: 20px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  outline: none;
 
-  &.ruolo--editor {
-    background: #e8f5e9;
-    color: #2e7d32;
+  ion-icon { font-size: 0.85rem; }
+
+  &--geo {
+    background: rgba($blue, 0.1);
+    color: $accent-blue;
+
+    &:hover {
+      background: $accent-blue;
+      color: $white;
+    }
+  }
+
+  &--config {
+    background: rgba($green, 0.1);
+    color: $green-d;
+
+    &:hover {
+      background: $accent-green;
+      color: $white;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
-// ─── Bottoni Accetta/Rifiuta ──────────────────────────────
-.request-card__actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-
-  ion-button {
-    flex: 1;
-    --border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-}
-
-.btn-rifiuta {
-  --border-color: var(--ion-color-danger);
-}
-
-.btn-accetta {
-  --background: #2dc653;
-  --background-activated: #24a844;
-}
-
-// ─── Empty state ──────────────────────────────────────────
-.empty-state {
-  text-align: center;
-  padding: 32px 16px;
-  background: #ffffff;
-  border-radius: 16px;
-  margin-bottom: 12px;
-
-  .empty-icon { font-size: 2.5rem; margin-bottom: 8px; }
-  .empty-text { color: #999; font-size: 0.9rem; }
-}
-
-// ─── Tap hint ─────────────────────────────────────────────
-.tap-hint {
-  font-size: 0.78rem;
-  color: #2dc653;
-  font-weight: 600;
-  margin: 8px 0 0;
-  text-align: right;
-}
-
-// ─── Footer ───────────────────────────────────────────────
-.peek-footer {
-  --background: #1a1a2e;
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.15);
-}
-
-.footer-nav {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-}
-
-.footer-btn {
+// ─── Guest List Rows (Tab 2) ──────────────────────────────
+.space-guests {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+.guests-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: $text-muted;
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.no-guests-hint {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.78rem;
+  color: $text-muted;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+.guest-row {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 3px;
-  background: none;
-  border: none;
-  color: rgba(255,255,255,0.5);
-  font-size: 0.65rem;
-  font-family: 'Montserrat', sans-serif;
-  cursor: pointer;
-  padding: 4px 24px;
-  transition: color 0.2s;
+  background: $page;
+  border-radius: 12px;
+  padding: 8px 12px;
+  gap: 10px;
+  transition: background-color 0.2s;
 
-  ion-icon { font-size: 1.4rem; }
-
-  &--active {
-    color: #ffffff;
-    ion-icon { color: #4fc3f7; }
+  &:hover {
+    background: $surf;
   }
 }
+
+.guest-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.guest-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba($blue, 0.15);
+  color: $accent-blue;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid $brd-light;
+}
+
+.guest-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  .guest-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: $text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .guest-email {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;
+    color: $text-muted;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.guest-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.guest-status-badge {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  &.status-accepted {
+    background: rgba($green, 0.1);
+    color: $green-d;
+  }
+
+  &.status-pending {
+    background: rgba($accent-orange, 0.1);
+    color: $accent-orange;
+  }
+}
+
+.btn-revoke-guest {
+  background: transparent;
+  border: none;
+  color: $text-muted;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  outline: none;
+
+  ion-icon { font-size: 0.95rem; }
+
+  &:hover {
+    background: rgba($accent-red, 0.1);
+    color: $accent-red;
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+// ─── Alert Cards (Tab 3: Geofencing) ──────────────────────
+.alert-card {
+  background: $white;
+  border-radius: $radius-card;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: $shadow-card;
+  border: 1px solid rgba(239, 68, 68, 0.1);
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
+  }
+
+  &--unread {
+    border-left: 4px solid $accent-red;
+    background: rgba(239, 68, 68, 0.02);
+  }
+
+  .alert-unread-dot {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 8px;
+    height: 8px;
+    background-color: $accent-red;
+    border-radius: 50%;
+    box-shadow: 0 0 8px $accent-red;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+
+  .alert-card__header {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .alert-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.1);
+    color: $accent-red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .alert-icon {
+      font-size: 1.25rem;
+    }
+  }
+
+  .alert-card-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .alert-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    gap: 10px;
+
+    .alert-scope {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: $text-primary;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .alert-time {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.72rem;
+      color: $text-muted;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+  }
+
+  .alert-message {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    color: $text-muted;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+  }
+
+  .alert-coordinates {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: $surf;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;
+    color: $text-muted;
+
+    ion-icon {
+      font-size: 0.8rem;
+      color: $accent-blue;
+    }
+  }
+
+  .alert-card__actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    border-top: 1px solid $brd-light;
+    padding-top: 12px;
+
+    .btn-alert-action {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      border-radius: 10px;
+      padding: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      outline: none;
+
+      ion-icon { font-size: 0.95rem; }
+
+      &--map {
+        background: rgba(58, 171, 219, 0.1);
+        color: $accent-blue;
+
+        &:hover {
+          background: $accent-blue;
+          color: #ffffff;
+        }
+      }
+
+      &--delete {
+        background: rgba(239, 68, 68, 0.1);
+        color: $accent-red;
+
+        &:hover {
+          background: $accent-red;
+          color: #ffffff;
+        }
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+  }
+}
+
+// ─── Animations & Keyframes ───────────────────────────────
+@keyframes floatBox {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+

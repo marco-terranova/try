@@ -1,89 +1,486 @@
-.geofence-page {
-  --background: var(--ion-color-light);
+@import '../../theme/variables';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap');
 
-  .status-banner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 12px;
-    padding: 14px 18px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    background: var(--ion-color-medium-tint);
-    color: var(--ion-color-medium-shade);
+// ═══ Tokens ══════════════════════════════════════════════════════
+$font:       'Poppins', sans-serif;
+$radius:     20px;
+$radius-sm:  12px;
+$shadow:     0 4px 20px rgba(0,0,0,0.04);
+$shadow-md:  0 10px 30px rgba(0,0,0,0.06);
 
-    &.active {
-      background: rgba(var(--ion-color-success-rgb), 0.12);
-      color: var(--ion-color-success-shade);
-      border: 1px solid rgba(var(--ion-color-success-rgb), 0.3);
-    }
-    &.inactive {
-      background: rgba(var(--ion-color-warning-rgb), 0.12);
-      color: var(--ion-color-warning-shade);
-      border: 1px solid rgba(var(--ion-color-warning-rgb), 0.3);
-    }
+// ═══ Host & Content ══════════════════════════════════════════════
+:host { display: block; font-family: $font; }
 
-    ion-icon { font-size: 1.4rem; }
+.geo-content {
+  --background: #{$page};
+  --padding-bottom: 32px;
+}
+
+// ═══ TOPBAR MINIMALISTA ══════════════════════════════════════════
+.geo-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px 10px;
+  background: rgba(255,255,255,0.90);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid $brd-light;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.geo-logo {
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+  &:hover { opacity: 0.7; }
+
+  .geo-logo-img { height: 28px; width: auto; object-fit: contain; }
+}
+
+.geo-page-title {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+
+  .geo-eyebrow {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: $blue;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
   }
 
-  ion-card {
-    border-radius: 16px;
-    margin: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  h1 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: $dark;
+    letter-spacing: -0.3px;
+  }
+}
+
+// ═══ STATUS BANNER ═══════════════════════════════════════════════
+.geo-status-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 16px 0;
+  padding: 14px 18px;
+  border-radius: $radius;
+  background: $surf;
+  border: 1px solid $brd-light;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: $mid;
+
+  &--active {
+    background: rgba($green, 0.08);
+    border-color: rgba($green, 0.25);
+    color: $green-d;
+
+    .geo-status-icon { color: $green-d; background: rgba($green, 0.12); }
   }
 
-  ion-card-title {
+  &--inactive {
+    background: rgba(251,191,36,0.08);
+    border-color: rgba(251,191,36,0.25);
+    color: #D97706;
+
+    .geo-status-icon { color: #D97706; background: rgba(251,191,36,0.12); }
+  }
+}
+
+.geo-status-icon {
+  width: 36px; height: 36px;
+  border-radius: 11px;
+  background: rgba($mid, 0.10);
+  color: $mid;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.geo-status-text { flex: 1; line-height: 1.35; }
+
+// ═══ LOADING ═════════════════════════════════════════════════════
+.geo-loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  ion-spinner { --color: #{$blue}; }
+}
+
+// ═══ CARD BASE ═══════════════════════════════════════════════════
+.geo-card {
+  margin: 16px;
+  background: $white;
+  border-radius: $radius;
+  box-shadow: $shadow-md;
+  border: 1px solid $brd-light;
+  overflow: hidden;
+
+  &--info { margin-bottom: 32px; }
+}
+
+.geo-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid $brd-light;
+}
+
+.geo-card-icon {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  background: rgba($blue, 0.10);
+  color: $blue;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+
+  &--blue { background: rgba($blue-d, 0.10); color: $blue-d; }
+}
+
+.geo-card-title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: $dark;
+  letter-spacing: -0.2px;
+}
+
+.geo-card-sub {
+  margin: 2px 0 0;
+  font-size: 0.72rem;
+  color: $mid;
+}
+
+// ═══ GPS BUTTON ══════════════════════════════════════════════════
+.btn-gps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 40px);
+  margin: 18px 20px 0;
+  padding: 13px 20px;
+  border: 1.5px solid $brd-light;
+  border-radius: 14px;
+  background: $white;
+  color: $blue-d;
+  font-family: $font;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: $shadow;
+
+  ion-icon { font-size: 1.1rem; }
+  ion-spinner { --color: #{$blue}; width: 18px; height: 18px; }
+
+  &:hover:not([disabled]) {
+    background: $surf;
+    border-color: rgba($blue, 0.35);
+    transform: translateY(-1px);
+  }
+
+  &[disabled] { opacity: 0.55; cursor: not-allowed; }
+}
+
+// ═══ COORDINATE GRID ═════════════════════════════════════════════
+.geo-coords-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 16px 20px 0;
+
+  @media (max-width: 500px) { grid-template-columns: 1fr; }
+}
+
+.geo-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.geo-input-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: $mid;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.geo-input-wrap {
+  display: flex;
+  align-items: center;
+  background: $page;
+  border: 1px solid $brd-light;
+  border-radius: $radius-sm;
+  padding: 10px 12px;
+  transition: all 0.2s;
+
+  &:focus-within {
+    border-color: $blue;
+    background: $white;
+    box-shadow: 0 4px 14px rgba(58,171,219,0.10);
+  }
+
+  .geo-input-icon {
     font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    ion-icon { font-size: 1.2rem; }
+    color: $blue;
+    margin-right: 8px;
+    flex-shrink: 0;
   }
 
-  .config-card { border-top: 4px solid var(--ion-color-primary); }
+  .geo-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: $font;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: $dark;
+    &::placeholder { color: rgba(15,23,42,0.35); font-weight: 500; }
+  }
+}
 
-  .raggio-section {
-    padding: 8px 0 4px;
-    .raggio-label {
-      font-size: 0.9rem;
-      margin: 0 0 4px 16px;
-      color: var(--ion-color-dark-tint);
-    }
+// ═══ PREVIEW COORDINATE ══════════════════════════════════════════
+.geo-coords-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 20px 0;
+  padding: 10px 14px;
+  background: rgba($blue, 0.05);
+  border-radius: $radius-sm;
+  border: 1px solid $brd-light;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: $dark;
+
+  ion-icon { color: $blue; font-size: 1rem; flex-shrink: 0; }
+
+  span { flex: 1; }
+
+  .btn-mappa {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 10px;
+    border: none; border-radius: 50px;
+    background: rgba($blue, 0.10);
+    color: $blue-d;
+    font-family: $font; font-size: 0.70rem; font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    ion-icon { font-size: 0.80rem; }
+    &:hover { background: rgba($blue, 0.18); }
+  }
+}
+
+// ═══ RANGE SLIDER ════════════════════════════════════════════════
+.geo-range-block {
+  padding: 18px 20px 0;
+}
+
+.geo-range-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.geo-range-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: $mid;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.geo-range-value {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: $blue;
+}
+
+.geo-range-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.geo-range-limit {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: $mid;
+  white-space: nowrap;
+}
+
+.geo-range {
+  flex: 1;
+  --bar-background: #{$surf};
+  --bar-background-active: #{$blue};
+  --bar-height: 6px;
+  --bar-border-radius: 50px;
+  --knob-background: #{$blue};
+  --knob-size: 22px;
+  --knob-box-shadow: 0 2px 10px rgba(58,171,219,0.35);
+  --pin-background: #{$blue};
+  --pin-color: #{$white};
+}
+
+// ═══ TOGGLE ATTIVO ═══════════════════════════════════════════════
+.geo-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 20px 0;
+  padding: 14px 16px;
+  background: $page;
+  border-radius: $radius-sm;
+  border: 1px solid $brd-light;
+}
+
+.geo-toggle-icon {
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  background: rgba($blue, 0.10);
+  color: $blue;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.geo-toggle-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+
+  .geo-toggle-label { font-size: 0.88rem; font-weight: 700; color: $dark; }
+  .geo-toggle-sub   { font-size: 0.70rem; color: $mid; }
+}
+
+.geo-toggle {
+  --handle-background-checked: #{$white};
+  --background-checked: #{$green};
+}
+
+// ═══ PULSANTI AZIONE ═════════════════════════════════════════════
+.geo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px 20px;
+}
+
+.btn-geo-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, $blue, $blue-d);
+  color: $white;
+  font-family: $font;
+  font-size: 0.90rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(58,171,219,0.28);
+  transition: all 0.2s;
+
+  ion-icon  { font-size: 1.1rem; }
+  ion-spinner { --color: #{$white}; width: 18px; height: 18px; }
+
+  &:hover:not([disabled]) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(58,171,219,0.38);
   }
 
-  .coords-preview {
-    background: rgba(var(--ion-color-primary-rgb), 0.06);
-    border-radius: 8px;
-    padding: 8px 14px;
-    margin: 8px 0;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    p { margin: 0; }
-  }
+  &[disabled] { opacity: 0.55; cursor: not-allowed; }
+}
 
-  ion-button[expand="block"] { margin-top: 10px; }
+.btn-geo-danger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  border: 1.5px solid rgba(220,53,69,0.25);
+  border-radius: 14px;
+  background: rgba(220,53,69,0.05);
+  color: #dc3545;
+  font-family: $font;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
 
-  .loading-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 30px;
-  }
+  ion-icon { font-size: 1rem; }
 
-  .info-card {
-    border-top: 4px solid var(--ion-color-tertiary);
-    font-size: 0.88rem;
-    ul {
-      padding-left: 8px;
-      list-style: none;
-      li { margin: 6px 0; }
-    }
-    .formula-note {
-      margin-top: 10px;
-      color: var(--ion-color-medium);
-      font-size: 0.82rem;
-    }
+  &:hover {
+    background: rgba(220,53,69,0.10);
+    border-color: rgba(220,53,69,0.40);
   }
+}
+
+// ═══ CARD INFO — Come funziona ════════════════════════════════════
+.geo-info-text {
+  margin: 0;
+  padding: 14px 20px 0;
+  font-size: 0.83rem;
+  color: $mid;
+  line-height: 1.65;
+}
+
+.geo-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 20px 0;
+}
+
+.geo-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: $radius-sm;
+  font-size: 0.82rem;
+  color: $dark;
+  line-height: 1.5;
+
+  strong { font-weight: 700; }
+
+  &--ok   { background: rgba($green, 0.07); border: 1px solid rgba($green, 0.18); }
+  &--warn { background: rgba(251,191,36,0.07); border: 1px solid rgba(251,191,36,0.20); }
+}
+
+.geo-info-bullet {
+  font-size: 0.90rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-weight: 700;
+}
+
+.geo-formula {
+  margin: 12px 20px 20px;
+  font-size: 0.75rem;
+  color: $mid;
+  line-height: 1.5;
+  padding: 10px 14px;
+  background: $page;
+  border-radius: $radius-sm;
+
+  strong { color: $dark; }
 }

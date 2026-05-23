@@ -323,6 +323,21 @@ export class DatabaseService {
       { headers: this.getAuthHeaders() });
   }
 
+  getNotificheGeofence() {
+    return this.http.get(`${this.apiUrl}/geofence/notifiche`,
+      { headers: this.getAuthHeaders() });
+  }
+
+  segnaNotificaComeLetta(id: number) {
+    return this.http.patch(`${this.apiUrl}/geofence/notifiche/${id}/letta`,
+      {}, { headers: this.getAuthHeaders() });
+  }
+
+  eliminaNotificaGeofence(id: number) {
+    return this.http.delete(`${this.apiUrl}/geofence/notifiche/${id}`,
+      { headers: this.getAuthHeaders() });
+  }
+
   // ─── EXPORT ───────────────────────────────────────────────
 
   getExportJson(utenteId: string) {

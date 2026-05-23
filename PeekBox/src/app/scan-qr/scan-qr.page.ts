@@ -161,6 +161,22 @@ export class ScanQrPage implements OnInit, OnDestroy {
     this.animFrameId = requestAnimationFrame(() => this.qrTick());
   }
 
+  private extractBoxId(input: string): string {
+    const trimmed = input.trim();
+    if (trimmed.includes('?') && trimmed.includes('box=')) {
+      try {
+        const urlParams = new URLSearchParams(trimmed.substring(trimmed.indexOf('?')));
+        const boxParam = urlParams.get('box');
+        if (boxParam) {
+          return boxParam;
+        }
+      } catch (e) {
+        console.error('Error parsing scanned URL:', e);
+      }
+    }
+    return trimmed;
+  }
+
   private qrTick() {
     const video = this.videoElRef?.nativeElement;
     const canvas = this.canvasElRef?.nativeElement;
@@ -180,7 +196,8 @@ export class ScanQrPage implements OnInit, OnDestroy {
         });
         if (code?.data) {
           this.stopScanning();
-          this.router.navigate(['/dettaglio-box', code.data.trim().toUpperCase()]);
+          const boxId = this.extractBoxId(code.data);
+          this.router.navigate(['/dettaglio-box', boxId.toUpperCase()]);
           return;
         }
       }
@@ -196,7 +213,8 @@ export class ScanQrPage implements OnInit, OnDestroy {
   submitManualCode() {
     const code = this.manualCode.trim();
     if (!code) return;
-    this.router.navigate(['/dettaglio-box', code.toUpperCase()]);
+    const boxId = this.extractBoxId(code);
+    this.router.navigate(['/dettaglio-box', boxId.toUpperCase()]);
   }
 
   navTo(route: string) { this.navHistory.navTo(route); }

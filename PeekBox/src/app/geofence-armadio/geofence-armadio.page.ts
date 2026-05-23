@@ -1,19 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonButton, IonIcon, IonItem, IonLabel,
-  IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-  IonRange, IonSpinner, IonBadge, IonInput,
+  IonContent, IonButton, IonIcon, IonItem, IonLabel,
+  IonToggle, IonRange, IonSpinner, IonInput,
   AlertController, ToastController
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackButtonComponent } from '../components/back-button/back-button.component';
 import { addIcons } from 'ionicons';
 import {
   locationOutline, shieldCheckmarkOutline, warningOutline,
-  trashOutline, saveOutline, navigateOutline, refreshOutline
+  trashOutline, saveOutline, navigateOutline, refreshOutline,
+  arrowForwardOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
 import { NavigationHistoryService } from '../services/navigation-history';
@@ -36,11 +34,9 @@ import { GpsService } from '../services/gps';
   styleUrls: ['./geofence-armadio.page.scss'],
   standalone: true,
   imports: [
-BackButtonComponent,     CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-    IonButton, IonIcon, IonItem, IonLabel,
-    IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-    IonRange, IonSpinner, IonBadge, IonInput
+    CommonModule, FormsModule,
+    IonContent, IonButton, IonIcon, IonItem, IonLabel,
+    IonToggle, IonRange, IonSpinner, IonInput
   ]
 })
 export class GeofenceArmadioPage implements OnInit {
@@ -75,7 +71,7 @@ export class GeofenceArmadioPage implements OnInit {
     private toastCtrl: ToastController,
     private navHistory: NavigationHistoryService
   ) {
-    addIcons({ locationOutline, shieldCheckmarkOutline, warningOutline, trashOutline, saveOutline, navigateOutline, refreshOutline });
+    addIcons({ locationOutline, shieldCheckmarkOutline, warningOutline, trashOutline, saveOutline, navigateOutline, refreshOutline, arrowForwardOutline });
   }
 
   ngOnInit() {
