@@ -1,0 +1,413 @@
+@import '../../theme/variables';
+
+$bg-saas:     $page;
+$dark-text:   $dark;
+$slate-gray:  $mid;
+$brand-blue:  $blue;
+$brand-green: $green;
+
+// ── FIX TAB BAR: padding-bottom per non nascondere contenuto ──
+ion-content {
+  --background: #{$bg-saas} !important;
+  --overflow: hidden !important;
+  --padding-bottom: 100px;
+}
+
+.page-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 24px 20px 24px;
+  box-sizing: border-box;
+}
+
+// ── HEADER LOGO ───────────────────────────────────────────────
+.top-compact-bar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.logo-peek {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  margin-left: -5px;
+}
+
+// ── GRID E CARD ───────────────────────────────────────────────
+.account-plancia-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+  flex-grow: 1;
+  max-height: calc(100vh - 170px);
+}
+
+.quadrante-card {
+  background: $white;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  border: 1px solid $brd-light;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+// FIX SPAZIO VUOTO: colonna destra senza space-between
+// Il bottone sta subito dopo i requisiti, non sparato in fondo
+.destra-card {
+  justify-content: flex-start;
+  gap: 0;
+}
+
+// ── HEADER CARD ───────────────────────────────────────────────
+.quadrante-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #{$dark-text};
+    margin: 0;
+  }
+}
+
+.header-left { display: flex; align-items: center; gap: 12px; }
+
+.icon-cerchio {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  &.azzurro { background: rgba(58, 171, 219, 0.1); color: #{$brand-blue}; }
+  &.verde   { background: rgba(125, 199, 64, 0.1); color: #{$brand-green}; }
+}
+
+// ── FORM ──────────────────────────────────────────────────────
+.form-layout-internal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-gruppo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #475569;
+    margin-left: 4px;
+  }
+}
+
+.password-forms ion-input {
+  --background: #{$bg-saas};
+  --border-color: #{$brd-light};
+  --border-radius: 16px;
+  --border-style: solid;
+  --border-width: 1px;
+  --padding-start: 18px;
+  --padding-end: 18px;
+  font-size: 1.05rem;
+  color: #{$dark-text};
+  font-weight: 500;
+  width: 100%;
+
+  &::part(native) { padding: 22px 0; }
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: $bg-saas;
+  border: 1px solid $brd-light;
+  border-radius: 16px;
+  padding: 0 16px;
+  transition: 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus-within {
+    border-color: #{$brand-blue};
+    box-shadow: 0 0 0 4px rgba(58, 171, 219, 0.1);
+    background: $white;
+  }
+
+  .icon-brand {
+    font-size: 1.3rem;
+    color: #{$brand-blue};
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  input {
+    border: none;
+    background: transparent;
+    flex-grow: 1;
+    padding: 18px 0;
+    font-size: 1.05rem;
+    color: #{$dark-text};
+    outline: none;
+    font-weight: 500;
+    min-width: 0;
+  }
+
+  &.disabled-wrapper {
+    background: $surf;
+    border-color: $brd-light;
+    input { color: #94A3B8; cursor: not-allowed; }
+    .ban-icon {
+      margin-left: auto;
+      flex-shrink: 0;
+      color: #EF4444;
+      font-size: 1.3rem;
+    }
+  }
+}
+
+// ── RIQUADRO REQUISITI PASSWORD ───────────────────────────────
+.password-requisiti {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(58, 171, 219, 0.06);
+  border: 1px solid rgba(58, 171, 219, 0.15);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-top: 20px;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: #{$brand-blue};
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .requisiti-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    strong {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #{$dark-text};
+    }
+    span {
+      font-size: 0.78rem;
+      color: #{$slate-gray};
+      font-weight: 500;
+      line-height: 1.4;
+    }
+  }
+}
+
+// ── MODULO FEEDBACK ───────────────────────────────────────────
+.feedback-module {
+  margin-top: auto;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #475569;
+    margin-left: 4px;
+  }
+}
+
+.textarea-wrapper {
+  align-items: flex-start;
+  padding-top: 14px;
+
+  textarea {
+    border: none;
+    background: transparent;
+    flex-grow: 1;
+    font-size: 0.95rem;
+    color: #{$dark-text};
+    outline: none;
+    resize: none;
+    height: 70px;
+    font-family: inherit;
+    padding: 0;
+  }
+}
+
+.btn-send-feedback {
+  background: rgba(58, 171, 219, 0.1);
+  color: #{$brand-blue};
+  border: none;
+  padding: 12px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:active:not(:disabled) { background: #{$brand-blue}; color: white; }
+}
+
+// ── SMART BUTTON (GRIGIO → VERDE) ─────────────────────────────
+.action-area-button {
+  padding-top: 20px;
+  width: 100%;
+  // nessun margin-top: auto — sta subito dopo i requisiti
+}
+
+.btn-submit-smart {
+  width: 100%;
+  background: $surf;
+  color: $slate-gray;
+  border: none;
+  padding: 20px;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: not-allowed;
+  transition: all 0.3s ease;
+
+  &.is-active {
+    background: #{$brand-green};
+    color: white;
+    box-shadow: 0 8px 24px rgba(125, 199, 64, 0.35);
+    cursor: pointer;
+    &:active { transform: scale(0.97); }
+  }
+}
+
+// ── TAB BAR TRANSIT ZONE (FOOTER FISSO) ───────────────────────
+// position: fixed + z-index alto garantisce visibilità
+// indipendentemente dalla gerarchia dei tab router
+.peekbox-footer {
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 99999;
+  background: transparent !important;
+  pointer-events: none; // pass-through per area trasparente
+
+  ion-tab-bar {
+    pointer-events: all; // riattiva solo sulla barra
+  }
+}
+
+.transit-tab-bar {
+  --background: #{$white};
+  border-radius: 30px;
+  margin: 0 15px 15px 15px;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+  height: 70px;
+  border: 1px solid $brd-light;
+  overflow: visible;
+}
+
+.transit-add-circle {
+  background: #{$brand-blue};
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 2rem;
+  transform: translateY(-20px);
+  box-shadow: 0 10px 25px rgba(58, 171, 219, 0.4);
+  transition: 0.2s;
+  &:active { transform: translateY(-18px) scale(0.95); }
+}
+
+.tab-selected { color: #{$brand-blue} !important; }
+
+// ═══════════════════════════════════════════════════════════════
+// RESPONSIVE — Adattamento adattivo per tutte le dimensioni
+// ═══════════════════════════════════════════════════════════════
+
+// ── Mobile piccolo (< 400px) ──────────────────────────────────
+@media (max-width: 399px) {
+  .page-wrapper {
+    padding: 10px 14px 20px;
+  }
+  .account-plancia-grid {
+    grid-template-columns: 1fr;
+    max-height: none;
+    gap: 16px;
+  }
+  ion-content {
+    --overflow: auto !important;
+  }
+  .quadrante-card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+  .logo-peek {
+    height: 32px;
+  }
+  .top-compact-bar {
+    margin-bottom: 16px;
+  }
+}
+
+// ── Collasso griglia su schermi stretti (< 640px) ─────────────
+@media (max-width: 639px) {
+  .account-plancia-grid {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+  ion-content {
+    --overflow: auto !important;
+  }
+}
+
+// ── Tablet (≥ 768px) ──────────────────────────────────────────
+@media (min-width: 768px) {
+  .page-wrapper {
+    padding: 16px 28px 24px;
+  }
+  .account-plancia-grid {
+    gap: 20px;
+    max-height: calc(100vh - 180px);
+  }
+  .quadrante-card {
+    padding: 30px;
+  }
+}
+
+// ── Desktop (≥ 1024px) ────────────────────────────────────────
+@media (min-width: 1024px) {
+  .page-wrapper {
+    padding: 20px 40px 28px;
+  }
+  .account-plancia-grid {
+    gap: 28px;
+    max-height: calc(100vh - 160px);
+  }
+  .quadrante-card {
+    padding: 36px;
+  }
+}

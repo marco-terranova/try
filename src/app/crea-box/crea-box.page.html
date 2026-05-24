@@ -1,0 +1,97 @@
+<ion-content class="bg-light-saas">
+  <div class="page-wrapper">
+
+    <div class="top-compact-bar">
+      <div class="logo-group" (click)="navTo('/home')">
+        <img src="assets/icon/logoTitolo1.png" alt="PeekBox" class="logo-peek-clickable">
+      </div>
+      <div class="title-space-filler"></div>
+    </div>
+
+    <div class="create-plancia-grid">
+
+      <div class="quadrante-card">
+        <div class="quadrante-header">
+          <div class="icon-cerchio azzurro">
+            <ion-icon name="create-outline"></ion-icon>
+          </div>
+          <h3>Identità Box</h3>
+        </div>
+
+        <div class="form-layout-internal filled-height">
+          <div class="input-gruppo">
+            <label>Nome del Contenitore</label>
+            <div class="input-wrapper">
+              <ion-icon name="cube-outline"></ion-icon>
+              <input type="text" [(ngModel)]="nome_box" placeholder="Es. Abbigliamento Invernale">
+            </div>
+          </div>
+
+          <div class="input-gruppo flex-expand">
+            <label>Note / Tag di Contenuto</label>
+            <div class="input-wrapper textarea-wrapper full-grow">
+              <ion-icon name="list-outline"></ion-icon>
+              <textarea [(ngModel)]="descrizione" placeholder="Cosa metterai all'interno? (es. maglioni, sciarpe, giubbotti di lana...)"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quadrante-card space-setup-card">
+        <div class="quadrante-header">
+          <div class="icon-cerchio verde">
+            <ion-icon name="location-outline"></ion-icon>
+          </div>
+          <h3>Collocazione e Anteprima</h3>
+        </div>
+
+        <div class="layout-split-dx">
+          <div class="input-gruppo">
+            <div class="label-row">
+              <label>Riferimento Spazio / Armadio</label>
+              <button type="button" class="new-space-link" (click)="aggiungiArmadio($event)">+ Nuovo spazio</button>
+            </div>
+            <div class="input-wrapper select-wrapper">
+              <ion-icon name="business-outline"></ion-icon>
+              <ion-select
+                class="select-spazio"
+                [(ngModel)]="rif_armadio"
+                placeholder="Seleziona uno spazio"
+                interface="popover"
+              >
+                <ion-select-option *ngFor="let armadio of armadi_disponibili" [value]="armadio.id">
+                  {{ armadio.nome }}
+                </ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+
+          <div class="box-preview-render-frame giant-view">
+            <div class="glow-effect"></div>
+            <img src="assets/icon/box-icon.png" alt="Box Preview" class="box-render-asset-giant">
+          </div>
+        </div>
+
+        <div class="action-area-button">
+          <button class="btn-submit-premium-green" (click)="salvaNuovaBox()" [disabled]="!nome_box || !rif_armadio">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <span>Registra nel Sistema</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <ion-tab-bar slot="bottom" class="custom-tab-bar">
+    <ion-tab-button tab="home" (click)="navTo('/home')"><ion-icon name="home-outline"></ion-icon></ion-tab-button>
+    <ion-tab-button tab="search" (click)="navTo('/search')"><ion-icon name="search-outline"></ion-icon></ion-tab-button>
+    <ion-tab-button class="add-button-tab" (click)="navTo('/crea-box')">
+      <div class="add-btn-circle active-btn"><ion-icon name="add"></ion-icon></div>
+    </ion-tab-button>
+    <ion-tab-button tab="scan" (click)="navTo('/scan-qr')"><ion-icon name="scan-outline"></ion-icon></ion-tab-button>
+    <ion-tab-button tab="profile" (click)="navTo('/area-personale')"><ion-icon name="person-outline"></ion-icon></ion-tab-button>
+  </ion-tab-bar>
+</ion-footer>

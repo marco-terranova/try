@@ -1,0 +1,201 @@
+@import '../../theme/variables';
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
+:host {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+ion-header ion-toolbar {
+  --background: #{$page};
+  --color: #{$dark};
+  --border-color: #{$brd-light};
+  --border-width: 0 0 1px 0;
+  --border-style: solid;
+}
+
+.search-content {
+  --background: #{$page};
+  --color: #{$dark};
+}
+
+.brand-title .pk { color: #{$blue-dk}; }
+.brand-title .bx { color: #{$green}; }
+
+.search-page-title {
+  color: #{$dark};
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  margin: 16px 0 14px;
+}
+
+ion-searchbar {
+  --background: #{$white};
+  --color: #{$dark};
+  --placeholder-color: rgba(74,122,148,.6);
+  --icon-color: #{$blue};
+  --clear-button-color: rgba(74,122,148,.5);
+  --border-radius: 50px;
+  --box-shadow: 0 4px 16px rgba(58,171,219,.08);
+  border: 1px solid #{$brd-light};
+  border-radius: 50px;
+  padding: 0 0 16px 0 !important;
+}
+
+.stato-iniziale {
+  margin-top: 60px;
+  padding: 0 20px;
+  text-align: center;
+
+  ion-icon {
+    color: rgba(58,171,219,.35) !important;
+  }
+  p {
+    color: #{$mid} !important;
+    font-family: 'DM Sans', sans-serif;
+  }
+}
+
+.spinner-wrap {
+  margin-top: 60px;
+  text-align: center;
+  ion-spinner { --color: #{$blue} !important; color: #{$blue} !important; }
+  p { color: #{$mid} !important; margin-top: 10px; font-family: 'DM Sans', sans-serif; }
+}
+
+.risultati-count {
+  color: #{$mid};
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  margin: 4px 0 10px;
+}
+
+.risultato-item {
+  --background: #{$card-bg};
+  --color: #{$dark};
+  --border-radius: 14px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  border: 1px solid #{$brd-light};
+  border-left: 3px solid #{$green};
+  box-shadow: 0 4px 16px rgba(58,171,219,.04);
+  backdrop-filter: blur(10px);
+
+  ion-label h2 {
+    color: #{$dark} !important;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+  }
+  ion-label p {
+    color: #{$mid} !important;
+    font-family: 'DM Sans', sans-serif;
+  }
+}
+
+.foto-risultato {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background: #{$surf};
+  border: 1px solid #{$brd-light};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-right: 8px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  ion-icon {
+    font-size: 1.6rem;
+    color: #{$blue};
+  }
+}
+
+.search-footer ion-toolbar {
+  --background: #{$topbar-bg};
+  --color: #{$dark};
+  --border-color: #{$brd-light};
+}
+
+.search-footer {
+  .nav-item {
+    color: #{$mid};
+    ion-icon { font-size: 1.6rem; }
+    span { font-size: 0.75rem; font-weight: 500; }
+  }
+  .nav-item--active {
+    color: #{$blue};
+    ion-icon { color: #{$blue}; }
+    span { font-weight: 700; color: #{$blue}; }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESPONSIVE — Adattamento adattivo per tutte le dimensioni
+// ═══════════════════════════════════════════════════════════════
+
+// ── Mobile piccolo (< 400px) ──────────────────────────────────
+@media (max-width: 399px) {
+  .search-page-title {
+    font-size: 1.2rem;
+    margin: 12px 0 10px;
+  }
+  .risultato-item {
+    --padding-start: 10px;
+    --padding-end: 10px;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+  }
+  .foto-risultato {
+    width: 44px;
+    height: 44px;
+  }
+  .stato-iniziale {
+    margin-top: 40px;
+    padding: 0 16px;
+  }
+}
+
+// ── Tablet (≥ 768px) ──────────────────────────────────────────
+@media (min-width: 768px) {
+  .search-page-title {
+    font-size: 1.6rem;
+    margin: 20px 0 16px;
+  }
+  .risultato-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+  .foto-risultato {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+  }
+  ion-searchbar {
+    --border-radius: 60px;
+  }
+}
+
+// ── Desktop (≥ 1024px) ────────────────────────────────────────
+@media (min-width: 1024px) {
+  .search-page-title {
+    font-size: 1.8rem;
+  }
+  ion-searchbar {
+    max-width: 700px;
+  }
+}

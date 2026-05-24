@@ -1,0 +1,320 @@
+@import '../../theme/variables';
+
+ion-content {
+  --background: #{$page} !important;
+}
+
+// ── WRAPPER ──────────────────────────────────────
+.admin-dashboard-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 5%;
+  box-sizing: border-box;
+}
+
+// ── HEADER ───────────────────────────────────────
+.admin-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 24px;
+}
+
+.back-btn-light {
+  background: $white;
+  color: $dark;
+  border: none;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  ion-icon {
+    font-size: 1.4rem;
+    color: $dark;
+    --color: #{$dark};
+  }
+
+  &:hover {
+    transform: scale(1.06);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.10);
+  }
+}
+
+.header-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.subtitle-admin {
+  color: $mid;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.main-title {
+  color: $dark;
+  font-size: 2.4rem;
+  font-weight: 900;
+  margin: 4px 0 0;
+  line-height: 1.1;
+}
+
+.text-azzurro { color: $blue; }
+
+.users-counter {
+  background: $white;
+  color: $blue;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(58,171,219,0.10);
+  white-space: nowrap;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: $blue;
+    --color: #{$blue};
+  }
+}
+
+// ── LISTA ────────────────────────────────────────
+.users-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ── CARD UTENTE ──────────────────────────────────
+.user-premium-card {
+  background: $white;
+  border-radius: 24px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.02);
+  border: 1px solid $brd-light;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(58,171,219,0.08);
+    border-color: rgba(58,171,219,0.12);
+  }
+}
+
+// ── IDENTITÀ ─────────────────────────────────────
+.user-identity {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+.avatar-circle {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $blue, $blue-d);
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 8px 16px rgba(2,132,199,0.20);
+}
+
+.user-details {
+  min-width: 0;
+
+  h3 {
+    margin: 0;
+    color: $dark;
+    font-size: 1.05rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    white-space: normal;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: $mid;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// ── BADGES ───────────────────────────────────────
+.role-badge {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+
+  &.admin {
+    background: rgba(58,171,219,0.12);
+    color: $blue-d;
+  }
+
+  &.personal {
+    background: rgba(125,199,64,0.12);
+    color: $green-d;
+  }
+
+  &.business {
+    background: rgba(21,66,92,0.12);
+    color: $blue-dk;
+  }
+}
+
+// ── STATISTICHE ──────────────────────────────────
+.user-stats-pills {
+  display: flex;
+  gap: 12px;
+  flex: 1.2;
+  justify-content: center;
+}
+
+.stat-pill {
+  background: $surf;
+  padding: 10px 16px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 110px;
+  transition: background 0.2s ease;
+
+  &:hover { background: rgba(58,171,219,0.12); }
+
+  ion-icon {
+    font-size: 1.3rem;
+    color: $blue;
+    --color: #{$blue};
+    flex-shrink: 0;
+  }
+
+  .stat-data {
+    display: flex;
+    flex-direction: column;
+
+    strong {
+      color: $dark;
+      font-size: 1.1rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    span {
+      color: $mid;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+  }
+}
+
+// ── AZIONI ───────────────────────────────────────
+.user-actions {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  padding-left: 16px;
+}
+
+.btn-delete-ghost {
+  background: rgba(239,68,68,0.06);
+  color: #EF4444;
+  border: none;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  ion-icon {
+    font-size: 1.3rem;
+    color: #EF4444;
+    --color: #EF4444;
+  }
+
+  &:hover {
+    background: #EF4444;
+    transform: scale(1.10);
+    box-shadow: 0 8px 20px rgba(239,68,68,0.25);
+
+    ion-icon {
+      color: $white;
+      --color: #{$white};
+    }
+  }
+}
+
+// ── RESPONSIVE ───────────────────────────────────
+@media (max-width: 900px) {
+  .admin-header {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .users-counter {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .user-premium-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px 24px;
+  }
+
+  .user-identity { width: 100%; }
+
+  .user-stats-pills {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .stat-pill { min-width: calc(33% - 8px); }
+
+  .user-actions {
+    width: 100%;
+    justify-content: flex-end;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-title { font-size: 1.8rem; }
+  .stat-pill { min-width: calc(50% - 6px); }
+}

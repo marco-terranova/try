@@ -1,0 +1,133 @@
+<ion-content class="bg-light-saas">
+  <div class="page-wrapper">
+
+    <div class="top-compact-bar">
+      <img src="assets/icon/logoTitolo1.png" alt="PeekBox" class="logo-peek" (click)="navTo('/home')">
+    </div>
+
+    <div class="account-plancia-grid">
+
+      <!-- COLONNA SINISTRA: Dati + Feedback -->
+      <div class="quadrante-card">
+        <div class="quadrante-header">
+          <div class="header-left">
+            <div class="icon-cerchio azzurro"><ion-icon name="id-card-outline"></ion-icon></div>
+            <h3>Dati Identificativi</h3>
+          </div>
+        </div>
+
+        <div class="form-layout-internal">
+          <div class="input-gruppo">
+            <label>Nome</label>
+            <div class="input-wrapper">
+              <ion-icon name="person-outline" class="icon-brand"></ion-icon>
+              <input type="text" [(ngModel)]="nome" (input)="verificaModifiche()" placeholder="Il tuo nome">
+            </div>
+          </div>
+
+          <div class="input-gruppo">
+            <label>Indirizzo Email</label>
+            <div class="input-wrapper disabled-wrapper">
+              <ion-icon name="mail-outline" class="icon-brand"></ion-icon>
+              <input type="email" [(ngModel)]="email" disabled>
+              <ion-icon name="ban-outline" class="ban-icon"></ion-icon>
+            </div>
+          </div>
+        </div>
+
+        <div class="feedback-module">
+          <label>Aiutaci a migliorare</label>
+          <div class="input-wrapper textarea-wrapper">
+            <ion-icon name="chatbubbles-outline" class="icon-brand"></ion-icon>
+            <textarea [(ngModel)]="feedbackText" placeholder="Hai suggerimenti per il team di sviluppo? Scrivici qui..."></textarea>
+          </div>
+          <button class="btn-send-feedback" (click)="inviaFeedback()" [disabled]="!feedbackText">
+            <ion-icon name="paper-plane-outline"></ion-icon> Invia Feedback
+          </button>
+        </div>
+      </div>
+
+      <!-- COLONNA DESTRA: Password + Requisiti + Bottone -->
+      <div class="quadrante-card destra-card">
+        <div class="quadrante-header">
+          <div class="icon-cerchio verde"><ion-icon name="shield-checkmark-outline"></ion-icon></div>
+          <h3>Gestione Password</h3>
+        </div>
+
+        <div class="form-layout-internal password-forms">
+          <div class="input-gruppo">
+            <label>Password Attuale</label>
+            <ion-input
+              [(ngModel)]="vecchiaPassword"
+              type="password"
+              placeholder="Password attuale">
+              <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+            </ion-input>
+          </div>
+
+          <div class="input-gruppo">
+            <label>Nuova Password</label>
+            <ion-input
+              [(ngModel)]="nuovaPassword"
+              (ionInput)="verificaModifiche()"
+              type="password"
+              placeholder="Minimo 8 caratteri">
+              <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+            </ion-input>
+          </div>
+
+          <div class="input-gruppo">
+            <label>Conferma Nuova Password</label>
+            <ion-input
+              [(ngModel)]="confermaPassword"
+              type="password"
+              placeholder="Ripeti la password">
+              <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+            </ion-input>
+          </div>
+        </div>
+
+        <!-- Riquadro requisiti password: riempie lo spazio vuoto -->
+        <div class="password-requisiti">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <div class="requisiti-text">
+            <strong>Requisiti Password</strong>
+            <span>Minimo 8 caratteri · almeno un numero · un carattere speciale (!@#$…)</span>
+          </div>
+        </div>
+
+        <div class="action-area-button">
+          <button
+            class="btn-submit-smart"
+            [class.is-active]="datiModificati"
+            [disabled]="!datiModificati || isSaving"
+            (click)="salvaModifiche()">
+            <ion-icon name="save-outline"></ion-icon>
+            <span>{{ isSaving ? 'Salvataggio...' : 'Salva Modifiche' }}</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border peekbox-footer">
+  <ion-tab-bar slot="bottom" class="transit-tab-bar">
+    <ion-tab-button tab="home" (click)="navTo('/home')">
+      <ion-icon name="home-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="search" (click)="navTo('/search')">
+      <ion-icon name="search-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button class="add-button-tab" (click)="navTo('/crea-box')">
+      <div class="transit-add-circle"><ion-icon name="add"></ion-icon></div>
+    </ion-tab-button>
+    <ion-tab-button tab="scan" (click)="navTo('/scan-qr')">
+      <ion-icon name="scan-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="profile" (click)="navTo('/area-personale')" class="tab-selected">
+      <ion-icon name="person"></ion-icon>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-footer>
