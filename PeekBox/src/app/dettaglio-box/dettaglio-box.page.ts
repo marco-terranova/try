@@ -10,6 +10,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
+  heart,
   heartOutline,          // cuore: outline di default, diventa “attivo” via CSS
   layersOutline,         // icona armadio nella sub-header
   paperPlaneOutline,     // moving mode
@@ -72,7 +73,7 @@ export class DettaglioBoxPage implements OnInit {
     private actionSheetCtrl: ActionSheetController
   ) {
     addIcons({
-      arrowBackOutline, heartOutline, layersOutline,
+      arrowBackOutline, heart, heartOutline, layersOutline,
       paperPlaneOutline, warningOutline,
       cubeOutline, addCircleOutline, qrCodeOutline, locationOutline,
       trashOutline, trashBinOutline, createOutline, checkmarkCircleOutline,

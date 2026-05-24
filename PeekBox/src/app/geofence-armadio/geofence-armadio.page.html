@@ -23,8 +23,8 @@
         <div class="geo-card-body">
           <!-- Acquisizione GPS -->
           <button class="gps-acquire-btn" (click)="usaPosizioneCorrcome()" [disabled]="isGettingGps">
-            <span *ngIf="!isGettingGps">🛰️</span>
-            <ion-spinner *ngIf="isGettingGps" name="crescent" class="spinner-small"></ion-spinner>
+            <ion-icon *ngIf="!isGettingGps" name="locate-outline" style="margin-right: 6px; font-size: 1.15rem;"></ion-icon>
+            <ion-spinner *ngIf="isGettingGps" name="crescent" class="spinner-small" style="margin-right: 6px;"></ion-spinner>
             <span>Usa posizione GPS corrente</span>
           </button>
 
@@ -68,20 +68,20 @@
           <div class="map-preview-box" *ngIf="latitudine !== null && longitudine !== null">
             <p>Coordinate: {{ latitudine | number:'1.6-6' }}, {{ longitudine | number:'1.6-6' }}</p>
             <button class="map-link-btn" (click)="apriInMappa()">
-              <span>🗺️</span> Vedi su Mappa
+              <ion-icon name="map-outline" style="margin-right: 6px; font-size: 1.1rem;"></ion-icon> Vedi su Mappa
             </button>
           </div>
 
           <!-- Pulsanti Azione -->
           <div class="actions-row">
             <button class="btn-save-geo" (click)="salvaGeofence()" [disabled]="isSaving || latitudine === null">
-              <span *ngIf="!isSaving">💾</span>
-              <ion-spinner *ngIf="isSaving" name="crescent" class="spinner-small"></ion-spinner>
+              <ion-icon *ngIf="!isSaving" name="save-outline" style="margin-right: 6px; font-size: 1.1rem;"></ion-icon>
+              <ion-spinner *ngIf="isSaving" name="crescent" class="spinner-small" style="margin-right: 6px;"></ion-spinner>
               <span>{{ hasGeofence ? 'Aggiorna Area' : 'Imposta Area' }}</span>
             </button>
             
             <button class="btn-delete-geo" *ngIf="hasGeofence" (click)="confermaElimina()">
-              <span>🗑️</span> Rimuovi Area
+              <ion-icon name="trash-outline" style="margin-right: 6px; font-size: 1.1rem;"></ion-icon> Rimuovi Area
             </button>
           </div>
 

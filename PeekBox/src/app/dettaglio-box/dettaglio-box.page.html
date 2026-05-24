@@ -17,19 +17,19 @@
     <!-- ── HEADER CARD (CENTRALE IN ALTO) ── -->
     <div class="pb-central-header">
       <button class="pb-back-btn" (click)="goBack()">
-        <span>⬅️</span>
+        <ion-icon name="arrow-back-outline"></ion-icon>
       </button>
 
       <h1 class="pb-box-title">{{ box?.nome | uppercase }}</h1>
 
       <div class="pb-header-badges">
-        <!-- Preferito: emoji cuore pieno o vuoto -->
+        <!-- Preferito: Ionicon cuore -->
         <button
           class="badge-btn-emoji"
           [class.active]="box?.is_preferito"
           (click)="togglePreferito()"
           title="Preferito">
-          <span style="font-size: 1.4rem;">{{ box?.is_preferito ? '❤️' : '🤍' }}</span>
+          <ion-icon [name]="box?.is_preferito ? 'heart' : 'heart-outline'" [class.heart-active]="box?.is_preferito"></ion-icon>
         </button>
 
         <!-- Moving Mode -->
@@ -69,7 +69,7 @@
               <div class="item-avatar">
                 <img *ngIf="o.foto" [src]="o.foto" [alt]="o.nome" />
                 <div class="item-avatar-placeholder" *ngIf="!o.foto">
-                  <span style="font-size: 1.2rem;">📦</span>
+                  <ion-icon name="cube-outline"></ion-icon>
                 </div>
               </div>
 
@@ -87,11 +87,11 @@
                 </span>
                 <!-- Bottone modifica -->
                 <button class="item-btn item-btn--edit" (click)="apriModificaOggetto(o)" title="Modifica">
-                  <span>✏️</span>
+                  <ion-icon name="create-outline"></ion-icon>
                 </button>
                 <!-- Cestino -->
                 <button class="item-btn item-btn--delete" (click)="eliminaOggetto(o)" title="Elimina">
-                  <span>🗑️</span>
+                  <ion-icon name="trash-outline"></ion-icon>
                 </button>
               </div>
             </div>
@@ -103,7 +103,7 @@
             <p class="empty-title">Nessun oggetto trovato in questo box</p>
             <p class="empty-sub">Aggiungi il tuo primo oggetto!</p>
             <button class="empty-cta" (click)="apriModale('aggiungi')">
-              <span style="margin-right: 6px;">➕</span>
+              <ion-icon name="add-circle-outline" slot="start" style="margin-right: 6px;"></ion-icon>
               Aggiungi oggetto
             </button>
           </div>
@@ -117,27 +117,35 @@
         <!-- Griglia azioni (allargata) -->
         <div class="actions-grid">
 
-          <!-- Aggiungi: emoji ➕ -->
+          <!-- Aggiungi -->
           <button class="action-tile action-tile--add" (click)="apriModale('aggiungi')">
-            <div class="tile-icon-emoji">➕</div>
+            <div class="tile-icon">
+              <ion-icon name="add-circle-outline"></ion-icon>
+            </div>
             <span class="tile-label">Aggiungi<br>Oggetto</span>
           </button>
 
-          <!-- QR Code: emoji 📲 -->
+          <!-- QR Code -->
           <button class="action-tile action-tile--qr" (click)="apriModale('qr')">
-            <div class="tile-icon-emoji">📲</div>
+            <div class="tile-icon">
+              <ion-icon name="qr-code-outline"></ion-icon>
+            </div>
             <span class="tile-label">QR Code<br>Box</span>
           </button>
 
-          <!-- Geofencing: emoji 📍 -->
+          <!-- Geofencing -->
           <button class="action-tile action-tile--geo" (click)="apriGeofence()">
-            <div class="tile-icon-emoji">📍</div>
+            <div class="tile-icon">
+              <ion-icon name="location-outline"></ion-icon>
+            </div>
             <span class="tile-label">Posizione<br>Geofence</span>
           </button>
 
-          <!-- Svuota: emoji 🧹 -->
+          <!-- Svuota -->
           <button class="action-tile action-tile--clear" (click)="svuotaBox()">
-            <div class="tile-icon-emoji">🧹</div>
+            <div class="tile-icon">
+              <ion-icon name="trash-outline"></ion-icon>
+            </div>
             <span class="tile-label">Svuota<br>Box</span>
           </button>
 
@@ -186,7 +194,7 @@
     <div class="modal-shell">
       <div class="modal-topbar">
         <button class="modal-back" (click)="chiudiModale()">
-          <span>✖️</span>
+          <ion-icon name="close-outline"></ion-icon>
         </button>
         <h2>{{ modaleAperta === 'modifica' ? 'Modifica Oggetto' : 'Nuovo Oggetto' }}</h2>
         <span></span>
@@ -194,32 +202,37 @@
       <div class="modal-body">
         <div class="modal-form">
 
-          <div class="form-group">
+          <div class="form-field">
             <label class="form-label">Foto</label>
             <button class="photo-btn" type="button" (click)="scattaFoto()">
-              <span style="margin-right: 8px;">📷</span>
+              <ion-icon name="camera" style="margin-right: 8px; font-size: 1.15rem;"></ion-icon>
               {{ fotoOggetto ? 'Cambia foto' : 'Aggiungi foto' }}
             </button>
             <img *ngIf="fotoOggetto" [src]="fotoOggetto" alt="anteprima" class="photo-preview" />
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Nome oggetto *</label>
-            <ion-input class="form-input" [(ngModel)]="nomeOggetto"
-              placeholder="Es. Lampada da terra, Libri cucina..."
-              [clearInput]="true"></ion-input>
+          <div class="form-field">
+            <label>Nome oggetto *</label>
+            <div class="input-wrap">
+              <ion-icon name="create-outline" class="input-icon"></ion-icon>
+              <input type="text" [(ngModel)]="nomeOggetto" placeholder="Es. Lampada da terra, Libri cucina...">
+            </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Categoria</label>
-            <ion-input class="form-input" [(ngModel)]="tipoOggetto"
-              placeholder="Es. Elettronica, Vestiti..."></ion-input>
+          <div class="form-field">
+            <label>Categoria</label>
+            <div class="input-wrap">
+              <ion-icon name="layers-outline" class="input-icon"></ion-icon>
+              <input type="text" [(ngModel)]="tipoOggetto" placeholder="Es. Elettronica, Vestiti...">
+            </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Quantità</label>
-            <ion-input class="form-input" type="number" [(ngModel)]="quantitaOggetto"
-              [min]="1" placeholder="1"></ion-input>
+          <div class="form-field">
+            <label>Quantità</label>
+            <div class="input-wrap">
+              <ion-icon name="bar-chart-outline" class="input-icon"></ion-icon>
+              <input type="number" [(ngModel)]="quantitaOggetto" [min]="1" placeholder="1">
+            </div>
           </div>
 
           <div class="form-group form-group--toggle">
@@ -230,14 +243,16 @@
             <ion-toggle [(ngModel)]="fragileOggetto" class="pb-azure-toggle"></ion-toggle>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Note (opzionale)</label>
-            <ion-textarea class="form-input" [(ngModel)]="descrizioneOggetto"
-              placeholder="Dettagli aggiuntivi..." [rows]="3" [autoGrow]="true"></ion-textarea>
+          <div class="form-field">
+            <label>Note (opzionale)</label>
+            <div class="input-wrap input-wrap--textarea">
+              <ion-icon name="information-circle-outline" class="input-icon"></ion-icon>
+              <textarea [(ngModel)]="descrizioneOggetto" placeholder="Dettagli aggiuntivi..." rows="2"></textarea>
+            </div>
           </div>
 
           <button class="save-btn" (click)="salvaOggetto()" [disabled]="isSaving">
-            <span style="margin-right: 6px;">✅</span>
+            <ion-icon name="checkmark-circle-outline" style="margin-right: 6px; font-size: 1.15rem;"></ion-icon>
             {{ isSaving ? 'Salvataggio...' : (modaleAperta === 'modifica' ? 'Aggiorna Oggetto' : 'Aggiungi al Box') }}
           </button>
 
@@ -251,7 +266,7 @@
     <div class="modal-shell modal-shell--centered">
       <div class="modal-topbar">
         <button class="modal-back" (click)="chiudiModale()">
-          <span>✖️</span>
+          <ion-icon name="close-outline"></ion-icon>
         </button>
         <h2>QR Code Box</h2>
         <span></span>
@@ -267,12 +282,12 @@
             <div class="qr-frame">
               <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" class="qr-image" />
               <div class="qr-placeholder" *ngIf="!qrDataUrl">
-                <span style="font-size: 3rem;">📲</span>
+                <ion-icon name="qr-code-outline" style="font-size: 4rem; color: #CBD5E1;"></ion-icon>
               </div>
             </div>
             <p class="qr-hint">Scansiona per identificare il box</p>
             <button class="save-btn" style="max-width:280px;margin:0 auto" (click)="stampaQr()">
-              <span style="margin-right: 6px;">🖨️</span>
+              <ion-icon name="cloud-download-outline" style="margin-right: 6px; font-size: 1.15rem;"></ion-icon>
               Stampa / Scarica
             </button>
           </div>

@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════
 //  DESIGN TOKENS
 // ═══════════════════════════════════════════════════════════
-$bg-page:      #F0F4F8;
+$bg-page:      #F8FAFC;
 $bg-card:      #FFFFFF;
 $text-primary: #0F172A;
 $text-muted:   #64748B;
@@ -9,15 +9,11 @@ $accent:       #3AABDB;
 $brand-dark:   #15425C;
 $red-soft:     #FEE2E2;
 $red:          #EF4444;
-$green-neon:   #22C55E;   // tag vestiti
-$shadow:       0 8px 32px rgba(15, 23, 42, 0.07);
-$shadow-hover: 0 20px 48px rgba(15, 23, 42, 0.13);
+$green-neon:   #22C55E;
+$shadow:       0 8px 32px rgba(15, 23, 42, 0.06);
+$shadow-hover: 0 16px 40px rgba(15, 23, 42, 0.12);
 $radius:       24px;
-
-// ═══════════════════════════════════════════════════════════
-//  FONT SYSTEM  (Inter / iOS stack)
-// ═══════════════════════════════════════════════════════════
-$font-stack: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+$font-stack:   'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
 
 :host {
   display: block;
@@ -97,69 +93,100 @@ ion-content {
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 1.4rem;
-    background: transparent;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
     border: none;
-    cursor: pointer;
-    transition: transform 0.2s;
+    background: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #3AABDB;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    ion-icon {
+      font-size: 1.35rem;
+    }
+
     &:hover {
-      transform: translateY(-50%) scale(1.15);
+      transform: translateY(-50%) scale(1.08);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     }
   }
 
   .pb-box-title {
+    margin: 0 0 14px;
+    font-family: $font-stack;
     font-size: 2.2rem;
     font-weight: 800;
-    color: #7DC740; // Brand Green
-    margin: 0 0 10px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    font-family: $font-stack;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #A8FF78, #7DC740);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .pb-header-badges {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 12px;
+    justify-content: center;
+  }
 
-    .badge-btn-emoji {
-      background: transparent;
-      border: none;
-      font-size: 1.3rem;
-      cursor: pointer;
-      padding: 4px;
-      transition: transform 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      &:hover {
-        transform: scale(1.15);
-      }
+  .badge-btn-emoji {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    color: #64748B;
+    transition: transform 0.2s, color 0.2s, border-color 0.2s;
+
+    ion-icon {
+      font-size: 1.2rem;
+      transition: color 0.2s, transform 0.2s;
     }
 
-    .badge-tag-emoji {
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 20px;
-      background: #FFFFFF;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      color: #334155;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      &--moving {
-        border: 1px solid rgba(58,171,219,0.3);
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &.active {
+      border-color: rgba(239, 68, 68, 0.15);
+      
+      ion-icon.heart-active {
+        color: #EF4444;
+        transform: scale(1.1);
       }
-      &--fragile {
-        border: 1px solid rgba(239,68,68,0.25);
-        background: #FEF2F2;
-        color: #991B1B;
-      }
+    }
+  }
+
+  .badge-tag-emoji {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: #FFFFFF;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &--moving {
+      border: 1px solid rgba(58,171,219,0.3);
+    }
+    
+    &--fragile {
+      border: 1px solid rgba(239,68,68,0.25);
+      background: #FEF2F2;
+      color: #991B1B;
     }
   }
 }
@@ -406,12 +433,16 @@ ion-content {
     box-shadow: $shadow-hover;
   }
 
-  .tile-icon-emoji {
+  .tile-icon {
     width: 52px; height: 52px;
     border-radius: 16px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.8rem;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
+
+    ion-icon {
+      font-size: 1.6rem;
+      transition: transform 0.2s;
+    }
   }
 
   .tile-label {
@@ -424,15 +455,15 @@ ion-content {
     letter-spacing: 0.01em;
   }
 
-  &--add .tile-icon-emoji   { background: #DCFCE7; }
-  &--qr .tile-icon-emoji    { background: #EEF8FE; }
-  &--geo .tile-icon-emoji   { background: #EDE9FE; }
-  &--clear .tile-icon-emoji { background: $red-soft; }
+  &--add .tile-icon   { background: rgba(58, 171, 219, 0.12); color: #3AABDB; }
+  &--qr .tile-icon    { background: rgba(34, 197, 94, 0.12); color: #22C55E; }
+  &--geo .tile-icon   { background: rgba(249, 115, 22, 0.12); color: #EA580C; }
+  &--clear .tile-icon { background: rgba(239, 68, 68, 0.12); color: #EF4444; }
 
-  &--add:hover .tile-icon-emoji   { background: #BBF7D0; transform: scale(1.1); }
-  &--qr:hover .tile-icon-emoji    { background: #BAE6FD; transform: scale(1.1); }
-  &--geo:hover .tile-icon-emoji   { background: #DDD6FE; transform: scale(1.1); }
-  &--clear:hover .tile-icon-emoji { background: #FECACA; transform: scale(1.1); }
+  &--add:hover .tile-icon   { background: rgba(58, 171, 219, 0.22); transform: scale(1.1); }
+  &--qr:hover .tile-icon    { background: rgba(34, 197, 94, 0.22); transform: scale(1.1); }
+  &--geo:hover .tile-icon   { background: rgba(249, 115, 22, 0.22); transform: scale(1.1); }
+  &--clear:hover .tile-icon { background: rgba(239, 68, 68, 0.22); transform: scale(1.1); }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -558,6 +589,84 @@ ion-content {
 
 .modal-form { display: flex; flex-direction: column; gap: 20px; }
 
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-family: $font-stack;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.input-wrap {
+  display: flex;
+  align-items: center;
+  background: #F8FAFC;
+  border: 1.5px solid #E2EAF0;
+  border-radius: 12px;
+  padding: 0 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: $accent;
+    box-shadow: 0 0 0 3px rgba(58, 171, 219, 0.15);
+  }
+
+  .input-icon {
+    font-size: 1.25rem;
+    color: $text-muted;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 14px 0;
+    font-family: $font-stack;
+    font-size: 0.92rem;
+    color: $text-primary;
+    outline: none;
+
+    &::placeholder {
+      color: #94A3B8;
+    }
+  }
+
+  &--textarea {
+    align-items: flex-start;
+    padding-top: 12px;
+    padding-bottom: 12px;
+
+    .input-icon {
+      margin-top: 2px;
+    }
+
+    textarea {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: $font-stack;
+      font-size: 0.92rem;
+      color: $text-primary;
+      outline: none;
+      resize: vertical;
+      min-height: 60px;
+
+      &::placeholder {
+        color: #94A3B8;
+      }
+    }
+  }
+}
+
 .form-group {
   display: flex; flex-direction: column; gap: 6px;
 
@@ -565,14 +674,6 @@ ion-content {
     font-family: $font-stack;
     font-size: 0.7rem; font-weight: 700;
     color: $text-muted; text-transform: uppercase; letter-spacing: 0.05em;
-  }
-
-  .form-input {
-    --background: #F8FAFC; --border-radius: 12px;
-    --padding-start: 14px; --padding-end: 14px;
-    --color: #{$text-primary};
-    border: 1.5px solid #E2EAF0; border-radius: 12px;
-    font-family: $font-stack; font-size: 0.92rem;
   }
 
   &--toggle {

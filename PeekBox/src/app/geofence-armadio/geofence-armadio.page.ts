@@ -13,7 +13,8 @@ import { BackButtonComponent } from '../components/back-button/back-button.compo
 import { addIcons } from 'ionicons';
 import {
   locationOutline, shieldCheckmarkOutline, warningOutline,
-  trashOutline, saveOutline, navigateOutline, refreshOutline
+  trashOutline, saveOutline, navigateOutline, refreshOutline,
+  locateOutline, mapOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
 import { GpsService } from '../services/gps';
@@ -73,7 +74,11 @@ export class GeofenceArmadioPage implements OnInit {
     private alertCtrl: AlertController,
     private toastCtrl: ToastController
   ) {
-    addIcons({ locationOutline, shieldCheckmarkOutline, warningOutline, trashOutline, saveOutline, navigateOutline, refreshOutline });
+    addIcons({
+      locationOutline, shieldCheckmarkOutline, warningOutline,
+      trashOutline, saveOutline, navigateOutline, refreshOutline,
+      locateOutline, mapOutline
+    });
   }
 
   ngOnInit() {

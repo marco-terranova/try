@@ -1,5 +1,5 @@
 // Design Tokens
-$bg-page:      #F0F4F8;
+$bg-page:      #F8FAFC; // aligned with bg-page of main design
 $bg-card:      #FFFFFF;
 $text-primary: #0F172A;
 $text-muted:   #64748B;
@@ -8,12 +8,19 @@ $brand-dark:   #15425C;
 $brand-green:  #7DC740;
 $shadow:       0 8px 32px rgba(15, 23, 42, 0.07);
 $radius:       24px;
+$font-stack:   'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+
+:host {
+  display: block;
+  font-family: $font-stack;
+}
 
 .geofence-page-content {
   --background: #{$bg-page};
   height: calc(100vh - 56px) !important;
   --overflow: hidden;
   overflow: hidden !important;
+  font-family: $font-stack;
 }
 
 .pb-toolbar {

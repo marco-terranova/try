@@ -42,6 +42,7 @@ declare module 'ionicons/icons' {
   export const flashOutline: string;
   export const funnelOutline: string;
   export const gridOutline: string;
+  export const heart: string;
   export const heartOutline: string;
   export const home: string;
   export const homeOutline: string;
@@ -51,6 +52,7 @@ declare module 'ionicons/icons' {
   export const keypadOutline: string;
   export const layersOutline: string;
   export const listOutline: string;
+  export const locateOutline: string;
   export const locationOutline: string;
   export const logOutOutline: string;
   export const mailOpenOutline: string;

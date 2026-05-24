@@ -51,8 +51,8 @@
         </div>
 
         <button class="btn-share-invite" (click)="invitaOspite()" [disabled]="isInviting">
-          <ion-spinner *ngIf="isInviting" name="crescent" class="spinner-small" slot="start"></ion-spinner>
-          <span *ngIf="!isInviting" style="margin-right: 8px;">📤</span>
+          <ion-spinner *ngIf="isInviting" name="crescent" class="spinner-small" style="margin-right: 6px;"></ion-spinner>
+          <ion-icon *ngIf="!isInviting" name="person-add-outline" style="margin-right: 6px; font-size: 1.15rem;"></ion-icon>
           <span>Condividi</span>
         </button>
       </ion-card-content>
@@ -90,7 +90,7 @@
               {{ ruoloLabel(c.ruolo) }}
             </span>
             <button slot="end" class="btn-revoke-revoke" (click)="confermaRevoca(c)">
-              <span>🗑️</span>
+              <ion-icon name="trash-outline"></ion-icon>
             </button>
           </ion-item>
         </ion-list>
