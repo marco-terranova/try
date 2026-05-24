@@ -109,12 +109,6 @@ export const routes: Routes = [
     loadComponent: () => import('./esporta-archivio/esporta-archivio.page').then(m => m.EsportaArchivioPage)
   },
 
-  {
-    path: 'condividi',
-    redirectTo: 'box-ricevute',
-    pathMatch: 'full'
-  },
-
   // ── Wildcard 404 — DEVE essere l'ultima voce ─────────────────────
   { path: '**', redirectTo: 'not-found' },
 ];

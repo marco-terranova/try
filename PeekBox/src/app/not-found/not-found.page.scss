@@ -1,9 +1,10 @@
-// ─ Design tokens allineati all'app ──────────────────────────────────
+@import '../../theme/variables';
+
 $font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-$accent: #3AABDB;
-$brand:  #15425C;
-$muted:  #64748B;
-$bg:     #F0F4F8;
+$accent: $blue;
+$brand:  $blue-dk;
+$muted:  $mid;
+$bg:     $page;
 
 :host { display: block; }
 
@@ -64,4 +65,59 @@ ion-content { --background: #{$bg}; }
   margin-top: 8px;
   ion-icon { font-size: 1.05rem; }
   &:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(58,171,219,0.42); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESPONSIVE — Adattamento adattivo per tutte le dimensioni
+// ═══════════════════════════════════════════════════════════════
+
+// ── Mobile piccolo (< 400px) ──────────────────────────────────
+@media (max-width: 399px) {
+  .nf-root {
+    padding: 24px 16px;
+    gap: 12px;
+  }
+  .nf-title {
+    font-size: 1.1rem;
+  }
+  .nf-sub {
+    font-size: 0.82rem;
+  }
+  .nf-btn {
+    padding: 11px 22px;
+    font-size: 0.85rem;
+  }
+}
+
+// ── Tablet (≥ 768px) ──────────────────────────────────────────
+@media (min-width: 768px) {
+  .nf-root {
+    gap: 20px;
+    padding: 40px 32px;
+  }
+  .nf-title {
+    font-size: 1.6rem;
+  }
+  .nf-sub {
+    font-size: 1rem;
+    max-width: 400px;
+  }
+  .nf-btn {
+    padding: 15px 34px;
+    font-size: 1rem;
+  }
+}
+
+// ── Desktop (≥ 1024px) ────────────────────────────────────────
+@media (min-width: 1024px) {
+  .nf-root {
+    gap: 24px;
+  }
+  .nf-title {
+    font-size: 1.8rem;
+  }
+  .nf-sub {
+    font-size: 1.05rem;
+    max-width: 480px;
+  }
 }

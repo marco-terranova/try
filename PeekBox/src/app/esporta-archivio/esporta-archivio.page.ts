@@ -9,6 +9,7 @@ import {
   cloudDownloadOutline, filterCircleOutline, documentTextOutline,
   documentOutline, gridOutline, codeSlashOutline, sparkles,
   homeOutline, shareSocialOutline, addOutline, qrCodeOutline,
+  home, add, search, person
 } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
 
@@ -16,6 +17,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-esporta-archivio',
@@ -41,11 +43,24 @@ export class EsportaArchivioPage implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private dbService: DatabaseService,
+    private navHistory: NavigationHistoryService,
   ) {
     addIcons({
-      cloudDownloadOutline, filterCircleOutline, documentTextOutline,
-      documentOutline, gridOutline, codeSlashOutline, sparkles,
-      homeOutline, shareSocialOutline, addOutline, qrCodeOutline,
+      'cloud-download-outline': cloudDownloadOutline,
+      'filter-circle-outline': filterCircleOutline,
+      'document-text-outline': documentTextOutline,
+      'document-outline': documentOutline,
+      'grid-outline': gridOutline,
+      'code-slash-outline': codeSlashOutline,
+      'sparkles': sparkles,
+      'home-outline': homeOutline,
+      'share-social-outline': shareSocialOutline,
+      'add-outline': addOutline,
+      'qr-code-outline': qrCodeOutline,
+      'home': home,
+      'add': add,
+      'search': search,
+      'person': person
     });
   }
 
@@ -311,4 +326,6 @@ export class EsportaArchivioPage implements OnInit {
   vaiHome() {
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
+  navTo(route: string) { this.navHistory.navTo(route); }
+
 }

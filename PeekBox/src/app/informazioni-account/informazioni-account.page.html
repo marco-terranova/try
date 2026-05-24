@@ -2,7 +2,7 @@
   <div class="page-wrapper">
 
     <div class="top-compact-bar">
-      <img src="assets/icon/logoTitolo1.png" alt="PeekBox" class="logo-peek" routerLink="/home">
+      <img src="assets/icon/logoTitolo1.png" alt="PeekBox" class="logo-peek" (click)="navTo('/home')">
     </div>
 
     <div class="account-plancia-grid">
@@ -114,19 +114,19 @@
 
 <ion-footer class="ion-no-border peekbox-footer">
   <ion-tab-bar slot="bottom" class="transit-tab-bar">
-    <ion-tab-button tab="home" routerLink="/home">
+    <ion-tab-button tab="home" (click)="navTo('/home')">
       <ion-icon name="home-outline"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button tab="search" routerLink="/search">
+    <ion-tab-button tab="search" (click)="navTo('/search')">
       <ion-icon name="search-outline"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button class="add-button-tab" routerLink="/crea-box">
+    <ion-tab-button class="add-button-tab" (click)="navTo('/crea-box')">
       <div class="transit-add-circle"><ion-icon name="add"></ion-icon></div>
     </ion-tab-button>
-    <ion-tab-button tab="scan" routerLink="/scan-qr">
+    <ion-tab-button tab="scan" (click)="navTo('/scan-qr')">
       <ion-icon name="scan-outline"></ion-icon>
     </ion-tab-button>
-    <ion-tab-button tab="profile" routerLink="/area-personale" class="tab-selected">
+    <ion-tab-button tab="profile" (click)="navTo('/area-personale')" class="tab-selected">
       <ion-icon name="person"></ion-icon>
     </ion-tab-button>
   </ion-tab-bar>

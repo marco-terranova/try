@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import {
@@ -11,9 +11,11 @@ import {
   arrowBackOutline, archiveOutline, addCircleOutline,
   pencilOutline, trashOutline, checkmarkOutline, closeOutline,
   home, shareSocialOutline, qrCodeOutline, add,
+  person,
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-gestione-spazi',
@@ -40,12 +42,21 @@ export class GestioneSpaziPage implements OnInit {
     private alertCtrl: AlertController,
     private dbService: DatabaseService,
     private router: Router,
-    private location: Location,
+    private navHistory: NavigationHistoryService,
   ) {
     addIcons({
-      arrowBackOutline, archiveOutline, addCircleOutline,
-      pencilOutline, trashOutline, checkmarkOutline, closeOutline,
-      home, shareSocialOutline, qrCodeOutline, add,
+      'arrow-back-outline': arrowBackOutline,
+      'archive-outline': archiveOutline,
+      'add-circle-outline': addCircleOutline,
+      'pencil-outline': pencilOutline,
+      'trash-outline': trashOutline,
+      'checkmark-outline': checkmarkOutline,
+      'close-outline': closeOutline,
+      'home': home,
+      'share-social-outline': shareSocialOutline,
+      'qr-code-outline': qrCodeOutline,
+      'add': add,
+      'person': person
     });
   }
 
@@ -120,12 +131,10 @@ export class GestioneSpaziPage implements OnInit {
   }
 
   goBack() {
-    if (window.history.length > 1) {
-      this.location.back();
-    } else {
-      this.router.navigateByUrl('/area-personale');
-    }
+    this.navHistory.back('/area-personale');
   }
 
-  vaiHome() { this.router.navigateByUrl('/home'); }
+  vaiHome() { this.navHistory.navTo('/home'); }
+  navTo(route: string) { this.navHistory.navTo(route); }
+
 }

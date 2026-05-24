@@ -1,5 +1,6 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { NavigationHistoryService } from './services/navigation-history';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +8,8 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   styleUrls: ['app.component.scss'],
   standalone: true,
   imports: [IonApp, IonRouterOutlet],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AppComponent {}
+export class AppComponent {
+  // L'iniezione nel costruttore avvia il tracking della history
+  constructor(private navHistory: NavigationHistoryService) {}
+}

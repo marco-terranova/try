@@ -1,2 +1,27 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+
+$blue:    #3AABDB;
+$blue-d:  #1A7FA8;
+$blue-dk: #15425C;
+$green:   #7DC740;
+$green-d: #5A9E2A;
+
+// ---- Palette LIGHT (sostituisce i toni scuri) ----
+$white:   #FFFFFF;
+$page:    #F4F7F9;   // sfondo pagina al posto di $dark
+$surf:    #EBF5FB;   // tono azzurrino chiaro
+$dark:    #0F172A;   // testi principali (scuro ma non nero)
+$mid:     #4A7A94;   // testi secondari
+
+// Overlay hero: semi-bianco invece di semi-nero
+$overlay-start:  rgba(244,247,249,.82);
+$overlay-mid:    rgba(235,245,251,.70);
+$overlay-end:    rgba(244,247,249,.60);
+$fade-bottom:    rgba(244,247,249,.92);
+
+// Card / Topbar
+$card-bg:        rgba(255,255,255,.82);
+$topbar-bg:      rgba(255,255,255,.72);
+$brd-light:      rgba(58,171,219,.18);
+$stats-bg:       rgba(255,255,255,.72);

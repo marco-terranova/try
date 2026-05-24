@@ -13,9 +13,11 @@ import {
   arrowForwardOutline, downloadOutline, documentTextOutline,
   cubeOutline, chevronDownOutline, arrowDownCircleOutline,
   checkmarkDoneOutline, informationCircleOutline,
+  person, search,
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
 import { ExportService } from '../services/export';
 
 @Component({
@@ -62,14 +64,27 @@ export class TransitZonePage implements OnInit, OnDestroy {
     private toastCtrl:        ToastController,
     private actionSheetCtrl:  ActionSheetController,
     private router:           Router,
-    private route:            ActivatedRoute
+    private route:            ActivatedRoute,
+    private navHistory:       NavigationHistoryService
   ) {
     addIcons({
-      home, add, qrCodeOutline, shareSocialOutline,
-      swapHorizontalOutline, archiveOutline, checkmarkCircleOutline,
-      arrowForwardOutline, downloadOutline, documentTextOutline,
-      cubeOutline, chevronDownOutline, arrowDownCircleOutline,
-      checkmarkDoneOutline, informationCircleOutline,
+      'home': home,
+      'add': add,
+      'qr-code-outline': qrCodeOutline,
+      'share-social-outline': shareSocialOutline,
+      'swap-horizontal-outline': swapHorizontalOutline,
+      'archive-outline': archiveOutline,
+      'checkmark-circle-outline': checkmarkCircleOutline,
+      'arrow-forward-outline': arrowForwardOutline,
+      'download-outline': downloadOutline,
+      'document-text-outline': documentTextOutline,
+      'cube-outline': cubeOutline,
+      'chevron-down-outline': chevronDownOutline,
+      'arrow-down-circle-outline': arrowDownCircleOutline,
+      'checkmark-done-outline': checkmarkDoneOutline,
+      'information-circle-outline': informationCircleOutline,
+      'person': person,
+      'search': search
     });
   }
 
@@ -382,4 +397,6 @@ export class TransitZonePage implements OnInit, OnDestroy {
   }
 
   vaiHome() { this.router.navigateByUrl('/home', { replaceUrl: true }); }
+  navTo(route: string) { this.navHistory.navTo(route); }
+
 }

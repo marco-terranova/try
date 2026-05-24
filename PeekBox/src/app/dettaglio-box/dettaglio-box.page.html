@@ -1,296 +1,242 @@
-<ion-content [fullscreen]="true">
-
-  <!-- FLOATING LOGO (firma sullo sfondo) -->
-  <div class="floating-logo" *ngIf="!isLoading">
-    <img src="assets/logoTitolo.png" alt="PeekBox" />
-  </div>
-
-  <!-- LOADING STATE -->
-  <div class="page-loading" *ngIf="isLoading">
-    <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p>Caricamento box...</p>
-  </div>
-
-  <!-- MAIN CONTENT -->
-  <div class="bento-root" *ngIf="!isLoading">
-
-    <!-- ── HEADER CARD (CENTRALE IN ALTO) ── -->
-    <div class="pb-central-header">
-      <button class="pb-back-btn" (click)="goBack()">
-        <ion-icon name="arrow-back-outline"></ion-icon>
+<ion-header class="ion-no-border">
+  <div class="header-container">
+    <div class="logo-side" (click)="goBack()">
+      <img src="assets/icon/logoTitolo1.png" class="logo-small" alt="PeekBox" />
+    </div>
+    <div class="header-actions">
+      <button class="hdr-action-btn" (click)="apriModale('history')" title="Cronologia Box">
+        <ion-icon name="time-outline"></ion-icon>
       </button>
-
-      <h1 class="pb-box-title">{{ box?.nome | uppercase }}</h1>
-
-      <div class="pb-header-badges">
-        <!-- Preferito: Ionicon cuore -->
-        <button
-          class="badge-btn-emoji"
-          [class.active]="box?.is_preferito"
-          (click)="togglePreferito()"
-          title="Preferito">
-          <ion-icon [name]="box?.is_preferito ? 'heart' : 'heart-outline'" [class.heart-active]="box?.is_preferito"></ion-icon>
-        </button>
-
-        <!-- Moving Mode -->
-        <span class="badge-tag-emoji" [class.badge-tag-emoji--moving]="box?.moving_mode">
-          <span>🚚</span>
-          {{ box?.moving_mode ? 'Moving' : 'Statico' }}
-        </span>
-
-        <!-- Fragili -->
-        <span class="badge-tag-emoji badge-tag-emoji--fragile" *ngIf="numFragili > 0">
-          <span>⚠️</span>
-          {{ numFragili }} fragili
-        </span>
-      </div>
+      <button class="hdr-action-btn" [class.hdr-action-btn--active-star]="box?.is_preferito" (click)="togglePreferito()">
+        <ion-icon [name]="box?.is_preferito ? 'star' : 'star-outline'"></ion-icon>
+      </button>
     </div>
+  </div>
+</ion-header>
 
-    <!-- ── BENTO GRID ── -->
-    <div class="bento-grid">
+<ion-content>
+  <!-- Loading -->
+  <div class="page-loading" *ngIf="isLoading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; gap: 15px;">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p style="font-weight: 600; color: #64748B;">Caricamento in corso...</p>
+  </div>
 
-      <!-- COLONNA SINISTRA – Inventario (Allargato) -->
-      <div class="bento-col bento-col--left">
-        <div class="bento-card inventory-card">
-
-          <!-- Header inventario: solo testo ed emoji, niente descrizione extra -->
-          <div class="inventory-header">
-            <div class="inventory-title">
-              <span class="inventory-icon">📦</span>
-              <span class="inventory-label">Inventario</span>
-              <span class="inventory-count">{{ oggetti.length }}</span>
-            </div>
+  <div class="page-content" *ngIf="!isLoading">
+    
+    <div class="main-container" style="padding-top: 40px;">
+      
+      <!-- COLONNA SINISTRA: INVENTARIO -->
+      <div class="pb-card">
+        <div class="card-header">
+          <div class="card-icon-wrap">📦</div>
+          <div style="flex: 1;">
+            <h2 class="card-title" style="margin-bottom: 2px;">{{ (box?.nome || 'Inventario') | uppercase }}</h2>
+            <span style="font-size: 0.7rem; color: #64748B; font-weight: 600;">LISTA ARTICOLI CATALOGATI</span>
           </div>
+        </div>
 
-          <!-- Lista oggetti (senza descrizione della categoria) -->
-          <div class="inventory-list" *ngIf="oggetti.length > 0">
-            <div class="inventory-item" *ngFor="let o of oggetti">
-              <!-- Avatar -->
-              <div class="item-avatar">
-                <img *ngIf="o.foto" [src]="o.foto" [alt]="o.nome" />
-                <div class="item-avatar-placeholder" *ngIf="!o.foto">
-                  <ion-icon name="cube-outline"></ion-icon>
-                </div>
-              </div>
-
-              <!-- Info -->
-              <div class="item-info">
-                <strong class="item-name">{{ o.nome }}</strong>
-                <!-- Nota: Rimosso completamente il tag categoria o la scritta tipo -->
-              </div>
-
-              <!-- Destra: quantità + fragile + azioni -->
-              <div class="item-right">
-                <span class="item-qty">&times;&thinsp;{{ o.quantita || 1 }}</span>
-                <span class="item-fragile" *ngIf="o.fragile == 1" title="Fragile">
-                  <span>⚠️</span>
-                </span>
-                <!-- Bottone modifica -->
-                <button class="item-btn item-btn--edit" (click)="apriModificaOggetto(o)" title="Modifica">
-                  <ion-icon name="create-outline"></ion-icon>
-                </button>
-                <!-- Cestino -->
-                <button class="item-btn item-btn--delete" (click)="eliminaOggetto(o)" title="Elimina">
-                  <ion-icon name="trash-outline"></ion-icon>
-                </button>
+        <div class="inventory-list" *ngIf="oggetti.length > 0">
+          <div class="item-row" *ngFor="let o of oggetti">
+            <div class="item-img-wrap">
+              <img *ngIf="o.foto" [src]="o.foto" />
+              <div *ngIf="!o.foto" class="item-placeholder" style="background: rgba(58,171,219,0.05); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                <ion-icon name="information-circle-outline" style="font-size: 1.4rem; color: #3AABDB;"></ion-icon>
               </div>
             </div>
+            <div class="item-info">
+              <span class="item-name">{{ o.nome }}</span>
+              <span class="item-meta">Q.tà: {{ o.quantita || 1 }} {{ o.fragile ? '• ⚠️ Fragile' : '' }}</span>
+            </div>
+            <div class="item-actions">
+              <button class="btn-action btn-action--edit" (click)="apriModificaOggetto(o)">
+                <ion-icon name="pencil-outline"></ion-icon>
+              </button>
+              <button class="btn-action btn-action--del" (click)="eliminaOggetto(o)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </div>
           </div>
+        </div>
 
-          <!-- Empty state -->
-          <div class="inventory-empty" *ngIf="oggetti.length === 0">
-            <div class="empty-illustration">📦</div>
-            <p class="empty-title">Nessun oggetto trovato in questo box</p>
-            <p class="empty-sub">Aggiungi il tuo primo oggetto!</p>
-            <button class="empty-cta" (click)="apriModale('aggiungi')">
-              <ion-icon name="add-circle-outline" slot="start" style="margin-right: 6px;"></ion-icon>
-              Aggiungi oggetto
-            </button>
-          </div>
-
+        <div class="inventory-empty" *ngIf="oggetti.length === 0" style="text-align: center; padding: 40px 20px;">
+          <div style="font-size: 3rem; margin-bottom: 15px;">📥</div>
+          <h3 style="margin: 0; font-size: 1.1rem; color: #1E293B;">Nessun oggetto</h3>
+          <p style="color: #64748B; font-size: 0.9rem; margin: 10px 0 20px;">Il box è vuoto, aggiungi il primo articolo!</p>
+          <button class="btn-save-oggetto" (click)="apriModale('aggiungi')" style="width: auto; padding: 12px 24px; margin: 0 auto;">
+            <ion-icon name="add-circle-outline"></ion-icon>
+            Aggiungi Oggetto
+          </button>
         </div>
       </div>
 
-      <!-- COLONNA DESTRA – Funzionalità / Azioni -->
-      <div class="bento-col bento-col--right">
-
-        <!-- Griglia azioni (allargata) -->
+      <!-- COLONNA DESTRA: AZIONI E STATS -->
+      <div class="right-col">
+        
         <div class="actions-grid">
-
-          <!-- Aggiungi -->
-          <button class="action-tile action-tile--add" (click)="apriModale('aggiungi')">
-            <div class="tile-icon">
-              <ion-icon name="add-circle-outline"></ion-icon>
-            </div>
-            <span class="tile-label">Aggiungi<br>Oggetto</span>
-          </button>
-
-          <!-- QR Code -->
-          <button class="action-tile action-tile--qr" (click)="apriModale('qr')">
-            <div class="tile-icon">
-              <ion-icon name="qr-code-outline"></ion-icon>
-            </div>
-            <span class="tile-label">QR Code<br>Box</span>
-          </button>
-
-          <!-- Geofencing -->
-          <button class="action-tile action-tile--geo" (click)="apriGeofence()">
-            <div class="tile-icon">
-              <ion-icon name="location-outline"></ion-icon>
-            </div>
-            <span class="tile-label">Posizione<br>Geofence</span>
-          </button>
-
-          <!-- Svuota -->
-          <button class="action-tile action-tile--clear" (click)="svuotaBox()">
-            <div class="tile-icon">
-              <ion-icon name="trash-outline"></ion-icon>
-            </div>
-            <span class="tile-label">Svuota<br>Box</span>
-          </button>
-
-        </div>
-
-        <!-- Saturazione -->
-        <div class="bento-card saturation-card">
-          <div class="sat-row">
-            <span class="sat-title">
-              <span style="margin-right: 6px;">📊</span>
-              Saturazione box
-            </span>
-            <span class="sat-percent"
-              [class.sat-percent--warn]="saturazionePercent >= 75"
-              [class.sat-percent--full]="saturazionePercent >= 95">
-              {{ saturazionePercent }}%
-            </span>
+          <div class="action-btn-card" (click)="apriModale('aggiungi')">
+            <div class="action-icon" style="background: rgba(125,199,64,0.1); color: #7DC740;">➕</div>
+            <span class="action-label">Aggiungi</span>
           </div>
-          <div class="sat-bar-big">
-            <div class="sat-fill"
-              [style.width.%]="saturazionePercent"
-              [class.sat-fill--warn]="saturazionePercent >= 75"
-              [class.sat-fill--full]="saturazionePercent >= 95"></div>
+          
+          <div class="action-btn-card" (click)="apriModale('qr')">
+            <div class="action-icon" style="background: rgba(58,171,219,0.1); color: #3AABDB;">🔲</div>
+            <span class="action-label">QR Code</span>
           </div>
-          <div class="sat-meta">
-            <span>{{ oggetti.length }} oggetti</span>
-            <span>max stimato {{ MAX_OGGETTI }}</span>
+
+          <div class="action-btn-card" (click)="apriGeofence()">
+            <div class="action-icon" style="background: rgba(139,92,246,0.1); color: #8B5CF6;">📍</div>
+            <span class="action-label">Geofence</span>
+          </div>
+
+          <div class="action-btn-card action-btn-card--danger" (click)="svuotaBox()">
+            <div class="action-icon" style="background: rgba(239,68,68,0.08); color: #dc3545;">🗑️</div>
+            <span class="action-label">Svuota</span>
           </div>
         </div>
 
-        <!-- Note box -->
-        <div class="bento-card info-card" *ngIf="box?.descrizione">
-          <div class="info-header">
-            <span style="margin-right: 6px;">📝</span>
-            <span>Note</span>
+        <div class="pb-card stats-section">
+          <div class="card-header">
+            <div class="card-icon-wrap">📊</div>
+            <h2 class="card-title">Statistiche</h2>
           </div>
-          <p class="info-desc">{{ box?.descrizione }}</p>
+          
+          <div class="stat-row">
+            <div class="stat-info">
+              <span>Saturazione</span>
+              <span class="val">{{ saturazionePercent }}%</span>
+            </div>
+            <div class="progress-bg">
+              <div class="progress-fill" [style.width.%]="saturazionePercent"></div>
+            </div>
+          </div>
+
+          <div class="stat-row" style="margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748B;">
+              <span>Oggetti totali:</span>
+              <span style="font-weight: 700; color: #1E293B;">{{ oggetti.length }} / {{ MAX_OGGETTI }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pb-card" style="margin-top: 24px;" *ngIf="box?.descrizione">
+          <div class="card-header">
+            <div class="card-icon-wrap">📝</div>
+            <h2 class="card-title">Note</h2>
+          </div>
+          <p style="margin: 0; font-size: 0.9rem; color: #475569; line-height: 1.6;">{{ box.descrizione }}</p>
         </div>
 
       </div>
+
     </div>
   </div>
 
-  <!-- MODALE: AGGIUNGI / MODIFICA OGGETTO -->
-  <div class="fullscreen-modal" *ngIf="modaleAperta === 'aggiungi' || modaleAperta === 'modifica'">
-    <div class="modal-shell">
-      <div class="modal-topbar">
-        <button class="modal-back" (click)="chiudiModale()">
+  <!-- MODALE AGGIUNGI/MODIFICA -->
+  <div class="modal-overlay" *ngIf="modaleAperta === 'aggiungi' || modaleAperta === 'modifica'" (click)="chiudiModale()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ modaleAperta === 'modifica' ? 'Modifica Oggetto' : 'Nuovo Oggetto' }}</h2>
+        <button class="btn-close" (click)="chiudiModale()">
           <ion-icon name="close-outline"></ion-icon>
         </button>
-        <h2>{{ modaleAperta === 'modifica' ? 'Modifica Oggetto' : 'Nuovo Oggetto' }}</h2>
-        <span></span>
       </div>
       <div class="modal-body">
-        <div class="modal-form">
-
-          <div class="form-field">
-            <label class="form-label">Foto</label>
-            <button class="photo-btn" type="button" (click)="scattaFoto()">
-              <ion-icon name="camera" style="margin-right: 8px; font-size: 1.15rem;"></ion-icon>
-              {{ fotoOggetto ? 'Cambia foto' : 'Aggiungi foto' }}
+        <div class="modal-col-left">
+          <div class="photo-upload-zone" (click)="apriSceltaFoto()">
+            <img *ngIf="fotoOggetto" [src]="fotoOggetto" class="preview-img" />
+            <div *ngIf="!fotoOggetto" class="upload-hint">📷</div>
+            <button *ngIf="fotoOggetto" class="btn-action btn-action--del" style="position: absolute; top: 10px; right: 10px;" (click)="rimuoviFoto($event)">
+              <ion-icon name="close-outline"></ion-icon>
             </button>
-            <img *ngIf="fotoOggetto" [src]="fotoOggetto" alt="anteprima" class="photo-preview" />
           </div>
-
-          <div class="form-field">
-            <label>Nome oggetto *</label>
-            <div class="input-wrap">
-              <ion-icon name="create-outline" class="input-icon"></ion-icon>
-              <input type="text" [(ngModel)]="nomeOggetto" placeholder="Es. Lampada da terra, Libri cucina...">
+          
+          <div style="margin-top: 20px; display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 12px; border-radius: 12px;">
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size: 0.9rem; font-weight: 700; color: #1E293B;">Fragile</span>
+              <span style="font-size: 0.75rem; color: #64748B;">Oggetto delicato</span>
             </div>
+            <ion-toggle [(ngModel)]="fragileOggetto" color="primary"></ion-toggle>
           </div>
+        </div>
 
-          <div class="form-field">
+        <div class="modal-col-right">
+          <div class="form-group">
+            <label>Nome Oggetto *</label>
+            <input type="text" class="input-control" [(ngModel)]="nomeOggetto" placeholder="Es. Lampada">
+          </div>
+          <div class="form-group">
             <label>Categoria</label>
-            <div class="input-wrap">
-              <ion-icon name="layers-outline" class="input-icon"></ion-icon>
-              <input type="text" [(ngModel)]="tipoOggetto" placeholder="Es. Elettronica, Vestiti...">
-            </div>
+            <input type="text" class="input-control" [(ngModel)]="tipoOggetto" placeholder="Es. Elettronica">
           </div>
-
-          <div class="form-field">
+          <div class="form-group">
             <label>Quantità</label>
-            <div class="input-wrap">
-              <ion-icon name="bar-chart-outline" class="input-icon"></ion-icon>
-              <input type="number" [(ngModel)]="quantitaOggetto" [min]="1" placeholder="1">
-            </div>
+            <input type="number" class="input-control" [(ngModel)]="quantitaOggetto" [min]="1">
           </div>
-
-          <div class="form-group form-group--toggle">
-            <div>
-              <span class="form-label" style="margin:0">Fragile</span>
-              <small style="color:#94A3B8;font-size:0.72rem;display:block">Contrassegna se l'oggetto può rompersi</small>
-            </div>
-            <ion-toggle [(ngModel)]="fragileOggetto" class="pb-azure-toggle"></ion-toggle>
+          <div class="form-group">
+            <label>Note</label>
+            <textarea class="input-control" [(ngModel)]="descrizioneOggetto" rows="3" placeholder="Dettagli aggiuntivi..."></textarea>
           </div>
-
-          <div class="form-field">
-            <label>Note (opzionale)</label>
-            <div class="input-wrap input-wrap--textarea">
-              <ion-icon name="information-circle-outline" class="input-icon"></ion-icon>
-              <textarea [(ngModel)]="descrizioneOggetto" placeholder="Dettagli aggiuntivi..." rows="2"></textarea>
-            </div>
-          </div>
-
-          <button class="save-btn" (click)="salvaOggetto()" [disabled]="isSaving">
-            <ion-icon name="checkmark-circle-outline" style="margin-right: 6px; font-size: 1.15rem;"></ion-icon>
-            {{ isSaving ? 'Salvataggio...' : (modaleAperta === 'modifica' ? 'Aggiorna Oggetto' : 'Aggiungi al Box') }}
+          <button class="btn-save-oggetto" (click)="salvaOggetto()" [disabled]="isSaving">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <span>{{ isSaving ? 'Salvataggio...' : 'Salva Oggetto' }}</span>
           </button>
-
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODALE: QR CODE -->
-  <div class="fullscreen-modal pb-qr-modal" *ngIf="modaleAperta === 'qr'">
-    <div class="modal-shell modal-shell--centered">
-      <div class="modal-topbar">
-        <button class="modal-back" (click)="chiudiModale()">
+  <!-- MODALE QR CODE -->
+  <div class="modal-overlay" *ngIf="modaleAperta === 'qr'" (click)="chiudiModale()">
+    <div class="modal-content" style="max-width: 450px;" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>QR Code Box</h2>
+        <button class="btn-close" (click)="chiudiModale()">
           <ion-icon name="close-outline"></ion-icon>
         </button>
-        <h2>QR Code Box</h2>
-        <span></span>
       </div>
-      <div class="modal-body modal-body--center">
-        <div class="qr-wrap">
-          <div class="qr-loading" *ngIf="isLoadingQr">
+      <div class="qr-container">
+        <p style="font-weight: 800; color: #7DC740; font-size: 1.2rem; margin-bottom: 20px;">{{ (box?.nome || '') | uppercase }}</p>
+        
+        <div class="qr-canvas-wrap">
+          <div *ngIf="isLoadingQr" style="padding: 40px;">
             <ion-spinner name="crescent"></ion-spinner>
-            <p>Generazione QR...</p>
           </div>
-          <div class="qr-content" *ngIf="!isLoadingQr">
-            <p class="qr-title">{{ box?.nome }}</p>
-            <div class="qr-frame">
-              <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" class="qr-image" />
-              <div class="qr-placeholder" *ngIf="!qrDataUrl">
-                <ion-icon name="qr-code-outline" style="font-size: 4rem; color: #CBD5E1;"></ion-icon>
-              </div>
-            </div>
-            <p class="qr-hint">Scansiona per identificare il box</p>
-            <button class="save-btn" style="max-width:280px;margin:0 auto" (click)="stampaQr()">
-              <ion-icon name="cloud-download-outline" style="margin-right: 6px; font-size: 1.15rem;"></ion-icon>
-              Stampa / Scarica
-            </button>
-          </div>
+          <canvas id="qr-canvas" [style.display]="isLoadingQr ? 'none' : 'block'"></canvas>
+        </div>
+
+        <p style="color: #64748B; font-size: 0.85rem; margin-bottom: 25px;">Scansiona il codice per identificare rapidamente il box nel sistema.</p>
+
+        <div class="qr-actions">
+          <button class="btn-qr btn-qr--primary" (click)="scaricaQr()">
+            <ion-icon name="cloud-download-outline" slot="start"></ion-icon>
+            Scarica PNG
+          </button>
+          <button class="btn-qr btn-qr--secondary" (click)="condividiLink()">
+            <ion-icon name="share-outline" slot="start"></ion-icon>
+            Copia Link
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE CRONOLOGIA -->
+  <div class="modal-overlay" *ngIf="modaleAperta === 'history'" (click)="chiudiModale()">
+    <div class="modal-content" style="max-width: 500px;" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Cronologia Box</h2>
+        <button class="btn-close" (click)="chiudiModale()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      <div style="padding: 30px; text-align: center;">
+        <div style="font-size: 3.5rem; margin-bottom: 20px;">🕒</div>
+        <h3 style="color: #1E293B; margin-bottom: 10px;">Movimenti Recenti</h3>
+        <p style="color: #64748B; font-size: 0.9rem; line-height: 1.6;">
+          Qui verranno visualizzati i log di accesso, le modifiche agli oggetti e i cambi di posizione del box nel tempo.
+        </p>
+        <div style="margin-top: 25px; padding: 15px; background: #F8FAFC; border-radius: 12px; border: 1px dashed #E2E8F0;">
+          <span style="font-size: 0.8rem; color: #94A3B8; font-weight: 600; text-transform: uppercase;">Nessun log recente</span>
         </div>
       </div>
     </div>

@@ -1,15 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
 
 // ===================== VARIABILI =====================
-$blue:        #3AABDB;
-$blue-d:      #1A7FA8;
-$green:       #7DC740;
-$green-d:     #5A9E2A;
-$page-bg:     #F8FAFC;
-$text-main:   #0F172A;
-$text-mid:    #64748B;
-$card-bg:     #FFFFFF;
-$input-bg:    #F1F5F9;
+@import '../../theme/variables';
+
+$blue:        $blue;
+$blue-d:      $blue-d;
+$green:       $green;
+$green-d:     $green-d;
+$page-bg:     $page;
+$text-main:   $dark;
+$text-mid:    $mid;
+$card-bg:     $white;
+$input-bg:    $surf;
 $radius-card: 32px;
 $radius-pill: 50px;
 $shadow-soft: 0 24px 48px rgba(15, 23, 42, 0.07);
@@ -55,10 +57,10 @@ $left-text-span:   rgba(255,255,255,0.72);
   inset: 0;
   background: linear-gradient(
     145deg,
-    #0EA5E9 0%,
-    #3AABDB 30%,
-    #1A7FA8 65%,
-    #0C5A7A 100%
+    $blue 0%,
+    $blue 30%,
+    $blue-d 65%,
+    $blue-dk 100%
   );
 }
 
@@ -95,8 +97,8 @@ $left-text-span:   rgba(255,255,255,0.72);
   font-size: 1.48rem;
   font-weight: 900;
   letter-spacing: -0.04em;
-  .pk { color: #FFFFFF; }
-  .bx { color: #D4F5A0; }  // verde pastello su azzurro
+  .pk { color: $white; }
+  .bx { color: lighten($green, 20%); }  // verde pastello su azzurro
 }
 
 .reg-left-body {
@@ -121,7 +123,7 @@ $left-text-span:   rgba(255,255,255,0.72);
 
 .reg-left-accent {
   // bianco puro per il secondo verso — massimo contrasto su azzurro
-  color: #FFFFFF;
+  color: $white;
   opacity: 0.70;
 }
 
@@ -214,8 +216,8 @@ $left-text-span:   rgba(255,255,255,0.72);
   width: fit-content;
   padding: 6px 12px;
   border-radius: $radius-pill;
-  background: #E0F2FE;
-  color: #0369A1;
+  background: $input-bg;
+  color: $blue-d;
   font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -309,7 +311,7 @@ $left-text-span:   rgba(255,255,255,0.72);
 
   &:focus-within {
     border-color: $blue;
-    background: #FFFFFF;
+    background: $white;
     box-shadow: 0 0 0 4px rgba(58,171,219,0.12);
   }
 }
@@ -356,7 +358,7 @@ $left-text-span:   rgba(255,255,255,0.72);
   border: none;
   border-radius: $radius-pill;
   background: linear-gradient(135deg, $blue 0%, $blue-d 100%);
-  color: #FFFFFF;
+  color: $white;
   font-family: 'Outfit', sans-serif;
   font-size: 1rem;
   font-weight: 800;
@@ -370,14 +372,14 @@ $left-text-span:   rgba(255,255,255,0.72);
   svg {
     position: relative; z-index: 1;
     width: 18px; height: 18px;
-    stroke: #FFFFFF;
+    stroke: $white;
   }
 
   .btn-shimmer {
     position: absolute;
     top: 0; left: -100%;
     width: 60%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba($white,0.2), transparent);
     animation: reg-shimmer 3.5s ease-in-out infinite 1.5s;
   }
 

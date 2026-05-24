@@ -258,6 +258,11 @@ export class DatabaseService {
       { headers: this.getAuthHeaders() });
   }
 
+  aggiornaRuoloCondivisione(condivisioneId: number, ruolo: 'viewer' | 'editor') {
+    return this.http.put(`${this.apiUrl}/condivisioni/${condivisioneId}/ruolo`,
+      { ruolo }, { headers: this.getAuthHeaders() });
+  }
+
   getBoxArchivioCondiviso(armadioId: number) {
     return this.http.get(`${this.apiUrl}/condivisioni/armadio/${armadioId}/box`,
       { headers: this.getAuthHeaders() });
@@ -320,6 +325,21 @@ export class DatabaseService {
   salvaCheckpointSicuro(rif_box: number, latitudine: number, longitudine: number, accuratezza?: number, label?: string) {
     return this.http.post(`${this.apiUrl}/checkpoint/sicuro`,
       { rif_box, latitudine, longitudine, accuratezza, label },
+      { headers: this.getAuthHeaders() });
+  }
+
+  getNotificheGeofence() {
+    return this.http.get(`${this.apiUrl}/geofence/notifiche`,
+      { headers: this.getAuthHeaders() });
+  }
+
+  segnaNotificaComeLetta(id: number) {
+    return this.http.patch(`${this.apiUrl}/geofence/notifiche/${id}/letta`,
+      {}, { headers: this.getAuthHeaders() });
+  }
+
+  eliminaNotificaGeofence(id: number) {
+    return this.http.delete(`${this.apiUrl}/geofence/notifiche/${id}`,
       { headers: this.getAuthHeaders() });
   }
 

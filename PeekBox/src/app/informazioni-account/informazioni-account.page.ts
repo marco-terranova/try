@@ -5,11 +5,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
 import { addIcons } from 'ionicons';
 import {
   personOutline, mailOutline, banOutline, shieldCheckmarkOutline,
   saveOutline, homeOutline, searchOutline, add, scanOutline, person,
-  idCardOutline, chatbubblesOutline, paperPlaneOutline, informationCircleOutline
+  idCardOutline, chatbubblesOutline, paperPlaneOutline, informationCircleOutline,
+  home, search, qrCodeOutline, shareSocialOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -39,11 +41,27 @@ export class InformazioniAccountPage implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private dbService: DatabaseService,
+    private navHistory: NavigationHistoryService,
   ) {
     addIcons({
-      personOutline, mailOutline, banOutline, shieldCheckmarkOutline,
-      saveOutline, homeOutline, searchOutline, add, scanOutline, person,
-      idCardOutline, chatbubblesOutline, paperPlaneOutline, informationCircleOutline
+      'person-outline': personOutline,
+      'mail-outline': mailOutline,
+      'ban-outline': banOutline,
+      'shield-checkmark-outline': shieldCheckmarkOutline,
+      'save-outline': saveOutline,
+      'home-outline': homeOutline,
+      'search-outline': searchOutline,
+      'add': add,
+      'scan-outline': scanOutline,
+      'person': person,
+      'id-card-outline': idCardOutline,
+      'chatbubbles-outline': chatbubblesOutline,
+      'paper-plane-outline': paperPlaneOutline,
+      'information-circle-outline': informationCircleOutline,
+      'home': home,
+      'search': search,
+      'qr-code-outline': qrCodeOutline,
+      'share-social-outline': shareSocialOutline
     });
   }
 
@@ -119,4 +137,7 @@ export class InformazioniAccountPage implements OnInit {
     });
     await toast.present();
   }
+
+  navTo(route: string) { this.navHistory.navTo(route); }
+
 }

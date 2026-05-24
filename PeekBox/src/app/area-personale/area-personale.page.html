@@ -54,7 +54,7 @@
         <!-- ===== COLONNA DESTRA: Actions Grid ===== -->
         <div class="actions-grid">
 
-          <div class="action-card" routerLink="/informazioni-account">
+          <div class="action-card" (click)="navForward('/informazioni-account')">
             <div class="option-icon-wrap" style="background: rgba(58,171,219,0.12);">
               <ion-icon name="information-circle-outline" style="color: #3AABDB;"></ion-icon>
             </div>
@@ -65,7 +65,7 @@
             <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
           </div>
 
-          <div class="action-card" routerLink="/cestino">
+          <div class="action-card" (click)="navForward('/cestino')">
             <div class="option-icon-wrap" style="background: rgba(220,53,69,0.10);">
               <ion-icon name="trash-outline" style="color: #dc3545;"></ion-icon>
             </div>
@@ -76,7 +76,7 @@
             <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
           </div>
 
-          <div class="action-card" routerLink="/transit-zone">
+          <div class="action-card" (click)="navForward('/transit-zone')">
             <div class="option-icon-wrap" style="background: rgba(125,199,64,0.12);">
               <ion-icon name="time-outline" style="color: #7DC740;"></ion-icon>
             </div>
@@ -87,7 +87,7 @@
             <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
           </div>
 
-          <div class="action-card" routerLink="/gestione-spazi">
+          <div class="action-card" (click)="navForward('/gestione-spazi')">
             <div class="option-icon-wrap" style="background: rgba(102,126,234,0.12);">
               <ion-icon name="location-outline" style="color: #667EEA;"></ion-icon>
             </div>
@@ -98,7 +98,7 @@
             <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
           </div>
 
-          <div class="action-card" routerLink="/esporta-archivio">
+          <div class="action-card" (click)="navForward('/esporta-archivio')">
             <div class="option-icon-wrap" style="background: rgba(245,166,35,0.12);">
               <ion-icon name="cube-outline" style="color: #F5A623;"></ion-icon>
             </div>
@@ -194,18 +194,18 @@
     <span>Home</span>
   </div>
 
-  <div class="nav-item" routerLink="/condividi">
+  <div class="nav-item" (click)="navTo('/box-ricevute')">
     <ion-icon name="share-social-outline"></ion-icon>
     <span>Condividi</span>
   </div>
 
   <div class="nav-fab-wrapper">
-    <button class="nav-fab" routerLink="/crea-box">
+    <button class="nav-fab" (click)="navTo('/crea-box')">
       <ion-icon name="add"></ion-icon>
     </button>
   </div>
 
-  <div class="nav-item" routerLink="/scan-qr">
+  <div class="nav-item" (click)="navTo('/scan-qr')">
     <ion-icon name="qr-code-outline"></ion-icon>
     <span>Scan</span>
   </div>

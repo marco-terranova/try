@@ -1,235 +1,940 @@
-// Design Tokens
-$bg-page:      #F8FAFC;
-$bg-card:      #FFFFFF;
-$text-primary: #0F172A;
-$text-muted:   #64748B;
-$accent:       #3AABDB;
-$brand-dark:   #15425C;
-$brand-green:  #7DC740;
-$shadow:       0 8px 32px rgba(15, 23, 42, 0.07);
-$radius:       24px;
-$font-stack:   'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+// ════════════════════════════════════════════════════════════════
+// FILE: condivisione-archivio.page.scss
+// Centro di Controllo Condivisioni — PeekBox
+// ════════════════════════════════════════════════════════════════
 
-:host {
-  display: block;
-  font-family: $font-stack;
+@import '../../theme/variables';
+
+$blue:      $blue;
+$blue-dark: $blue-d;
+$green:     $green;
+$dark:      $dark;
+$muted:     $mid;
+$bg:        $page;
+$card:      $white;
+$border:    $brd-light;
+$warning:   #F4A200;
+$danger:    #EF4444;
+
+// ─── CONTENT ────────────────────────────────────────────────────
+ion-content.ctrl-content {
+  --background: #{$bg} !important;
 }
 
-.condivisione-page-content {
-  --background: #{$bg-page};
-  font-family: $font-stack;
-}
-
-.pb-toolbar {
+// ─── TOOLBAR ─────────────────────────────────────────────────────
+ion-toolbar.ctrl-toolbar {
   --background: #FFFFFF;
-  --color: #{$brand-dark};
-  border-bottom: 1px solid #E2EAF0;
+  --border-width: 0;
+  box-shadow: 0 1px 0 $border;
 }
 
-.pb-title {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: $brand-dark;
-  text-align: center;
-}
-
-.condivisione-wrapper {
-  padding: 24px 32px 48px;
-  max-width: 800px;
-  margin: 0 auto;
+.ctrl-header {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 8px;
 
-.pb-card {
-  background: $bg-card;
-  border-radius: $radius;
-  box-shadow: $shadow;
-  border: none;
-  margin: 0;
-  overflow: hidden;
-
-  ion-card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: $brand-dark;
-    font-family: 'Poppins', sans-serif;
+  &__left {
     display: flex;
     align-items: center;
+    gap: 12px;
   }
 
-  &.invite-card { border-top: 4px solid $accent; }
-  &.ospiti-card { border-top: 4px solid $brand-green; }
-  &.received-card { border-top: 4px solid #667EEA; }
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
 }
 
-.pb-item {
-  --background: #F8FAFC;
-  --border-radius: 12px;
-  --color: #{$text-primary};
-  border: 1.5px solid #E2EAF0;
+.ctrl-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: $muted;
+}
+
+.ctrl-archivio {
+  font-size: 1rem;
+  font-weight: 800;
+  color: $dark;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.back-btn, .refresh-btn {
+  width: 36px; height: 36px;
   border-radius: 12px;
-  margin-top: 12px;
-  font-family: 'Inter', sans-serif;
+  border: 1.5px solid $border;
+  background: $card;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: $dark;
+  ion-icon { font-size: 1.1rem; }
+  &:active { transform: scale(0.94); }
+}
 
-  ion-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: $text-muted;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+.refresh-btn.spinning ion-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+// ─── WRAPPER ─────────────────────────────────────────────────────
+.ctrl-wrapper {
+  padding: 16px 16px 100px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+// ─── TAB PILLS ───────────────────────────────────────────────────
+.tab-pills {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.tab-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  border-radius: 50px;
+  border: 1.5px solid $border;
+  background: $card;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: $muted;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba($dark, 0.04);
+
+  ion-icon { font-size: 1rem; }
+
+  &.active {
+    background: $blue;
+    border-color: $blue;
+    color: $white;
+    box-shadow: 0 4px 14px rgba($blue, 0.3);
+  }
+
+  &:not(.active):hover {
+    border-color: rgba($blue, 0.3);
+    color: $blue;
   }
 }
 
-.pb-select {
-  width: 100%;
-}
+.tab-count {
+  min-width: 18px; height: 18px;
+  border-radius: 50px;
+  background: rgba($white, 0.25);
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 5px;
 
-.ruolo-info {
-  border-radius: 12px;
-  background: rgba(58, 171, 219, 0.08);
-  padding: 12px 16px;
-  margin: 16px 0;
-  font-size: 0.85rem;
-  color: #1E3A8A;
-  border: 1px solid rgba(58, 171, 219, 0.2);
-  p { margin: 0; }
-  &.editor {
-    background: rgba(125, 199, 64, 0.08);
-    color: #166534;
-    border-color: rgba(125, 199, 64, 0.2);
+  .tab-pill:not(.active) & {
+    background: rgba($blue, 0.1);
+    color: $blue;
+  }
+  &--warning {
+    .tab-pill:not(.active) & {
+      background: rgba($warning, 0.15);
+      color: $warning;
+    }
   }
 }
 
-.btn-share-invite {
+.tab-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: $muted;
+  opacity: 0.4;
+  &.dot--active {
+    background: $green;
+    opacity: 1;
+    box-shadow: 0 0 0 2px rgba($green, 0.3);
+  }
+  &.dot--inactive {
+    background: $warning;
+    opacity: 1;
+  }
+}
+
+// ─── TAB PANEL ───────────────────────────────────────────────────
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ─── PANEL SECTION ───────────────────────────────────────────────
+.panel-section {
+  background: $card;
+  border-radius: 20px;
+  border: 1.5px solid $border;
+  box-shadow: 0 2px 12px rgba($dark, 0.04);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid $border;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    h3 {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: $dark;
+    }
+  }
+}
+
+.panel-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  &.dot--blue    { background: $blue; }
+  &.dot--green   { background: $green; }
+  &.dot--warning { background: $warning; }
+  &.dot--red     { background: $danger; }
+}
+
+.panel-count {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba($blue, 0.1);
+  color: $blue;
+  padding: 2px 8px;
+  border-radius: 50px;
+  &--warning { background: rgba($warning, 0.1); color: $warning; }
+  &--danger  { background: rgba($danger, 0.1);  color: $danger; }
+}
+
+// ─── ACCESS CHIPS ────────────────────────────────────────────────
+.access-list {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.access-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: rgba($blue, 0.04); }
+  &:active { background: rgba($blue, 0.08); }
+
+  &__icon {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    background: rgba($blue, 0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: $blue;
+    font-size: 1rem;
+    flex-shrink: 0;
+    &.icon--editor {
+      background: rgba($green, 0.1);
+      color: $green;
+    }
+  }
+
+  &__avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $blue, $blue-dark);
+    display: flex; align-items: center; justify-content: center;
+    color: $white;
+    font-size: 0.9rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+}
+
+.chip-nome {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip-sub {
+  font-size: 0.75rem;
+  color: $muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 50px;
+  background: rgba($blue, 0.1);
+  color: $blue;
+  flex-shrink: 0;
+  &.badge--editor {
+    background: rgba($green, 0.12);
+    color: darken($green, 15%);
+  }
+}
+
+.chip-arrow {
+  font-size: 0.9rem;
+  color: $muted;
+  flex-shrink: 0;
+}
+
+.revoke-btn {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  border: none;
+  background: rgba($danger, 0.08);
+  color: $danger;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  ion-icon { font-size: 1rem; }
+  &:hover { background: rgba($danger, 0.15); }
+  &:active { transform: scale(0.9); }
+}
+
+// ─── REQUEST CARDS ───────────────────────────────────────────────
+.request-list {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.request-card {
+  background: $bg;
+  border-radius: 16px;
+  border: 1.5px solid $border;
+  padding: 14px;
+
+  &__top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  &__icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: rgba($warning, 0.1);
+    color: $warning;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.request-nome {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: $dark;
+}
+
+.request-meta {
+  font-size: 0.78rem;
+  color: $muted;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  ion-icon { font-size: 0.85rem; }
+}
+
+.action-btn {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  ion-icon { font-size: 1rem; }
+
+  &--reject {
+    background: rgba($danger, 0.08);
+    color: $danger;
+    &:hover { background: rgba($danger, 0.14); }
+    &:active { transform: scale(0.96); }
+  }
+
+  &--accept {
+    background: linear-gradient(135deg, $green, $green-d);
+    color: $white;
+    box-shadow: 0 4px 14px rgba($green, 0.3);
+    &:hover { box-shadow: 0 6px 20px rgba($green, 0.4); }
+    &:active { transform: scale(0.96); }
+  }
+}
+
+// ─── GEOFENCE STATUS BANNER ──────────────────────────────────────
+.geo-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba($muted, 0.08);
+  border: 1.5px solid $border;
+  margin-bottom: 4px;
+
+  ion-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    color: $muted;
+  }
+
+  &.geo-status--active {
+    background: rgba($green, 0.08);
+    border-color: rgba($green, 0.25);
+    ion-icon { color: $green; }
+    .geo-status-title { color: darken($green, 10%); }
+  }
+
+  &.geo-status--warning {
+    background: rgba($warning, 0.08);
+    border-color: rgba($warning, 0.25);
+    ion-icon { color: $warning; }
+    .geo-status-title { color: darken($warning, 10%); }
+  }
+
+  &.geo-status--none {
+    background: rgba($blue, 0.06);
+    border-color: rgba($blue, 0.15);
+    ion-icon { color: $blue; }
+  }
+}
+
+.geo-status-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.geo-status-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: $dark;
+}
+
+.geo-status-sub {
+  font-size: 0.78rem;
+  color: $muted;
+}
+
+.geo-toggle-wrap {
+  flex-shrink: 0;
+}
+
+// ─── NOTIF CARDS ─────────────────────────────────────────────────
+.notif-list {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notif-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba($green, 0.06);
+  border: 1px solid rgba($green, 0.15);
+
+  &--fuori {
+    background: rgba($danger, 0.06);
+    border-color: rgba($danger, 0.2);
+
+    .notif-card__icon {
+      background: rgba($danger, 0.12);
+      color: $danger;
+    }
+  }
+
+  &__icon {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    background: rgba($green, 0.12);
+    color: darken($green, 10%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.notif-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: $dark;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Poppins', sans-serif;
+}
+
+.notif-meta {
+  font-size: 0.75rem;
+  color: $muted;
+}
+
+.dismiss-btn {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: rgba($dark, 0.06);
+  color: $muted;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  ion-icon { font-size: 0.9rem; }
+  &:hover { background: rgba($danger, 0.1); color: $danger; }
+}
+
+// ─── GEO CONFIG CTA ──────────────────────────────────────────────
+.geo-config-cta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: $card;
+  border: 1.5px dashed rgba($blue, 0.3);
+  cursor: pointer;
+  color: $blue;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: all 0.2s;
+
+  ion-icon:first-child { font-size: 1.1rem; }
+  span { flex: 1; }
+  ion-icon:last-child { font-size: 0.9rem; color: $muted; }
+
+  &:hover {
+    background: rgba($blue, 0.04);
+    border-color: rgba($blue, 0.5);
+  }
+}
+
+// ─── INVITE FORM ─────────────────────────────────────────────────
+.invite-form-card {
+  background: $card;
+  border-radius: 20px;
+  border: 1.5px solid $border;
+  box-shadow: 0 2px 12px rgba($dark, 0.04);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.invite-form {
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  &__icon {
+    width: 48px; height: 48px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, $blue, $blue-dark);
+    display: flex; align-items: center; justify-content: center;
+    color: $white;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  &__title {
+    margin: 0 0 2px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: $dark;
+  }
+  &__sub {
+    margin: 0;
+    font-size: 0.8rem;
+    color: $muted;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $muted;
+}
+
+.form-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px solid $border;
+  background: $bg;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: $blue;
+    background: #fff;
+  }
+
+  .input-icon { font-size: 1rem; color: $muted; flex-shrink: 0; }
+}
+
+.form-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: $dark;
+  outline: none;
+  font-family: inherit;
+
+  &::placeholder { color: rgba($muted, 0.6); }
+}
+
+// ─── ROLE SELECTOR ───────────────────────────────────────────────
+.role-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px solid $border;
+  background: $bg;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  ion-icon { font-size: 1.1rem; color: $muted; }
+
+  &--active {
+    border-color: $blue;
+    background: rgba($blue, 0.04);
+    ion-icon { color: $blue; }
+  }
+
+  &--editor.role-option--active {
+    border-color: $green;
+    background: rgba($green, 0.04);
+    ion-icon { color: $green; }
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+}
+
+.role-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $dark;
+}
+
+.role-desc {
+  font-size: 0.75rem;
+  color: $muted;
+}
+
+.role-check {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: $blue;
+  display: flex; align-items: center; justify-content: center;
+  color: $white;
+  ion-icon { font-size: 0.8rem; }
+
+  .role-option--editor & { background: $green; }
+}
+
+.role-info-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba($blue, 0.06);
+  border: 1px solid rgba($blue, 0.15);
+  font-size: 0.83rem;
+  color: $blue-dark;
+
+  ion-icon { font-size: 1rem; color: $blue; flex-shrink: 0; }
+  p { margin: 0; }
+
+  &--editor {
+    background: rgba($green, 0.06);
+    border-color: rgba($green, 0.2);
+    color: darken($green, 20%);
+    ion-icon { color: $green; }
+  }
+}
+
+.invite-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   padding: 14px;
+  border-radius: 16px;
   border: none;
-  border-radius: 50px;
-  background: linear-gradient(135deg, $accent, #0284C7);
-  color: #FFFFFF;
-  font-weight: 600;
+  background: linear-gradient(135deg, $blue, $blue-dark);
+  color: $white;
   font-size: 0.95rem;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(58, 171, 219, 0.25);
-  transition: transform 0.2s, box-shadow 0.2s;
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(58, 171, 219, 0.35);
+  box-shadow: 0 6px 20px rgba($blue, 0.3);
+  transition: all 0.2s;
+
+  ion-icon { font-size: 1.1rem; }
+
+  &:hover { box-shadow: 0 8px 28px rgba($blue, 0.4); transform: translateY(-1px); }
+  &:active { transform: translateY(0); box-shadow: 0 4px 14px rgba($blue, 0.25); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+}
+
+// ─── EMPTY STATE ─────────────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 30px 20px;
+  text-align: center;
+
+  .empty-icon {
+    font-size: 2.2rem;
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+    line-height: 1;
   }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: $muted;
+    max-width: 260px;
   }
 }
 
 .loading-wrap {
   display: flex;
   justify-content: center;
-  padding: 24px;
+  padding: 28px;
 }
 
-.empty-state {
-  text-align: center;
-  padding: 24px;
-  color: $text-muted;
-  font-size: 0.9rem;
-}
+// ─── FLOATING NAV ────────────────────────────────────────────────
+.floating-nav {
+  position: fixed;
+  bottom: 18px; left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px); max-width: 520px; height: 66px;
+  background: rgba($white,0.88);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-radius: 40px;
+  border: 1px solid rgba($white,0.95);
+  box-shadow: 0 8px 32px rgba($blue, 0.13), 0 2px 8px rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 0 8px; z-index: 1000;
 
-.pb-list {
-  background: transparent !important;
-  padding: 0;
-}
-
-.pb-list-item {
-  --background: transparent;
-  --padding-start: 0;
-  --padding-end: 0;
-
-  .role-icon-emoji {
-    font-size: 1.4rem;
-    margin-right: 12px;
+  .nav-glow {
+    position: absolute; bottom: -12px; left: 50%;
+    transform: translateX(-50%);
+    width: 55%; height: 22px;
+    background: radial-gradient(ellipse, rgba($blue, 0.22), transparent 70%);
+    pointer-events: none; z-index: -1;
   }
 
-  h2 {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: $text-primary;
-  }
-  p {
-    font-size: 0.8rem;
-    color: $text-muted;
-  }
-  .data-label {
-    font-size: 0.72rem;
-    color: $text-muted;
-    margin-top: 2px;
+  .nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    cursor: pointer; padding: 5px 10px; border-radius: 18px;
+    transition: background 0.2s;
+    text-decoration: none;
+
+    ion-icon { font-size: 1.35rem; color: $blue; transition: color 0.2s; }
+    span {
+      font-size: 0.65rem; font-weight: 700; color: $blue;
+    }
+
+    &.active {
+      ion-icon { color: $blue-dark; }
+      span { color: $blue-dark; }
+    }
+    &:not(.active):hover { background: rgba(0,0,0,0.04); }
   }
 
-  .role-badge {
-    font-size: 0.7rem;
-    font-weight: 600;
-    background: rgba(58, 171, 219, 0.1);
-    color: $accent;
-    padding: 4px 10px;
-    border-radius: 20px;
-    margin-right: 12px;
-    &.editor {
-      background: rgba(125, 199, 64, 0.1);
-      color: $brand-green;
+  .nav-fab-wrapper {
+    display: flex; align-items: center;
+    justify-content: center; margin-top: -26px;
+
+    .nav-fab {
+      width: 58px; height: 58px;
+      border-radius: 50%; border: none;
+      background: linear-gradient(135deg, $green, $green-d);
+      color: $white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 10px 25px rgba($green, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+
+      ion-icon { font-size: 1.7rem; }
+      &:hover {
+        transform: scale(1.07);
+        box-shadow: 0 14px 30px rgba($green, 0.5);
+      }
     }
   }
 
-  .btn-revoke-revoke {
-    background: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    width: 32px;
-    height: 32px;
+  .avatar-circle-nav {
+    width: 28px; height: 28px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #EF4444;
-    transition: transform 0.15s, background 0.15s;
-    
-    ion-icon {
-      font-size: 0.95rem;
-    }
-    
-    &:hover {
-      transform: scale(1.1);
-      background: rgba(239, 68, 68, 0.15);
-    }
+    background: linear-gradient(135deg, $blue, $blue-dark);
+    color: $white; font-size: 0.75rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
   }
 }
 
-.badge-count {
-  margin-left: auto;
-  --background: #E2EAF0;
-  --color: #{$text-muted};
-  font-weight: 700;
-  font-size: 0.75rem;
-}
+// ═══════════════════════════════════════════════════════════════
+// RESPONSIVE — Adattamento adattivo per tutte le dimensioni
+// ═══════════════════════════════════════════════════════════════
 
-.spinner-small {
-  width: 18px;
-  height: 18px;
-}
-
-@media (max-width: 600px) {
-  .condivisione-wrapper {
-    padding: 16px 12px;
-    gap: 16px;
+// ── Mobile piccolo (< 400px) ──────────────────────────────────
+@media (max-width: 399px) {
+  .ctrl-wrapper {
+    padding: 12px 12px 90px;
   }
-  .pb-card {
-    padding: 12px;
+  .ctrl-header {
+    padding: 8px 12px 6px;
+  }
+  .ctrl-archivio {
+    max-width: 160px;
+    font-size: 0.9rem;
+  }
+  .tab-pills {
+    gap: 4px;
+  }
+  .tab-pill {
+    padding: 6px 10px;
+    font-size: 0.72rem;
+  }
+  .request-card__actions {
+    flex-direction: column;
+    .action-btn {
+      width: 100%;
+    }
+  }
+  .invite-form-card {
+    padding: 16px;
+  }
+  .floating-nav {
+    width: calc(100% - 20px);
+    height: 60px;
+  }
+}
+
+// ── Tablet (≥ 768px) ──────────────────────────────────────────
+@media (min-width: 768px) {
+  .ctrl-wrapper {
+    padding: 20px 24px 110px;
+    max-width: 720px;
+  }
+  .ctrl-header {
+    padding: 12px 24px 10px;
+  }
+  .ctrl-archivio {
+    max-width: 320px;
+    font-size: 1.1rem;
+  }
+  .panel-section {
+    border-radius: 24px;
+  }
+}
+
+// ── Desktop (≥ 1024px) ────────────────────────────────────────
+@media (min-width: 1024px) {
+  .ctrl-wrapper {
+    padding: 24px 40px 110px;
+    max-width: 900px;
+  }
+  .ctrl-header {
+    padding: 14px 40px 12px;
   }
 }

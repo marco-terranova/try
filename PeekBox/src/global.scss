@@ -1,3 +1,5 @@
+@import './theme/variables';
+
 /*
  * App Global CSS — PeekBox
  * ORDINE CRITICO: Ionic PRIMA, Bootstrap DOPO.
@@ -38,7 +40,6 @@ body {
   height: 100% !important;
   min-height: 100% !important;
   overflow: hidden !important;
-  font-family: 'Outfit', 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
 }
 
 ion-app {
@@ -75,15 +76,15 @@ ion-content {
 
 // ===== PEEKBOX — GLOBAL CUSTOM STYLES =====
 
-// Ion-select popover dark theme
+// Ion-select popover light theme
 ion-popover.select-popover,
 ion-popover[trigger] {
-  --background: rgba(9,28,42,.98);
+  --background: rgba(255,255,255,.98);
   --border-radius: 16px;
-  --box-shadow: 0 16px 48px rgba(0,0,0,.55);
+  --box-shadow: 0 16px 48px rgba(15,23,42,.12);
 
   &::part(content) {
-    border: 1px solid rgba(58,171,219,.2);
+    border: 1px solid #{$brd-light};
     border-radius: 16px;
     overflow: hidden;
   }
@@ -95,8 +96,8 @@ ion-popover[trigger] {
 
   ion-item {
     --background: transparent;
-    --background-hover: rgba(58,171,219,.1);
-    --color: rgba(255,255,255,.85);
+    --background-hover: rgba(58,171,219,.08);
+    --color: #{$dark};
     --border-color: transparent;
     border-radius: 10px;
     margin: 2px 0;
@@ -106,39 +107,39 @@ ion-popover[trigger] {
   }
 
   ion-radio {
-    --color: rgba(255,255,255,.3);
-    --color-checked: #3AABDB;
+    --color: rgba(15,23,42,.3);
+    --color-checked: #{$blue};
   }
 
   ion-item.item-radio-checked {
-    --background: rgba(58,171,219,.15);
-    ion-label { color: #3AABDB !important; font-weight: 700; }
+    --background: rgba(58,171,219,.08);
+    ion-label { color: #{$blue} !important; font-weight: 700; }
   }
 }
 
 // ===== ALERT PEEKBOX STYLE =====
 ion-alert {
-  --background: #0D2A3A;
+  --background: #{$white};
   --border-radius: 20px;
-  --box-shadow: 0 24px 64px rgba(0,0,0,.75);
-  --backdrop-opacity: 0.7;
+  --box-shadow: 0 24px 64px rgba(15,23,42,.15);
+  --backdrop-opacity: 0.5;
   --min-width: 300px;
 }
 
 ion-alert .alert-wrapper {
-  background: #0D2A3A !important;
-  border: 1px solid rgba(58,171,219,.25) !important;
+  background: #{$white} !important;
+  border: 1px solid #{$brd-light} !important;
   border-radius: 20px !important;
   overflow: hidden !important;
 }
 
 ion-alert .alert-head {
-  background: #0D2A3A !important;
+  background: #{$white} !important;
   padding: 22px 22px 8px !important;
 }
 
 ion-alert .alert-title {
-  color: #ffffff !important;
+  color: #{$dark} !important;
   font-family: 'Outfit', sans-serif !important;
   font-size: 1.1rem !important;
   font-weight: 900 !important;
@@ -146,38 +147,38 @@ ion-alert .alert-title {
 }
 
 ion-alert .alert-message {
-  color: rgba(255,255,255,.6) !important;
+  color: #{$mid} !important;
   font-family: 'DM Sans', sans-serif !important;
   font-size: .88rem !important;
   line-height: 1.55 !important;
   padding: 4px 22px 18px !important;
-  background: #0D2A3A !important;
+  background: #{$white} !important;
 }
 
 ion-alert .alert-input-group {
-  background: #0D2A3A !important;
+  background: #{$white} !important;
   padding: 0 18px 14px !important;
 }
 
 ion-alert .alert-input {
-  background: rgba(255,255,255,.07) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(58,171,219,.35) !important;
+  background: rgba(15,23,42,.03) !important;
+  color: #{$dark} !important;
+  border: 1px solid #{$brd-light} !important;
   border-radius: 12px !important;
   padding: 11px 14px !important;
   font-family: 'DM Sans', sans-serif !important;
   font-size: .92rem !important;
   margin: 0 !important;
-  caret-color: #3AABDB !important;
+  caret-color: #{$blue} !important;
 }
 
 ion-alert .alert-input::placeholder {
-  color: rgba(255,255,255,.28) !important;
+  color: rgba(15,23,42,.35) !important;
 }
 
 ion-alert .alert-button-group {
-  background: #091C2A !important;
-  border-top: 1px solid rgba(58,171,219,.12) !important;
+  background: #{$page} !important;
+  border-top: 1px solid #{$brd-light} !important;
   padding: 10px 12px 12px !important;
   display: flex !important;
   gap: 8px !important;
@@ -185,8 +186,8 @@ ion-alert .alert-button-group {
 }
 
 ion-alert .alert-button {
-  background: rgba(255,255,255,.06) !important;
-  color: rgba(255,255,255,.5) !important;
+  background: rgba(15,23,42,.04) !important;
+  color: #{$mid} !important;
   font-family: 'Outfit', sans-serif !important;
   font-size: .88rem !important;
   font-weight: 700 !important;
@@ -197,7 +198,7 @@ ion-alert .alert-button {
 }
 
 ion-alert .alert-button .alert-button-inner {
-  color: rgba(255,255,255,.5) !important;
+  color: #{$mid} !important;
   font-family: 'Outfit', sans-serif !important;
   font-weight: 700 !important;
   justify-content: center !important;
@@ -205,26 +206,26 @@ ion-alert .alert-button .alert-button-inner {
 
 ion-alert .alert-button.alert-button-role-cancel,
 ion-alert .alert-button[data-role="cancel"] {
-  background: rgba(255,255,255,.05) !important;
-  color: rgba(255,255,255,.4) !important;
+  background: rgba(15,23,42,.02) !important;
+  color: rgba(15,23,42,.5) !important;
 }
 
 ion-alert .alert-button.alert-button-role-cancel .alert-button-inner {
-  color: rgba(255,255,255,.4) !important;
+  color: rgba(15,23,42,.5) !important;
 }
 
 ion-alert .alert-button:not(.alert-button-role-cancel):not(.alert-button-role-destructive) {
-  background: linear-gradient(135deg, #3AABDB 0%, #1A7FA8 100%) !important;
-  box-shadow: 0 4px 14px rgba(58,171,219,.35) !important;
+  background: linear-gradient(135deg, #{$blue} 0%, #{$blue-d} 100%) !important;
+  box-shadow: 0 4px 14px rgba(58,171,219,.25) !important;
 }
 
 ion-alert .alert-button:not(.alert-button-role-cancel):not(.alert-button-role-destructive) .alert-button-inner {
-  color: #ffffff !important;
+  color: #{$white} !important;
 }
 
 ion-alert .alert-button.alert-button-role-destructive {
-  background: rgba(220,60,60,.14) !important;
-  border: 1px solid rgba(220,60,60,.25) !important;
+  background: rgba(220,60,60,.08) !important;
+  border: 1px solid rgba(220,60,60,.15) !important;
 }
 
 ion-alert .alert-button.alert-button-role-destructive .alert-button-inner {
@@ -233,11 +234,11 @@ ion-alert .alert-button.alert-button-role-destructive .alert-button-inner {
 
 // ===== TOAST PEEKBOX STYLE =====
 ion-toast {
-  --background: #091C2A;
-  --color: rgba(255,255,255,.9);
+  --background: #{$white};
+  --color: #{$dark};
   --border-radius: 14px;
-  --box-shadow: 0 8px 32px rgba(0,0,0,.5);
-  --border: 1px solid rgba(58,171,219,.2);
+  --box-shadow: 0 8px 32px rgba(15,23,42,.08);
+  --border: 1px solid #{$brd-light};
   font-family: 'Outfit', sans-serif;
   font-weight: 600;
 }
@@ -444,32 +445,180 @@ ion-tab-button ion-label {
   opacity: 1 !important;
 }
 
-// ===== ACTION SHEET PEEKBOX STYLE =====
-ion-action-sheet.pb-action-sheet {
-  --background: #ffffff !important;
-  --backdrop-opacity: 0.55 !important;
-  --button-background: #ffffff !important;
-  --button-background-selected: rgba(58,171,219,0.1) !important;
-  --button-color: #15425C !important;
-  --button-color-selected: #3AABDB !important;
-  --color: #15425C !important;
-  
-  &::part(container) {
-    border-radius: 20px 20px 0 0 !important;
+// ═══════════════════════════════════════════════════════════════════
+//  PEEKBOX — ACTION SHEET CUSTOM FOTO (Premium Design)
+// ═══════════════════════════════════════════════════════════════════
+
+.peekbox-photo-sheet {
+  // Contenitore principale
+  .action-sheet-container {
+    padding: 0 12px 16px;
+  }
+
+  .action-sheet-group {
+    background: #FFFFFF !important;
+    border-radius: 20px !important;
+    margin-bottom: 10px !important;
     overflow: hidden !important;
+    box-shadow: 0 8px 32px rgba(15,23,42,0.12) !important;
+    border: 1px solid rgba(58,171,219,0.15) !important;
   }
-  
-  &::part(button) {
-    font-family: 'Outfit', sans-serif !important;
-    font-weight: 600 !important;
-  }
-  
-  &::part(action-sheet-title) {
+
+  // Header del sheet
+  .action-sheet-title {
+    background: #FFFFFF !important;
     color: #15425C !important;
-    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.95rem !important;
     font-weight: 800 !important;
-    font-size: 1rem !important;
-    border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+    padding: 18px 20px 14px !important;
+    border-bottom: 1px solid rgba(58,171,219,0.12) !important;
+    font-family: 'Poppins', sans-serif !important;
+    letter-spacing: -0.2px !important;
+  }
+
+  // Pulsante Scatta Foto
+  .sheet-btn-camera {
+    .action-sheet-button-inner {
+      color: #3AABDB !important;
+      font-weight: 700 !important;
+      font-size: 0.95rem !important;
+      font-family: 'Poppins', sans-serif !important;
+    }
+    background: rgba(58,171,219,0.04) !important;
+    border-bottom: 1px solid rgba(58,171,219,0.08) !important;
+
+    &:hover, &:active {
+      background: rgba(58,171,219,0.10) !important;
+    }
+  }
+
+  // Pulsante Galleria
+  .sheet-btn-gallery {
+    .action-sheet-button-inner {
+      color: #1A7FA8 !important;
+      font-weight: 700 !important;
+      font-size: 0.95rem !important;
+      font-family: 'Poppins', sans-serif !important;
+    }
+    background: #FFFFFF !important;
+
+    &:hover, &:active {
+      background: rgba(58,171,219,0.06) !important;
+    }
+  }
+
+  // Pulsante Annulla
+  .sheet-btn-cancel {
+    .action-sheet-button-inner {
+      color: #4A7A94 !important;
+      font-weight: 600 !important;
+      font-size: 0.88rem !important;
+      font-family: 'Poppins', sans-serif !important;
+    }
+    background: #FFFFFF !important;
+  }
+
+  // Backdrop scuro ma non troppo
+  .action-sheet-backdrop {
+    opacity: 0.45 !important;
   }
 }
 
+// ═══════════════════════════════════════════════════════════════════
+//  PEEKBOX — FIX EMOJI GLOBALE
+//  Le emoji vengono renderizzate con il font di sistema corretto
+//  su tutte le piattaforme (iOS, Android, Web).
+// ═══════════════════════════════════════════════════════════════════
+
+.empty-icon,
+.empty-emoji,
+.action-emoji,
+.inventory-emoji,
+.item-emoji,
+.item-fragile-badge,
+.photo-emoji,
+.sat-emoji,
+.notes-header span:first-child,
+.geo-info-bullet {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji',
+               'Android Emoji', 'EmojiSymbols', sans-serif !important;
+  font-style: normal !important;
+  font-variant: normal !important;
+  line-height: 1 !important;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  RESPONSIVE GLOBALE — Adattamento adattivo per tutte le pagine
+//  Gestisce elementi condivisi: floating-nav, floating-nav, font base
+// ═══════════════════════════════════════════════════════════════════
+
+// ── Mobile piccolo (< 400px) ──────────────────────────────────────
+@media (max-width: 399px) {
+  // Floating nav più compatta su schermi molto piccoli
+  .floating-nav {
+    height: 58px !important;
+    width: calc(100% - 20px) !important;
+    bottom: 12px !important;
+    .nav-item {
+      padding: 4px 8px !important;
+      ion-icon { font-size: 1.2rem !important; }
+      span { font-size: 0.58rem !important; }
+    }
+    .nav-fab-wrapper .nav-fab {
+      width: 50px !important;
+      height: 50px !important;
+      ion-icon { font-size: 1.5rem !important; }
+    }
+  }
+  // Ion modal più compatto
+  ion-modal {
+    --border-radius: 16px;
+  }
+  // Toast più piccolo
+  ion-toast {
+    --min-width: 80vw;
+  }
+}
+
+// ── Tablet (≥ 768px) ──────────────────────────────────────────────
+@media (min-width: 768px) {
+  // Floating nav centrata e più grande
+  .floating-nav {
+    max-width: 600px !important;
+    .nav-item {
+      padding: 6px 14px !important;
+      ion-icon { font-size: 1.45rem !important; }
+      span { font-size: 0.7rem !important; }
+    }
+  }
+  // Ion modal più ampio
+  ion-modal {
+    --width: 80vw;
+    --max-width: 600px;
+    --border-radius: 24px;
+  }
+}
+
+// ── Desktop (≥ 1024px) ────────────────────────────────────────────
+@media (min-width: 1024px) {
+  // Floating nav ancora più grande su desktop
+  .floating-nav {
+    max-width: 700px !important;
+    height: 70px !important;
+    .nav-item {
+      padding: 8px 18px !important;
+      ion-icon { font-size: 1.5rem !important; }
+      span { font-size: 0.72rem !important; }
+    }
+    .nav-fab-wrapper .nav-fab {
+      width: 62px !important;
+      height: 62px !important;
+    }
+  }
+  // Ion modal desktop
+  ion-modal {
+    --width: 60vw;
+    --max-width: 700px;
+    --border-radius: 28px;
+  }
+}

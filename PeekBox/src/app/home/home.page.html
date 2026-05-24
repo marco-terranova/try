@@ -45,7 +45,7 @@
           (click)="filtri.soloPreferiti = !filtri.soloPreferiti; applicaFiltri()"
         >
           <span>⭐ Preferiti</span>
-          <ion-icon *ngIf="filtri.soloPreferiti" name="close-circle" class="clear-icon"></ion-icon>
+          <ion-icon *ngIf="filtri.soloPreferiti" name="close-circle-outline" class="clear-icon"></ion-icon>
         </button>
 
         <button
@@ -55,7 +55,7 @@
           (click)="filtri.idArmadio = (filtri.idArmadio === armadio.id ? null : armadio.id); applicaFiltri()"
         >
           <span>{{ armadio.nome }}</span>
-          <ion-icon *ngIf="filtri.idArmadio === armadio.id" name="close-circle" class="clear-icon"></ion-icon>
+          <ion-icon *ngIf="filtri.idArmadio === armadio.id" name="close-circle-outline" class="clear-icon"></ion-icon>
         </button>
 
         <button
@@ -65,7 +65,7 @@
           (click)="filtri.categoria = (filtri.categoria === tipo.nome ? null : tipo.nome); applicaFiltri()"
         >
           <span>{{ tipo.nome }}</span>
-          <ion-icon *ngIf="filtri.categoria === tipo.nome" name="close-circle" class="clear-icon"></ion-icon>
+          <ion-icon *ngIf="filtri.categoria === tipo.nome" name="close-circle-outline" class="clear-icon"></ion-icon>
         </button>
 
       </div>
@@ -83,7 +83,7 @@
           </div>
           <h2 class="empty-title">NESSUNA BOX TROVATA</h2>
           <p class="empty-subtitle">Il tuo spazio è attualmente vuoto. Inizia a catalogare i tuoi oggetti per ritrovarli in un istante.</p>
-          <button class="btn-create-first" routerLink="/crea-box">
+          <button class="btn-create-first" (click)="navTo('/crea-box')">
             <ion-icon name="add-circle-outline"></ion-icon>
             <span>Crea la tua prima Box</span>
           </button>
@@ -223,13 +223,13 @@
     <span>Home</span>
   </div>
 
-  <div class="nav-item" routerLink="/condividi">
+  <div class="nav-item" (click)="navTo('/box-ricevute')">
     <ion-icon name="share-social-outline"></ion-icon>
     <span>Condividi</span>
   </div>
 
   <div class="nav-fab-wrapper">
-    <button class="nav-fab" routerLink="/crea-box">
+    <button class="nav-fab" (click)="navTo('/crea-box')">
       <ion-icon name="add"></ion-icon>
     </button>
   </div>
@@ -239,7 +239,7 @@
     <span>Scan</span>
   </div>
 
-  <div class="nav-item" routerLink="/area-personale">
+  <div class="nav-item" (click)="navTo('/area-personale')">
     <div class="avatar-circle">
       {{ nomeUtente ? nomeUtente.charAt(0).toUpperCase() : 'U' }}
     </div>

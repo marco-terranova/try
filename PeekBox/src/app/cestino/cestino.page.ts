@@ -9,9 +9,11 @@ import { addIcons } from 'ionicons';
 import {
   home, add, qrCodeOutline,
   trashOutline, trashBinOutline, timeOutline,
-  shareSocialOutline, refreshOutline
+  shareSocialOutline, refreshOutline,
+  person, search
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-cestino',
@@ -36,12 +38,20 @@ export class CestinoPage implements OnInit {
     private dbService: DatabaseService,
     private router: Router,
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private navHistory: NavigationHistoryService
   ) {
     addIcons({
-      home, add, qrCodeOutline,
-      trashOutline, trashBinOutline, timeOutline,
-      shareSocialOutline, refreshOutline
+      'home': home,
+      'add': add,
+      'qr-code-outline': qrCodeOutline,
+      'trash-outline': trashOutline,
+      'trash-bin-outline': trashBinOutline,
+      'time-outline': timeOutline,
+      'share-social-outline': shareSocialOutline,
+      'refresh-outline': refreshOutline,
+      'person': person,
+      'search': search
     });
   }
 
@@ -172,4 +182,6 @@ export class CestinoPage implements OnInit {
   vaiHome() {
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
+  navTo(route: string) { this.navHistory.navTo(route); }
+
 }

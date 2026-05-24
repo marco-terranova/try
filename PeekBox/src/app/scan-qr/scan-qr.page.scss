@@ -1,8 +1,10 @@
-$bg-saas:    #F8FAFC;
-$dark-text:  #0F172A;
-$slate-gray: #64748B;
-$brand-blue: #3AABDB;
-$brand-green:#7DC740;
+@import '../../theme/variables';
+
+$bg-saas:    $page;
+$dark-text:  $dark;
+$slate-gray: $mid;
+$brand-blue: $blue;
+$brand-green:$green;
 
 ion-content.bg-light-saas {
   --background: #{$bg-saas} !important;
@@ -72,11 +74,11 @@ ion-content.bg-light-saas {
 }
 
 .quadrante-card {
-  background: #ffffff;
+  background: $white;
   border-radius: 24px;
   padding: 28px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
-  border: 1px solid rgba(15, 23, 42, 0.04);
+  border: 1px solid $brd-light;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -119,7 +121,7 @@ ion-content.bg-light-saas {
 /* Contenitore fotocamera: bordo scuro, occupa lo spazio disponibile */
 .camera-preview-container {
   flex-grow: 1;
-  background: #0F172A;
+  background: $dark-text;
   border-radius: 20px;
   position: relative;
   overflow: hidden;
@@ -151,7 +153,7 @@ ion-content.bg-light-saas {
 
 .camera-off-placeholder {
   text-align: center;
-  color: #94A3B8;
+  color: $slate-gray;
 
   ion-icon {
     font-size: 3rem;
@@ -223,7 +225,7 @@ ion-content.bg-light-saas {
 }
 
 .btn-fotocamera-toggle {
-  background: #0F172A;
+  background: $dark-text;
   color: white;
   padding: 15px;
   border-radius: 16px;
@@ -260,8 +262,8 @@ ion-content.bg-light-saas {
   gap: 16px;
 
   .tool-btn-premium {
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    background: $bg-saas;
+    border: 1px solid $brd-light;
     border-radius: 16px;
     padding: 16px;
     display: flex;
@@ -307,14 +309,14 @@ ion-content.bg-light-saas {
 .custom-input-group-premium {
   display: flex;
   align-items: center;
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  background: $bg-saas;
+  border: 1px solid $brd-light;
   border-radius: 16px;
   padding: 6px 6px 6px 16px;
 
   .prefix-icon {
     font-size: 1.25rem;
-    color: #94A3B8;
+    color: $slate-gray;
     margin-right: 12px;
   }
 
@@ -356,10 +358,10 @@ ion-content.bg-light-saas {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #F8FAFC;
+  background: $bg-saas;
   padding: 12px 16px;
   border-radius: 14px;
-  border: 1px solid rgba(15, 23, 42, 0.02);
+  border: 1px solid $brd-light;
 
   p {
     font-size: 0.8rem;
@@ -376,8 +378,8 @@ ion-content.bg-light-saas {
 }
 
 .custom-tab-bar {
-  --background: #ffffff;
-  border-top: 1px solid #e2e8f0;
+  --background: #{$white};
+  border-top: 1px solid $brd-light;
   padding-bottom: 5px;
 }
 

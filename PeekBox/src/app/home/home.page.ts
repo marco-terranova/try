@@ -14,10 +14,12 @@ import { addIcons } from 'ionicons';
 import {
   trashOutline, star, starOutline, home, search,
   person, add, filter, cubeOutline, archiveOutline, closeOutline,
-  flashOutline, shareSocialOutline, qrCodeOutline
+  flashOutline, shareSocialOutline, qrCodeOutline,
+  addCircleOutline, closeCircleOutline
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-home',
@@ -54,14 +56,30 @@ export class HomePage {
   constructor(
     private alertCtrl: AlertController,
     private dbService: DatabaseService,
-    private router: Router
+    private router: Router,
+    private navHistory: NavigationHistoryService
   ) {
     addIcons({
-      add, filter, home, search, person, star, starOutline,
-      trashOutline, cubeOutline, archiveOutline, closeOutline,
-      flashOutline, shareSocialOutline, qrCodeOutline
+      'add': add,
+      'filter': filter,
+      'home': home,
+      'search': search,
+      'person': person,
+      'star': star,
+      'star-outline': starOutline,
+      'trash-outline': trashOutline,
+      'cube-outline': cubeOutline,
+      'archive-outline': archiveOutline,
+      'close-outline': closeOutline,
+      'flash-outline': flashOutline,
+      'share-social-outline': shareSocialOutline,
+      'qr-code-outline': qrCodeOutline,
+      'add-circle-outline': addCircleOutline,
+      'close-circle-outline': closeCircleOutline
     });
   }
+
+  navTo(route: string) { this.navHistory.navTo(route); }
 
   ionViewWillEnter() {
     this.utenteId = localStorage.getItem('utente_id');
@@ -72,7 +90,7 @@ export class HomePage {
   }
 
   apriScanner() {
-    this.router.navigate(['/scan-qr']);
+    this.navHistory.navTo('/scan-qr');
   }
 
   caricaDatiDalServer(idUtente: string) {

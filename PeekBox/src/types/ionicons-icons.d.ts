@@ -52,7 +52,6 @@ declare module 'ionicons/icons' {
   export const keypadOutline: string;
   export const layersOutline: string;
   export const listOutline: string;
-  export const locateOutline: string;
   export const locationOutline: string;
   export const logOutOutline: string;
   export const mailOpenOutline: string;

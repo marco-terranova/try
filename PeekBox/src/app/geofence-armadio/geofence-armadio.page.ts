@@ -1,22 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonButton, IonIcon, IonItem, IonLabel,
-  IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-  IonRange, IonSpinner, IonBadge, IonInput,
+  IonContent, IonButton, IonIcon, IonItem, IonLabel,
+  IonToggle, IonRange, IonSpinner, IonInput,
   AlertController, ToastController
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackButtonComponent } from '../components/back-button/back-button.component';
 import { addIcons } from 'ionicons';
 import {
   locationOutline, shieldCheckmarkOutline, warningOutline,
   trashOutline, saveOutline, navigateOutline, refreshOutline,
-  locateOutline, mapOutline
+  arrowForwardOutline, closeOutline, mapOutline, informationCircleOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
 import { GpsService } from '../services/gps';
 
 /**
@@ -36,11 +34,9 @@ import { GpsService } from '../services/gps';
   styleUrls: ['./geofence-armadio.page.scss'],
   standalone: true,
   imports: [
-BackButtonComponent,     CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-    IonButton, IonIcon, IonItem, IonLabel,
-    IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-    IonRange, IonSpinner, IonBadge, IonInput
+    CommonModule, FormsModule,
+    IonContent, IonButton, IonIcon, IonItem, IonLabel,
+    IonToggle, IonRange, IonSpinner, IonInput
   ]
 })
 export class GeofenceArmadioPage implements OnInit {
@@ -62,6 +58,15 @@ export class GeofenceArmadioPage implements OnInit {
   verificaResult: any = null;
   isVerifying = false;
 
+  /** Computed: true = dentro, false = fuori, null = non ancora verificato */
+  get verificaRisultato(): boolean | null {
+    if (this.verificaResult === null) return null;
+    if (typeof this.verificaResult?.dentro_perimetro !== 'undefined') {
+      return this.verificaResult.dentro_perimetro === true || this.verificaResult.dentro_perimetro === 1;
+    }
+    return null;
+  }
+
   isLoading = false;
   isSaving = false;
   isGettingGps = false;
@@ -72,23 +77,39 @@ export class GeofenceArmadioPage implements OnInit {
     private dbService: DatabaseService,
     private gpsService: GpsService,
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private navHistory: NavigationHistoryService
   ) {
     addIcons({
-      locationOutline, shieldCheckmarkOutline, warningOutline,
-      trashOutline, saveOutline, navigateOutline, refreshOutline,
-      locateOutline, mapOutline
+      'location-outline': locationOutline,
+      'shield-checkmark-outline': shieldCheckmarkOutline,
+      'warning-outline': warningOutline,
+      'warning': warningOutline,
+      'trash-outline': trashOutline,
+      'save-outline': saveOutline,
+      'navigate-outline': navigateOutline,
+      'refresh-outline': refreshOutline,
+      'arrow-forward-outline': arrowForwardOutline,
+      'close-outline': closeOutline,
+      'map-outline': mapOutline,
+      'information-circle-outline': informationCircleOutline
     });
   }
+
+  boxId: number | null = null;
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     const parsedId = id ? Number(id) : NaN;
 
+    // Recupero opzionale del boxId per tornare indietro correttamente
+    const bId = this.route.snapshot.queryParamMap.get('boxId');
+    this.boxId = bId ? Number(bId) : null;
+
     if (!parsedId || isNaN(parsedId) || parsedId <= 0) {
       // ID non valido: torna indietro e avvisa
       this.mostraToast('ID archivio non valido. Torna indietro e riprova.', 'danger').then(() => {
-        this.router.navigate(['/home']);
+        this.chiudi();
       });
       return;
     }
@@ -132,25 +153,38 @@ export class GeofenceArmadioPage implements OnInit {
   }
 
   async salvaGeofence() {
-    if (this.latitudine == null || this.longitudine == null) {
-      await this.mostraToast('Imposta le coordinate prima di salvare.', 'warning');
+    // Conversione esplicita a numero per evitare errori di tipo stringa da input
+    const lat = Number(this.latitudine);
+    const lng = Number(this.longitudine);
+    const raggio = Number(this.raggioM);
+
+    if (isNaN(lat) || isNaN(lng) || this.latitudine === null || this.longitudine === null) {
+      await this.mostraToast('Imposta le coordinate valide prima di salvare.', 'warning');
       return;
     }
-    if (this.raggioM < 10 || this.raggioM > 50000) {
+    
+    if (isNaN(raggio) || raggio < 10 || raggio > 50000) {
       await this.mostraToast('Il raggio deve essere tra 10 e 50.000 metri.', 'warning');
       return;
     }
 
     this.isSaving = true;
-    this.dbService.impostaGeofence(this.armadioId, this.latitudine, this.longitudine, this.raggioM, this.attivo).subscribe({
-      next: async () => {
+    // Assicuriamoci che i valori passati siano numeri
+    this.dbService.impostaGeofence(this.armadioId, lat, lng, raggio, this.attivo).subscribe({
+      next: async (res: any) => {
         this.isSaving = false;
-        this.caricaGeofence();
+        // Aggiorna lo stato locale con la risposta del server
+        this.hasGeofence = true;
+        this.geofenceEsistente = res.geofence || { armadio_id: this.armadioId, latitudine: lat, longitudine: lng, raggio_m: raggio, attivo: this.attivo ? 1 : 0 };
+        
         await this.mostraToast('✅ Geofence configurato con successo!', 'success');
+        // Ricarica per sicurezza per allineare tutto lo stato
+        this.caricaGeofence();
       },
       error: async (err: any) => {
         this.isSaving = false;
-        await this.mostraToast(err.error?.error || 'Errore durante il salvataggio.', 'danger');
+        console.error('Errore salvataggio geofence:', err);
+        await this.mostraToast(err.error?.message || err.error?.error || 'Errore durante il salvataggio.', 'danger');
       }
     });
   }
@@ -222,4 +256,15 @@ export class GeofenceArmadioPage implements OnInit {
     const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'bottom' });
     await toast.present();
   }
+
+  chiudi() {
+    if (this.boxId) {
+      this.navHistory.navTo(`/dettaglio-box/${this.boxId}`);
+    } else {
+      this.navHistory.navTo('/home');
+    }
+  }
+
+  navTo(route: string) { this.navHistory.navTo(route); }
+
 }

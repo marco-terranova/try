@@ -13,9 +13,11 @@ import {
   informationCircleOutline, personCircleOutline, home, search,
   closeOutline, checkmarkCircleOutline, shieldCheckmarkOutline,
   locationOutline, shareSocialOutline, add, qrCodeOutline,
+  person,
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-area-personale',
@@ -52,14 +54,29 @@ export class AreaPersonalePage implements OnInit {
     private alertCtrl: AlertController,
     private dbService: DatabaseService,
     private router: Router,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private navHistory: NavigationHistoryService
   ) {
     addIcons({
-      archiveOutline, cubeOutline, timeOutline, logOutOutline,
-      chevronForwardOutline, arrowBackOutline, trashOutline,
-      informationCircleOutline, personCircleOutline, home, search,
-      closeOutline, checkmarkCircleOutline, shieldCheckmarkOutline,
-      locationOutline, shareSocialOutline, add, qrCodeOutline,
+      'archive-outline': archiveOutline,
+      'cube-outline': cubeOutline,
+      'time-outline': timeOutline,
+      'log-out-outline': logOutOutline,
+      'chevron-forward-outline': chevronForwardOutline,
+      'arrow-back-outline': arrowBackOutline,
+      'trash-outline': trashOutline,
+      'information-circle-outline': informationCircleOutline,
+      'person-circle-outline': personCircleOutline,
+      'home': home,
+      'search': search,
+      'close-outline': closeOutline,
+      'checkmark-circle-outline': checkmarkCircleOutline,
+      'shield-checkmark-outline': shieldCheckmarkOutline,
+      'location-outline': locationOutline,
+      'share-social-outline': shareSocialOutline,
+      'add': add,
+      'qr-code-outline': qrCodeOutline,
+      'person': person
     });
   }
 
@@ -176,6 +193,7 @@ export class AreaPersonalePage implements OnInit {
 
   eseguiLogout() {
     localStorage.clear();
+    this.navHistory.clearHistory();
     this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
@@ -188,10 +206,14 @@ export class AreaPersonalePage implements OnInit {
   }
 
   vaiSearch() {
-    this.router.navigateByUrl('/search');
+    this.router.navigateByUrl('/search', { replaceUrl: true });
   }
 
   vaiAdmin() {
-    this.router.navigateByUrl('/admin');
+    this.router.navigateByUrl('/admin', { replaceUrl: true });
   }
+  navTo(route: string) { this.navHistory.navTo(route); }
+
+  navForward(route: string) { this.router.navigateByUrl(route); }
+
 }

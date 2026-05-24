@@ -10,6 +10,7 @@ import {
 import { addIcons } from 'ionicons';
 import { searchOutline, archiveOutline, cubeOutline, home, search, person } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-search',
@@ -31,7 +32,7 @@ export class SearchPage {
   haCercato: boolean = false;
   utenteId: string | null = null;
 
-  constructor(private dbService: DatabaseService) {
+  constructor(private dbService: DatabaseService, private navHistory: NavigationHistoryService) {
     addIcons({ searchOutline, archiveOutline, cubeOutline, home, search, person });
   }
 
@@ -70,4 +71,6 @@ export class SearchPage {
     this.risultati = [];
     this.haCercato = false;
   }
+  navTo(route: string) { this.navHistory.navTo(route); }
+
 }

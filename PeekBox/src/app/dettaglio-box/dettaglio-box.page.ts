@@ -1,35 +1,49 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import {
-  IonContent, IonIcon, IonSpinner, IonInput, IonToggle, IonTextarea,
+  IonHeader, IonToolbar, IonContent, IonIcon, IonSpinner, IonInput, IonToggle, IonTextarea,
   AlertController, ToastController, ActionSheetController
 } from '@ionic/angular/standalone';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { ActivatedRoute } from '@angular/router';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
-  heart,
-  heartOutline,          // cuore: outline di default, diventa “attivo” via CSS
-  layersOutline,         // icona armadio nella sub-header
-  paperPlaneOutline,     // moving mode
-  warningOutline,        // fragile badge
+  starOutline,
+  star,
+  layersOutline,
+  paperPlaneOutline,
+  warningOutline,
   cubeOutline,
-  addCircleOutline,      // plus pulito
+  addCircleOutline,
   qrCodeOutline,
   locationOutline,
-  trashOutline,          // cestino filiforme (usato sia tile che item)
+  trashOutline,
   trashBinOutline,
   createOutline,
   checkmarkCircleOutline,
   camera,
+  imageOutline,
   closeOutline,
   barChartOutline,
   informationCircleOutline,
-  cloudDownloadOutline
+  cloudDownloadOutline,
+  shareOutline,
+  home,
+  shareSocialOutline,
+  add,
+  chevronForwardOutline,
+  pricetagOutline,
+  flashOutline,
+  pencilOutline,
+  person,
+  search,
+  timeOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
+import { NavigationHistoryService } from '../services/navigation-history';
+import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-dettaglio-box',
@@ -37,11 +51,11 @@ import { DatabaseService } from '../services/database';
   styleUrls: ['./dettaglio-box.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
-    IonContent, IonIcon, IonSpinner, IonInput, IonToggle, IonTextarea
+    CommonModule, FormsModule, RouterModule,
+    IonHeader, IonToolbar, IonContent, IonIcon, IonSpinner, IonInput, IonToggle, IonTextarea
   ]
 })
-export class DettaglioBoxPage implements OnInit {
+export class DettaglioBoxPage implements OnInit, AfterViewInit {
 
   readonly MAX_OGGETTI = 20;
 
@@ -61,8 +75,11 @@ export class DettaglioBoxPage implements OnInit {
   fotoOggetto: string | null = null;
   isSaving = false;
 
-  qrDataUrl: string | null = null;
   isLoadingQr = false;
+  qrGenerato = false;
+
+  nomeUtente = '';
+  utenteId: string | null = null;
 
   constructor(
     private route:     ActivatedRoute,
@@ -70,15 +87,41 @@ export class DettaglioBoxPage implements OnInit {
     private dbService: DatabaseService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private navHistory: NavigationHistoryService
   ) {
     addIcons({
-      arrowBackOutline, heart, heartOutline, layersOutline,
-      paperPlaneOutline, warningOutline,
-      cubeOutline, addCircleOutline, qrCodeOutline, locationOutline,
-      trashOutline, trashBinOutline, createOutline, checkmarkCircleOutline,
-      camera, closeOutline, barChartOutline,
-      informationCircleOutline, cloudDownloadOutline
+      'arrow-back-outline': arrowBackOutline,
+      'star-outline': starOutline,
+      'star': star,
+      'layers-outline': layersOutline,
+      'paper-plane-outline': paperPlaneOutline,
+      'warning-outline': warningOutline,
+      'cube-outline': cubeOutline,
+      'add-circle-outline': addCircleOutline,
+      'qr-code-outline': qrCodeOutline,
+      'location-outline': locationOutline,
+      'trash-outline': trashOutline,
+      'trash-bin-outline': trashBinOutline,
+      'create-outline': createOutline,
+      'checkmark-circle-outline': checkmarkCircleOutline,
+      'camera': camera,
+      'image-outline': imageOutline,
+      'close-outline': closeOutline,
+      'bar-chart-outline': barChartOutline,
+      'information-circle-outline': informationCircleOutline,
+      'cloud-download-outline': cloudDownloadOutline,
+      'share-outline': shareOutline,
+      'home': home,
+      'share-social-outline': shareSocialOutline,
+      'add': add,
+      'chevron-forward-outline': chevronForwardOutline,
+      'pricetag-outline': pricetagOutline,
+      'flash-outline': flashOutline,
+      'pencil-outline': pencilOutline,
+      'person': person,
+      'search': search,
+      'time-outline': timeOutline
     });
   }
 
@@ -87,12 +130,14 @@ export class DettaglioBoxPage implements OnInit {
     const parsed = id ? Number(id) : NaN;
     if (!parsed || isNaN(parsed) || parsed <= 0) {
       this.toast('ID box non valido.', 'danger');
-      this.router.navigate(['/home']);
+      this.navHistory.navTo('/home');
       return;
     }
     this.boxId = parsed;
     this.caricaDati();
   }
+
+  ngAfterViewInit() {}
 
   // ─── Caricamento ────────────────────────────────────────────────────
 
@@ -121,10 +166,6 @@ export class DettaglioBoxPage implements OnInit {
     return this.oggetti.filter(o => o.fragile == 1).length;
   }
 
-  /**
-   * Restituisce true se la categoria va colorata in verde neon.
-   * Riconosce: vestiti, abbigliamento, moda, clothes, clothing, fashion.
-   */
   isVestiti(tipo: string): boolean {
     if (!tipo) return false;
     const t = tipo.toLowerCase();
@@ -138,7 +179,7 @@ export class DettaglioBoxPage implements OnInit {
     if (!this.box) return;
     const newVal = !this.box.is_preferito;
     this.dbService.updatePreferito(this.boxId, newVal).subscribe({
-      next: () => { this.box.is_preferito = newVal; this.toast(newVal ? '❤️ Aggiunto ai preferiti' : 'Rimosso dai preferiti', 'primary'); },
+      next: () => { this.box.is_preferito = newVal; this.toast(newVal ? '⭐ Aggiunto ai preferiti' : 'Rimosso dai preferiti', 'primary'); },
       error: () => this.toast('Errore aggiornamento preferito.', 'danger')
     });
   }
@@ -154,6 +195,7 @@ export class DettaglioBoxPage implements OnInit {
   chiudiModale() {
     this.modaleAperta = null;
     this.oggettoInModifica = null;
+    this.qrGenerato = false;
     this.resetFormOggetto();
   }
 
@@ -194,12 +236,12 @@ export class DettaglioBoxPage implements OnInit {
     };
     if (this.modaleAperta === 'modifica' && this.oggettoInModifica) {
       this.dbService.aggiornaOggetto(this.oggettoInModifica.id, dati).subscribe({
-        next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('✅ Oggetto aggiornato!', 'success'); },
+        next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('Oggetto aggiornato!', 'success'); },
         error: () => { this.isSaving = false; this.toast('Errore aggiornamento.', 'danger'); }
       });
     } else {
       this.dbService.creaOggetto(dati).subscribe({
-        next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('✅ Oggetto aggiunto!', 'success'); },
+        next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('Oggetto aggiunto!', 'success'); },
         error: () => { this.isSaving = false; this.toast('Errore inserimento.', 'danger'); }
       });
     }
@@ -227,7 +269,7 @@ export class DettaglioBoxPage implements OnInit {
     if (this.oggetti.length === 0) { this.toast('Il box è già vuoto.', 'medium'); return; }
     const alert = await this.alertCtrl.create({
       cssClass: 'peekbox-alert',
-      header: '⚠️ Svuota Box',
+      header: 'Svuota Box',
       message: `Stai per eliminare tutti i ${this.oggetti.length} oggetti. Operazione irreversibile.`,
       buttons: [
         { text: 'Annulla', role: 'cancel' },
@@ -241,75 +283,148 @@ export class DettaglioBoxPage implements OnInit {
     await alert.present();
   }
 
-  // ─── Foto real Capacitor camera & Action Sheet ─────────────────
-  async scattaFoto() {
+  ionViewWillEnter() {
+    this.utenteId = localStorage.getItem('utente_id');
+    this.nomeUtente = (localStorage.getItem('utente_nome') || '').toUpperCase();
+  }
+
+  // ─── Foto — Action Sheet Custom Premium ──────────────────────────
+
+  async apriSceltaFoto() {
     const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Seleziona sorgente foto',
-      cssClass: 'pb-action-sheet',
+      cssClass: 'peekbox-photo-sheet',
+      header: '📷  Aggiungi Foto',
       buttons: [
         {
-          text: 'Fotocamera 📷',
+          text: '📸  Scatta Foto',
+          cssClass: 'sheet-btn-camera',
           handler: () => {
-            this.ottieniFoto(CameraSource.Camera);
+            this.scattaFotoNativa();
           }
         },
         {
-          text: 'Galleria immagini 🖼️',
+          text: '🖼️  Scegli dalla Galleria',
+          cssClass: 'sheet-btn-gallery',
           handler: () => {
-            this.ottieniFoto(CameraSource.Photos);
+            this.scegliDaGalleria();
           }
         },
         {
-          text: 'Annulla ❌',
-          role: 'cancel'
+          text: 'Annulla',
+          role: 'cancel',
+          cssClass: 'sheet-btn-cancel'
         }
       ]
     });
     await actionSheet.present();
   }
 
-  async ottieniFoto(source: CameraSource) {
+  private async scattaFotoNativa() {
     try {
-      const image = await Camera.getPhoto({
-        quality: 85,
-        allowEditing: false,
-        resultType: CameraResultType.DataUrl,
-        source: source
+      const { Camera, CameraSource, CameraResultType } = await import('@capacitor/camera');
+      const photo = await Camera.getPhoto({
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Camera,
+        quality: 90
       });
-      if (image && image.dataUrl) {
-        this.fotoOggetto = image.dataUrl;
-        this.toast('Foto caricata con successo!', 'success');
+      if (photo.base64String) {
+        this.fotoOggetto = `data:image/jpeg;base64,${photo.base64String}`;
       }
-    } catch (error: any) {
-      console.warn('Errore fotocamera:', error);
-      if (error?.message !== 'User cancelled photos app') {
-        this.toast('Impossibile acquisire la foto: ' + error.message, 'danger');
+    } catch {
+      const input = document.getElementById('foto-input') as HTMLInputElement;
+      if (input) {
+        input.setAttribute('capture', 'environment');
+        input.click();
       }
     }
   }
 
-  // ─── QR Code ───────────────────────────────────────────────────
+  private async scegliDaGalleria() {
+    try {
+      const { Camera, CameraSource, CameraResultType } = await import('@capacitor/camera');
+      const photo = await Camera.getPhoto({
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Photos,
+        quality: 90
+      });
+      if (photo.base64String) {
+        this.fotoOggetto = `data:image/jpeg;base64,${photo.base64String}`;
+      }
+    } catch {
+      const input = document.getElementById('foto-input') as HTMLInputElement;
+      if (input) {
+        input.removeAttribute('capture');
+        input.click();
+      }
+    }
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.fotoOggetto = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  rimuoviFoto(event: Event) {
+    event.stopPropagation();
+    this.fotoOggetto = null;
+    const input = document.getElementById('foto-input') as HTMLInputElement;
+    if (input) input.value = '';
+  }
+
+  // ─── QR Code (qrcode lib, client-side) ─────────────────────────────
 
   caricaQr() {
     this.isLoadingQr = true;
-    this.qrDataUrl = null;
+    this.qrGenerato = false;
     this.dbService.getQrToken(this.boxId).subscribe({
-      next: (res: any) => {
+      next: async (res: any) => {
         const url = this.dbService.buildQrUrl(this.boxId, res.token);
-        this.qrDataUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
-        this.isLoadingQr = false;
+        setTimeout(async () => {
+          try {
+            const canvas = document.getElementById('qr-canvas') as HTMLCanvasElement;
+            if (canvas) {
+              await QRCode.toCanvas(canvas, url, {
+                width: 220,
+                margin: 2,
+                color: { dark: '#0F172A', light: '#FFFFFF' }
+              });
+              this.qrGenerato = true;
+            }
+          } catch (e) {
+            this.toast('Errore generazione QR.', 'danger');
+          }
+          this.isLoadingQr = false;
+        }, 100);
       },
       error: () => { this.isLoadingQr = false; this.toast('Impossibile generare il QR.', 'danger'); }
     });
   }
 
-  stampaQr() {
-    if (!this.qrDataUrl) return;
-    const win = window.open('');
-    if (win) {
-      win.document.write(`<html><body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><img src="${this.qrDataUrl}" style="max-width:400px"/></body></html>`);
-      win.document.close();
-      win.print();
+  scaricaQr() {
+    const canvas = document.getElementById('qr-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = `QR_Box_${this.boxId}_${this.box?.nome || 'box'}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    this.toast('QR Code scaricato!', 'success');
+  }
+
+  async condividiLink() {
+    const url = window.location.origin + `/dettaglio-box/${this.boxId}`;
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(url);
+      this.toast('Link copiato negli appunti!', 'success');
+    } else {
+      this.toast(url, 'medium');
     }
   }
 
@@ -318,11 +433,16 @@ export class DettaglioBoxPage implements OnInit {
   apriGeofence() {
     if (!this.box?.rif_armadio) { this.toast('ID armadio non disponibile.', 'warning'); return; }
     this.router.navigate(['/geofence-armadio', this.box.rif_armadio], {
-      queryParams: { nome: this.box.nome_armadio || '' }
+      queryParams: { 
+        nome: this.box.nome_armadio || '',
+        boxId: this.boxId
+      }
     });
   }
 
-  goBack() { this.router.navigate(['/home']); }
+  goBack() { this.navHistory.navTo('/home'); }
+  vaiHome() { this.navHistory.navTo('/home'); }
+  navTo(route: string) { this.navHistory.navTo(route); }
 
   private async toast(message: string, color = 'primary') {
     const t = await this.toastCtrl.create({ message, duration: 2400, color, position: 'bottom' });
