@@ -1,4 +1,7 @@
 import {
+  e as e4
+} from "./chunk-4SKD3W26.js";
+import {
   o as o5
 } from "./chunk-JOQNI6T3.js";
 import {
@@ -20,9 +23,6 @@ import {
   p as p3,
   t as t4
 } from "./chunk-CELP2UVQ.js";
-import {
-  e as e4
-} from "./chunk-4SKD3W26.js";
 import {
   $,
   A,
@@ -87,20 +87,13 @@ import {
   t2 as t3,
   x as x2,
   y as y2
-} from "./chunk-RHMLV4ZB.js";
-import {
-  i as i2
-} from "./chunk-OE6MR5NH.js";
-import {
-  h,
-  s as s3
-} from "./chunk-Q7PV5YUG.js";
-import {
-  o as o3
-} from "./chunk-JBFBWIQB.js";
+} from "./chunk-AUZL4GWY.js";
 import {
   l as l2
-} from "./chunk-SE5TKJNU.js";
+} from "./chunk-GHQMJS3L.js";
+import {
+  i as i2
+} from "./chunk-AF5L426C.js";
 import {
   B,
   D,
@@ -111,7 +104,7 @@ import {
   r,
   s as s2,
   v as v2
-} from "./chunk-IPZGAUHZ.js";
+} from "./chunk-IDSU2GGJ.js";
 import {
   T,
   _,
@@ -132,6 +125,13 @@ import {
   x,
   y
 } from "./chunk-TBEOIZAN.js";
+import {
+  h,
+  s as s3
+} from "./chunk-Q7PV5YUG.js";
+import {
+  o as o3
+} from "./chunk-JBFBWIQB.js";
 import {
   d,
   o
@@ -523,7 +523,7 @@ var b3 = Dn(class extends I {
       const t14 = () => {
         this.gestureOrAnimationInProgress = true, this.swipeHandler && this.swipeHandler.onStart();
       };
-      this.gesture = (yield import("./p-Cz5nLPGT-HX3L3KX5.js")).createSwipeBackGesture(this.el, (() => !this.gestureOrAnimationInProgress && !!this.swipeHandler && this.swipeHandler.canStart()), (() => t14()), ((t15) => {
+      this.gesture = (yield import("./p-Cz5nLPGT-43BRVMDG.js")).createSwipeBackGesture(this.el, (() => !this.gestureOrAnimationInProgress && !!this.swipeHandler && this.swipeHandler.canStart()), (() => t14()), ((t15) => {
         var i13;
         return null === (i13 = this.ani) || void 0 === i13 ? void 0 : i13.progressStep(t15);
       }), ((t15, i13, s19) => {
@@ -7189,7 +7189,7 @@ var k7 = Dn(class extends I {
   }
   componentDidLoad() {
     return __async(this, null, function* () {
-      this.didLoad = true, this.rootChanged(), this.gesture = (yield import("./p-Cz5nLPGT-HX3L3KX5.js")).createSwipeBackGesture(this.el, this.canStart.bind(this), this.onStart.bind(this), this.onMove.bind(this), this.onEnd.bind(this)), this.swipeGestureChanged();
+      this.didLoad = true, this.rootChanged(), this.gesture = (yield import("./p-Cz5nLPGT-43BRVMDG.js")).createSwipeBackGesture(this.el, this.canStart.bind(this), this.onStart.bind(this), this.onMove.bind(this), this.onEnd.bind(this)), this.swipeGestureChanged();
     });
   }
   connectedCallback() {

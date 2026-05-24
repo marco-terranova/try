@@ -38,6 +38,11 @@
                 "glob": "sql-wasm.wasm",
                 "input": "node_modules/sql.js/dist",
                 "output": "assets"
+              },
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/svg",
+                "output": "svg"
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
@@ -115,6 +120,11 @@
                 "glob": "sql-wasm.wasm",
                 "input": "node_modules/sql.js/dist",
                 "output": "assets"
+              },
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/svg",
+                "output": "svg"
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
