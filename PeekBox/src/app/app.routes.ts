@@ -111,7 +111,6 @@ export const routes: Routes = [
 
   {
     path: 'condividi',
-    canActivate: [authGuard],
     redirectTo: 'box-ricevute',
     pathMatch: 'full'
   },
