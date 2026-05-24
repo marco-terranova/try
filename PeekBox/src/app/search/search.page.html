@@ -87,7 +87,7 @@
 <ion-footer class="search-footer">
   <ion-toolbar>
     <div class="d-flex justify-content-around align-items-center w-100 py-2">
-      <div class="d-flex flex-column align-items-center nav-item" (click)="navTo('/home')" style="cursor: pointer;">
+      <div class="d-flex flex-column align-items-center nav-item" routerLink="/home" style="cursor: pointer;">
         <ion-icon name="home"></ion-icon>
         <span>Home</span>
       </div>
@@ -95,7 +95,7 @@
         <ion-icon name="search"></ion-icon>
         <span>Cerca</span>
       </div>
-      <div class="d-flex flex-column align-items-center nav-item" (click)="navTo('/area-personale')" style="cursor: pointer;">
+      <div class="d-flex flex-column align-items-center nav-item" routerLink="/area-personale" style="cursor: pointer;">
         <ion-icon name="person"></ion-icon>
         <span>Profilo</span>
       </div>

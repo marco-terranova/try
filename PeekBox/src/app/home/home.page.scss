@@ -1,27 +1,26 @@
-@import '../../theme/variables';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&display=swap');
 
 // === DESIGN TOKENS ===
-$bg-page:      $page;
-$bg-card:      $white;
-$text-primary: $dark;
-$text-muted:   $mid;
-$accent-blue:  $blue;
-$accent-green: $green;
-$brand-dark:   $blue-dk;
+$bg-page:      #F8FAFC;
+$bg-card:      #FFFFFF;
+$text-primary: #0F172A;
+$text-muted:   #64748B;
+$accent-blue:  #3AABDB;
+$accent-green: #7DC740;
+$brand-dark:   #15425C;
 $radius-card:  20px;
 $shadow-card:  0 4px 20px rgba(0,0,0,0.06);
 
 :host { display: block; }
 
 ion-toolbar {
-  --background: #{$page};
+  --background: #F8FAFC;
   --border-width: 0;
   padding: 0;
 }
 
 ion-content {
-  --background: #{$page};
+  --background: #F8FAFC;
   --padding-bottom: 110px;
   --overflow: hidden !important;
 }
@@ -48,14 +47,14 @@ ion-content {
   font-family: 'Poppins', 'Montserrat', sans-serif !important;
   font-weight: 800;
   font-size: 1.15rem;
-  color: $text-primary;
+  color: #0F172A;
   letter-spacing: 0.5px;
   margin: 0;
   line-height: 1;
 }
 
 .nome-verde {
-  background: linear-gradient(135deg, $green, $green-d) !important;
+  background: linear-gradient(135deg, #A8FF78, #7DC740) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
@@ -65,18 +64,18 @@ ion-content {
 
 // === SEARCH BAR FUTURISTICA ===
 .searchbar-container {
-  background: $bg-card;
+  background: #ffffff;
   border-radius: 20px;
   padding: 4px 16px;
   box-shadow: 0 8px 24px rgba(58, 171, 219, 0.08);
-  border: 1px solid $brd-light;
+  border: 1px solid rgba(58, 171, 219, 0.15);
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
   margin: 16px 0 0;
 
   .search-icon {
-    color: $accent-blue !important;
+    color: #3AABDB !important;
     font-size: 1.35rem;
     margin-right: 12px;
     flex-shrink: 0;
@@ -87,17 +86,17 @@ ion-content {
     background: transparent;
     width: 100%;
     font-family: 'Poppins', sans-serif;
-    color: $text-primary;
+    color: #0F172A;
     font-size: 0.95rem;
     outline: none;
     padding: 12px 0;
 
-    &::placeholder { color: $text-muted; font-weight: 500; }
+    &::placeholder { color: #94A3B8; font-weight: 500; }
   }
 
   &:focus-within {
     box-shadow: 0 8px 24px rgba(58, 171, 219, 0.25);
-    border-color: $accent-blue;
+    border-color: #3AABDB;
     transform: translateY(-2px);
   }
 }
@@ -289,14 +288,14 @@ ion-content {
   font-family: 'Poppins', sans-serif !important;
   font-size: 1.5rem !important;
   font-weight: 900 !important;
-  color: $text-primary !important;
+  color: #1E293B !important;
   margin: 0 0 8px;
   letter-spacing: 1px;
 }
 
 .empty-subtitle {
   font-family: 'Poppins', sans-serif;
-  color: $text-muted;
+  color: #64748B;
   font-size: 0.9rem !important;
   line-height: 1.5;
   max-width: 400px;
@@ -304,8 +303,8 @@ ion-content {
 }
 
 .btn-create-first {
-  background: linear-gradient(135deg, $green, $green-d);
-  color: $white;
+  background: linear-gradient(135deg, #A8FF78, #7DC740);
+  color: #ffffff;
   border: none;
   border-radius: 50px;
   padding: 16px 32px;
@@ -367,7 +366,7 @@ ion-content {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: $bg-page;
+    background: #F8FAFC;
 
     .card-image {
       width: 100%;
@@ -401,7 +400,7 @@ ion-content {
         align-items: center;
         gap: 5px;
         padding: 5px 11px;
-        background: $surf;
+        background: #F1F5F9;
         color: $text-muted;
         font-size: 0.72rem; font-weight: 600;
         border-radius: 50px;
@@ -420,7 +419,7 @@ ion-content {
           justify-content: center;
           width: 32px; height: 32px;
           border: none; border-radius: 50%;
-          background: $bg-page;
+          background: #F8FAFC;
           box-shadow: 0 2px 6px rgba(0,0,0,0.07);
           cursor: pointer;
           transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
@@ -430,8 +429,8 @@ ion-content {
           &:hover { transform: scale(1.12); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
 
           &.star-btn {
-            &.is-fav { background: rgba(58,171,219,0.12); ion-icon { color: $accent-blue; } }
-            &:hover:not(.is-fav) { background: rgba(58,171,219,0.08); ion-icon { color: $accent-blue; } }
+            &.is-fav { background: rgba(245,166,35,0.12); ion-icon { color: #F5A623; } }
+            &:hover:not(.is-fav) { background: rgba(245,166,35,0.08); ion-icon { color: #F5A623; } }
           }
 
           &.delete-btn:hover {

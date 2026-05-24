@@ -1,172 +1,142 @@
-<ion-content class="geo-content">
+<ion-header class="ion-no-border">
+  <ion-toolbar class="pb-toolbar">
+    <ion-buttons slot="start">
+      <app-back-button fallbackRoute="/home"></app-back-button>
+    </ion-buttons>
+    <ion-title class="pb-title">Geofence</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  <!-- ── HEADER MINIMALISTA ──────────────────────────────────────── -->
-  <div class="geo-topbar">
-    <div class="geo-logo" (click)="navTo('/home')" title="Torna indietro">
-      <img src="assets/icon/logoTitolo1.png" class="geo-logo-img" alt="PeekBox" />
-    </div>
-    <div class="geo-page-title">
-      <span class="geo-eyebrow">Geofence</span>
-      <h1 class="geo-armadio-name">{{ armadioNome }}</h1>
-    </div>
-  </div>
+<ion-content class="geofence-page-content">
+  <div class="geofence-wrapper">
 
-  <!-- ── STATUS BANNER ──────────────────────────────────────────── -->
-  <div class="geo-status-card"
-    [class.geo-status-card--active]="hasGeofence && attivo"
-    [class.geo-status-card--inactive]="hasGeofence && !attivo">
-    <div class="geo-status-icon">
-      <ion-icon [name]="hasGeofence ? 'shield-checkmark-outline' : 'warning-outline'"></ion-icon>
-    </div>
-    <div class="geo-status-text">
-      <span *ngIf="!hasGeofence">Nessun perimetro configurato</span>
-      <span *ngIf="hasGeofence && attivo">Perimetro attivo — {{ raggioLabel }}</span>
-      <span *ngIf="hasGeofence && !attivo">Perimetro disattivato</span>
-    </div>
-  </div>
+    <!-- ── TWIN CARDS CONTAINER ── -->
+    <div class="geofence-grid">
 
-  <!-- ── LOADING ────────────────────────────────────────────────── -->
-  <div *ngIf="isLoading" class="geo-loading">
-    <ion-spinner name="dots"></ion-spinner>
-  </div>
+      <!-- CARD SINISTRA: Configurazione -->
+      <div class="geo-card geo-card--left">
+        <div class="geo-card-header">
+          <span class="geo-card-icon">📍</span>
+          <h3>Configura Perimetro</h3>
+        </div>
+        
+        <div class="geo-card-body">
+          <!-- Acquisizione GPS -->
+          <button class="gps-acquire-btn" (click)="usaPosizioneCorrcome()" [disabled]="isGettingGps">
+            <span *ngIf="!isGettingGps">🛰️</span>
+            <ion-spinner *ngIf="isGettingGps" name="crescent" class="spinner-small"></ion-spinner>
+            <span>Usa posizione GPS corrente</span>
+          </button>
 
-  <!-- ── CARD CONFIGURAZIONE ────────────────────────────────────── -->
-  <div class="geo-card" *ngIf="!isLoading">
-    <div class="geo-card-header">
-      <div class="geo-card-icon">
-        <ion-icon name="location-outline"></ion-icon>
-      </div>
-      <div>
-        <p class="geo-card-title">Perimetro Virtuale</p>
-        <p class="geo-card-sub">Configura il centro e il raggio del geofence</p>
-      </div>
-    </div>
+          <!-- Inputs Coordinate -->
+          <div class="inputs-row">
+            <div class="input-wrap">
+              <label>Latitudine</label>
+              <input type="number" step="0.000001" placeholder="es. 45.464203" [(ngModel)]="latitudine" />
+            </div>
+            <div class="input-wrap">
+              <label>Longitudine</label>
+              <input type="number" step="0.000001" placeholder="es. 9.189982" [(ngModel)]="longitudine" />
+            </div>
+          </div>
 
-    <!-- GPS Button -->
-    <button class="btn-gps" (click)="usaPosizioneCorrcome()" [disabled]="isGettingGps">
-      <ion-spinner *ngIf="isGettingGps" name="crescent"></ion-spinner>
-      <ion-icon *ngIf="!isGettingGps" name="navigate-outline"></ion-icon>
-      <span>{{ isGettingGps ? 'Acquisizione GPS...' : 'Usa posizione GPS corrente' }}</span>
-    </button>
+          <!-- Raggio Slider -->
+          <div class="raggio-container">
+            <div class="raggio-header">
+              <span>Raggio di tolleranza</span>
+              <strong>{{ raggioLabel }}</strong>
+            </div>
+            <ion-range
+              min="10" max="5000" step="10"
+              [(ngModel)]="raggioM"
+              class="pb-range-green">
+              <span slot="start" class="range-hint">10m</span>
+              <span slot="end" class="range-hint">5km</span>
+            </ion-range>
+          </div>
 
-    <!-- Coordinate manuali -->
-    <div class="geo-coords-grid">
-      <div class="geo-input-group">
-        <label class="geo-input-label">Latitudine</label>
-        <div class="geo-input-wrap">
-          <ion-icon name="location-outline" class="geo-input-icon"></ion-icon>
-          <input
-            type="number"
-            step="0.000001"
-            placeholder="es. 45.464203"
-            [(ngModel)]="latitudine"
-            class="geo-input"
-          />
+          <!-- Toggle Attivo (Verde/Azzurro Brand) -->
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <strong>Stato Perimetro</strong>
+              <span>Attiva o disattiva il controllo GPS</span>
+            </div>
+            <ion-toggle [(ngModel)]="attivo" class="pb-green-toggle"></ion-toggle>
+          </div>
+
+          <!-- Preview su mappa -->
+          <div class="map-preview-box" *ngIf="latitudine !== null && longitudine !== null">
+            <p>Coordinate: {{ latitudine | number:'1.6-6' }}, {{ longitudine | number:'1.6-6' }}</p>
+            <button class="map-link-btn" (click)="apriInMappa()">
+              <span>🗺️</span> Vedi su Mappa
+            </button>
+          </div>
+
+          <!-- Pulsanti Azione -->
+          <div class="actions-row">
+            <button class="btn-save-geo" (click)="salvaGeofence()" [disabled]="isSaving || latitudine === null">
+              <span *ngIf="!isSaving">💾</span>
+              <ion-spinner *ngIf="isSaving" name="crescent" class="spinner-small"></ion-spinner>
+              <span>{{ hasGeofence ? 'Aggiorna Area' : 'Imposta Area' }}</span>
+            </button>
+            
+            <button class="btn-delete-geo" *ngIf="hasGeofence" (click)="confermaElimina()">
+              <span>🗑️</span> Rimuovi Area
+            </button>
+          </div>
+
         </div>
       </div>
-      <div class="geo-input-group">
-        <label class="geo-input-label">Longitudine</label>
-        <div class="geo-input-wrap">
-          <ion-icon name="location-outline" class="geo-input-icon"></ion-icon>
-          <input
-            type="number"
-            step="0.000001"
-            placeholder="es. 9.189982"
-            [(ngModel)]="longitudine"
-            class="geo-input"
-          />
+
+      <!-- CARD DESTRA: Info e Stato -->
+      <div class="geo-card geo-card--right">
+        <div class="geo-card-header">
+          <span class="geo-card-icon">🛡️</span>
+          <h3>Stato & Info</h3>
+        </div>
+
+        <div class="geo-card-body">
+          <!-- Stato Banner -->
+          <div class="status-banner" [class.active]="hasGeofence && attivo" [class.inactive]="hasGeofence && !attivo" [class.not-set]="!hasGeofence">
+            <span class="status-icon">{{ hasGeofence && attivo ? '🛡️' : (hasGeofence ? '💤' : '⚠️') }}</span>
+            <div class="status-text">
+              <strong *ngIf="!hasGeofence">Nessun geofence impostato</strong>
+              <strong *ngIf="hasGeofence && attivo">Perimetro attivo</strong>
+              <strong *ngIf="hasGeofence && !attivo">Perimetro disattivato</strong>
+              <span *ngIf="hasGeofence && attivo">Tolleranza impostata: {{ raggioLabel }}</span>
+              <span *ngIf="!hasGeofence">Configura i parametri a sinistra per attivare</span>
+            </div>
+          </div>
+
+          <!-- Spiegazione funzionamento -->
+          <div class="info-content">
+            <h4>Come funziona</h4>
+            <p>Ogni volta che un box viene scansionato tramite QR Code, il sistema rileva la posizione GPS e la confronta con le coordinate impostate.</p>
+            
+            <div class="info-rule active">
+              <span class="rule-icon">✅</span>
+              <div class="rule-text">
+                <strong>Dentro il perimetro</strong>
+                <span>Nessuna anomalia riscontrata, il box è al sicuro.</span>
+              </div>
+            </div>
+
+            <div class="info-rule warning">
+              <span class="rule-icon">⚠️</span>
+              <div class="rule-text">
+                <strong>Fuori dal perimetro</strong>
+                <span>Viene generata un'eccezione di sicurezza e inviata notifica.</span>
+              </div>
+            </div>
+
+            <p class="haversine-note">
+              Il calcolo della distanza geodetica usa la formula matematica di <strong>Haversine</strong> per garantire precisione millimetrica.
+            </p>
+          </div>
         </div>
       </div>
+
     </div>
 
-    <!-- Preview coordinate -->
-    <div class="geo-coords-preview" *ngIf="latitudine !== null && longitudine !== null">
-      <ion-icon name="location-outline"></ion-icon>
-      <span>{{ latitudine | number:'1.6-6' }}, {{ longitudine | number:'1.6-6' }}</span>
-      <button class="btn-mappa" (click)="apriInMappa()">
-        Vedi su mappa
-        <ion-icon name="arrow-forward-outline"></ion-icon>
-      </button>
-    </div>
-
-    <!-- Raggio slider -->
-    <div class="geo-range-block">
-      <div class="geo-range-header">
-        <span class="geo-range-label">Raggio di tolleranza</span>
-        <span class="geo-range-value">{{ raggioLabel }}</span>
-      </div>
-      <div class="geo-range-wrap">
-        <span class="geo-range-limit">10 m</span>
-        <ion-range
-          min="10" max="5000" step="10"
-          [(ngModel)]="raggioM"
-          class="geo-range">
-        </ion-range>
-        <span class="geo-range-limit">5 km</span>
-      </div>
-    </div>
-
-    <!-- Toggle attivo -->
-    <div class="geo-toggle-row">
-      <div class="geo-toggle-icon">
-        <ion-icon name="shield-checkmark-outline"></ion-icon>
-      </div>
-      <div class="geo-toggle-text">
-        <span class="geo-toggle-label">Geofence attivo</span>
-        <span class="geo-toggle-sub">Abilita il monitoraggio del perimetro</span>
-      </div>
-      <ion-toggle [(ngModel)]="attivo" color="success" class="geo-toggle"></ion-toggle>
-    </div>
-
-    <!-- Pulsanti azione -->
-    <div class="geo-actions">
-      <button class="btn-geo-primary" (click)="salvaGeofence()" [disabled]="isSaving || latitudine === null">
-        <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
-        <ion-icon *ngIf="!isSaving" name="save-outline"></ion-icon>
-        <span>{{ hasGeofence ? 'Aggiorna Geofence' : 'Imposta Geofence' }}</span>
-      </button>
-
-      <button class="btn-geo-danger" *ngIf="hasGeofence" (click)="confermaElimina()">
-        <ion-icon name="trash-outline"></ion-icon>
-        <span>Rimuovi Geofence</span>
-      </button>
-    </div>
   </div>
-
-  <!-- ── CARD COME FUNZIONA ─────────────────────────────────────── -->
-  <div class="geo-card geo-card--info" *ngIf="!isLoading">
-    <div class="geo-card-header">
-      <div class="geo-card-icon geo-card-icon--blue">
-        <ion-icon name="shield-checkmark-outline"></ion-icon>
-      </div>
-      <div>
-        <p class="geo-card-title">Come funziona</p>
-        <p class="geo-card-sub">Logica di rilevamento posizione</p>
-      </div>
-    </div>
-
-    <p class="geo-info-text">
-      Ogni volta che un asset viene scansionato (QR Code), il sistema rileva la sua posizione GPS e la confronta con il perimetro definito.
-    </p>
-
-    <div class="geo-info-list">
-      <div class="geo-info-item geo-info-item--ok">
-        <div class="geo-info-bullet">✓</div>
-        <div>
-          <strong>Dentro il perimetro</strong>: nessuna azione richiesta.
-        </div>
-      </div>
-      <div class="geo-info-item geo-info-item--warn">
-        <div class="geo-info-bullet">⚠</div>
-        <div>
-          <strong>Fuori dal perimetro</strong>: viene generata un'eccezione di sicurezza con alert all'amministratore.
-        </div>
-      </div>
-    </div>
-
-    <p class="geo-formula">
-      Il calcolo usa la formula di <strong>Haversine</strong> per la distanza geodetica precisa.
-    </p>
-  </div>
-
 </ion-content>

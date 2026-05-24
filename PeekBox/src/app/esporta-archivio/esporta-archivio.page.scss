@@ -1,16 +1,15 @@
-@import '../../theme/variables';
-
-$blue:   $blue;
-$green:  $green;
+// ─── Variabili ────────────────────────────────────────────────
+$blue:   #3AABDB;
+$green:  #7DC740;
 $red:    #EF4444;
-$dark:   $dark;
-$muted:  $mid;
-$light:  $page;
-$border: $brd-light;
+$dark:   #0F172A;
+$muted:  #64748B;
+$light:  #F8FAFC;
+$border: #E2E8F0;
 
 // ─── Content ──────────────────────────────────────────────────
 ion-content.bg-soft {
-  --background: #{$light};
+  --background: #F8FAFC;
   --overflow: hidden !important; /* Divieto assoluto di scroll nella pagina principale */
 }
 
@@ -56,7 +55,7 @@ ion-content.bg-soft {
 
 // ─── Bottone "Genera Report" in alto a destra ─────────────────
 .btn-export-top-right {
-  background: linear-gradient(135deg, $green, $green-d);
+  background: linear-gradient(135deg, #A8FF78, $green);
   color: #ffffff !important;
   border: none;
   padding: 10px 24px;
@@ -99,11 +98,11 @@ ion-content.bg-soft {
 
 // ─── Quadrante Card ───────────────────────────────────────────
 .quadrante-esporta-card {
-  background: $white;
+  background: #ffffff;
   border-radius: 24px; /* Angoli più morbidi e moderni */
   padding: 28px; /* Più respiro interno */
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
-  border: 1px solid $border;
+  border: 1px solid rgba(15, 23, 42, 0.04);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -153,7 +152,7 @@ ion-content.bg-soft {
   background: $light;
   transition: all 0.25s ease;
 
-  &:hover { background: $surf; }
+  &:hover { background: #F1F5F9; }
 
   input { display: none; }
 
@@ -166,7 +165,7 @@ ion-content.bg-soft {
 .custom-radio {
   width: 22px;
   height: 22px;
-  border: 2px solid $border;
+  border: 2px solid #CBD5E1;
   border-radius: 50%;
   position: relative;
   margin-top: 2px;
@@ -237,7 +236,7 @@ ion-content.bg-soft {
   box-sizing: border-box;
 
   &:hover {
-    border-color: $border;
+    border-color: #CBD5E1;
     transform: translateY(-3px);
     box-shadow: 0 6px 14px rgba($dark, 0.06);
   }
@@ -251,7 +250,7 @@ ion-content.bg-soft {
   }
 
   &.active {
-    background: $white;
+    background: #ffffff;
     border-color: $green;
     box-shadow: 0 10px 24px rgba($green, 0.18);
     transform: translateY(-3px);
@@ -267,7 +266,7 @@ ion-content.bg-soft {
 .format-icon {
   font-size: 2.2rem;
   margin-bottom: 10px;
-  color: $border;
+  color: #CBD5E1;
   transition: all 0.3s ease;
 }
 
@@ -280,11 +279,11 @@ ion-content.bg-soft {
   width: calc(100% - 32px);
   max-width: 520px;
   height: 66px;
-  background: rgba($white, 0.85);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-radius: 40px;
-  border: 1px solid rgba($white, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.95);
   box-shadow: 0 8px 32px rgba($blue, 0.13), 0 2px 8px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: center;
@@ -339,7 +338,7 @@ ion-content.bg-soft {
       height: 58px;
       border-radius: 50%;
       border: none !important;
-      background: linear-gradient(135deg, $green, $green-d) !important;
+      background: linear-gradient(135deg, #A8FF78, $green) !important;
       color: #fff;
       cursor: pointer;
       display: flex;

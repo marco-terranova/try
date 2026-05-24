@@ -1,46 +1,34 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
 import {
-  IonHeader, IonToolbar, IonContent, IonIcon, IonSpinner, IonInput, IonToggle, IonTextarea,
+  IonContent, IonIcon, IonSpinner, IonInput, IonToggle, IonTextarea,
   AlertController, ToastController, ActionSheetController
 } from '@ionic/angular/standalone';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { addIcons } from 'ionicons';
 import {
   arrowBackOutline,
-  starOutline,
-  star,
-  layersOutline,
-  paperPlaneOutline,
-  warningOutline,
+  heartOutline,          // cuore: outline di default, diventa “attivo” via CSS
+  layersOutline,         // icona armadio nella sub-header
+  paperPlaneOutline,     // moving mode
+  warningOutline,        // fragile badge
   cubeOutline,
-  addCircleOutline,
+  addCircleOutline,      // plus pulito
   qrCodeOutline,
   locationOutline,
-  trashOutline,
+  trashOutline,          // cestino filiforme (usato sia tile che item)
   trashBinOutline,
   createOutline,
   checkmarkCircleOutline,
   camera,
-  imageOutline,
   closeOutline,
   barChartOutline,
   informationCircleOutline,
-  cloudDownloadOutline,
-  shareOutline,
-  home,
-  shareSocialOutline,
-  add,
-  chevronForwardOutline,
-  pricetagOutline,
-  flashOutline,
-  pencilOutline
+  cloudDownloadOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
-import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-dettaglio-box',
@@ -48,11 +36,11 @@ import * as QRCode from 'qrcode';
   styleUrls: ['./dettaglio-box.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule, RouterModule,
-    IonHeader, IonToolbar, IonContent, IonIcon, IonSpinner, IonInput, IonToggle, IonTextarea
+    CommonModule, FormsModule,
+    IonContent, IonIcon, IonSpinner, IonInput, IonToggle, IonTextarea
   ]
 })
-export class DettaglioBoxPage implements OnInit, AfterViewInit {
+export class DettaglioBoxPage implements OnInit {
 
   readonly MAX_OGGETTI = 20;
 
@@ -72,11 +60,8 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
   fotoOggetto: string | null = null;
   isSaving = false;
 
+  qrDataUrl: string | null = null;
   isLoadingQr = false;
-  qrGenerato = false;
-
-  nomeUtente = '';
-  utenteId: string | null = null;
 
   constructor(
     private route:     ActivatedRoute,
@@ -84,18 +69,15 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     private dbService: DatabaseService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private actionSheetCtrl: ActionSheetController,
-    private navHistory: NavigationHistoryService
+    private actionSheetCtrl: ActionSheetController
   ) {
     addIcons({
-      arrowBackOutline, starOutline, star, layersOutline,
+      arrowBackOutline, heartOutline, layersOutline,
       paperPlaneOutline, warningOutline,
       cubeOutline, addCircleOutline, qrCodeOutline, locationOutline,
       trashOutline, trashBinOutline, createOutline, checkmarkCircleOutline,
-      camera, imageOutline, closeOutline, barChartOutline,
-      informationCircleOutline, cloudDownloadOutline, shareOutline,
-      home, shareSocialOutline, add, chevronForwardOutline,
-      pricetagOutline, flashOutline, pencilOutline
+      camera, closeOutline, barChartOutline,
+      informationCircleOutline, cloudDownloadOutline
     });
   }
 
@@ -104,14 +86,12 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     const parsed = id ? Number(id) : NaN;
     if (!parsed || isNaN(parsed) || parsed <= 0) {
       this.toast('ID box non valido.', 'danger');
-      this.navHistory.navTo('/home');
+      this.router.navigate(['/home']);
       return;
     }
     this.boxId = parsed;
     this.caricaDati();
   }
-
-  ngAfterViewInit() {}
 
   // ─── Caricamento ────────────────────────────────────────────────────
 
@@ -140,16 +120,15 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     return this.oggetti.filter(o => o.fragile == 1).length;
   }
 
+  /**
+   * Restituisce true se la categoria va colorata in verde neon.
+   * Riconosce: vestiti, abbigliamento, moda, clothes, clothing, fashion.
+   */
   isVestiti(tipo: string): boolean {
     if (!tipo) return false;
     const t = tipo.toLowerCase();
     return ['vestiti', 'vestito', 'abbigliamento', 'moda', 'clothes', 'clothing', 'fashion']
       .some(k => t.includes(k));
-  }
-
-  removeEmojis(text: string): string {
-    if (!text) return '';
-    return text.replace(/[\u{1F300}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E6}-\u{1F1FF}\u{2600}-\u{26FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F19A}\u{1F1E6}-\u{1F1FF}\u{200D}\u{FE0F}]/gu, '').trim();
   }
 
   // ─── Preferito ────────────────────────────────────────────────────
@@ -158,7 +137,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     if (!this.box) return;
     const newVal = !this.box.is_preferito;
     this.dbService.updatePreferito(this.boxId, newVal).subscribe({
-      next: () => { this.box.is_preferito = newVal; this.toast(newVal ? '⭐ Aggiunto ai preferiti' : 'Rimosso dai preferiti', 'primary'); },
+      next: () => { this.box.is_preferito = newVal; this.toast(newVal ? '❤️ Aggiunto ai preferiti' : 'Rimosso dai preferiti', 'primary'); },
       error: () => this.toast('Errore aggiornamento preferito.', 'danger')
     });
   }
@@ -174,7 +153,6 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
   chiudiModale() {
     this.modaleAperta = null;
     this.oggettoInModifica = null;
-    this.qrGenerato = false;
     this.resetFormOggetto();
   }
 
@@ -215,12 +193,12 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     };
     if (this.modaleAperta === 'modifica' && this.oggettoInModifica) {
       this.dbService.aggiornaOggetto(this.oggettoInModifica.id, dati).subscribe({
-        next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('Oggetto aggiornato!', 'success'); },
+        next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('✅ Oggetto aggiornato!', 'success'); },
         error: () => { this.isSaving = false; this.toast('Errore aggiornamento.', 'danger'); }
       });
     } else {
       this.dbService.creaOggetto(dati).subscribe({
-        next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('Oggetto aggiunto!', 'success'); },
+        next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('✅ Oggetto aggiunto!', 'success'); },
         error: () => { this.isSaving = false; this.toast('Errore inserimento.', 'danger'); }
       });
     }
@@ -248,7 +226,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     if (this.oggetti.length === 0) { this.toast('Il box è già vuoto.', 'medium'); return; }
     const alert = await this.alertCtrl.create({
       cssClass: 'peekbox-alert',
-      header: 'Svuota Box',
+      header: '⚠️ Svuota Box',
       message: `Stai per eliminare tutti i ${this.oggetti.length} oggetti. Operazione irreversibile.`,
       buttons: [
         { text: 'Annulla', role: 'cancel' },
@@ -262,85 +240,75 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     await alert.present();
   }
 
-  ionViewWillEnter() {
-    this.utenteId = localStorage.getItem('utente_id');
-    this.nomeUtente = (localStorage.getItem('utente_nome') || '').toUpperCase();
+  // ─── Foto real Capacitor camera & Action Sheet ─────────────────
+  async scattaFoto() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Seleziona sorgente foto',
+      cssClass: 'pb-action-sheet',
+      buttons: [
+        {
+          text: 'Fotocamera 📷',
+          handler: () => {
+            this.ottieniFoto(CameraSource.Camera);
+          }
+        },
+        {
+          text: 'Galleria immagini 🖼️',
+          handler: () => {
+            this.ottieniFoto(CameraSource.Photos);
+          }
+        },
+        {
+          text: 'Annulla ❌',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
   }
 
-  // ─── Foto (Input file nativo) ─────────────────────────────────────
-
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.fotoOggetto = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+  async ottieniFoto(source: CameraSource) {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 85,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: source
+      });
+      if (image && image.dataUrl) {
+        this.fotoOggetto = image.dataUrl;
+        this.toast('Foto caricata con successo!', 'success');
+      }
+    } catch (error: any) {
+      console.warn('Errore fotocamera:', error);
+      if (error?.message !== 'User cancelled photos app') {
+        this.toast('Impossibile acquisire la foto: ' + error.message, 'danger');
+      }
+    }
   }
 
-  triggerFileInput() {
-    const input = document.getElementById('foto-input') as HTMLInputElement;
-    if (input) input.click();
-  }
-
-  rimuoviFoto(event: Event) {
-    event.stopPropagation();
-    this.fotoOggetto = null;
-    const input = document.getElementById('foto-input') as HTMLInputElement;
-    if (input) input.value = '';
-  }
-
-  // ─── QR Code (qrcode lib, client-side) ─────────────────────────────
+  // ─── QR Code ───────────────────────────────────────────────────
 
   caricaQr() {
     this.isLoadingQr = true;
-    this.qrGenerato = false;
+    this.qrDataUrl = null;
     this.dbService.getQrToken(this.boxId).subscribe({
-      next: async (res: any) => {
+      next: (res: any) => {
         const url = this.dbService.buildQrUrl(this.boxId, res.token);
-        // Aspettiamo che il canvas sia nel DOM
-        setTimeout(async () => {
-          try {
-            const canvas = document.getElementById('qr-canvas') as HTMLCanvasElement;
-            if (canvas) {
-              await QRCode.toCanvas(canvas, url, {
-                width: 220,
-                margin: 2,
-                color: { dark: '#0F172A', light: '#FFFFFF' }
-              });
-              this.qrGenerato = true;
-            }
-          } catch (e) {
-            this.toast('Errore generazione QR.', 'danger');
-          }
-          this.isLoadingQr = false;
-        }, 100);
+        this.qrDataUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
+        this.isLoadingQr = false;
       },
       error: () => { this.isLoadingQr = false; this.toast('Impossibile generare il QR.', 'danger'); }
     });
   }
 
-  scaricaQr() {
-    const canvas = document.getElementById('qr-canvas') as HTMLCanvasElement;
-    if (!canvas) return;
-    const link = document.createElement('a');
-    link.href = canvas.toDataURL('image/png');
-    link.download = `QR_Box_${this.boxId}_${this.removeEmojis(this.box?.nome || 'box')}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    this.toast('QR Code scaricato!', 'success');
-  }
-
-  async condividiLink() {
-    const url = window.location.origin + `/dettaglio-box/${this.boxId}`;
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(url);
-      this.toast('Link copiato negli appunti!', 'success');
-    } else {
-      this.toast(url, 'medium');
+  stampaQr() {
+    if (!this.qrDataUrl) return;
+    const win = window.open('');
+    if (win) {
+      win.document.write(`<html><body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0"><img src="${this.qrDataUrl}" style="max-width:400px"/></body></html>`);
+      win.document.close();
+      win.print();
     }
   }
 
@@ -353,9 +321,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     });
   }
 
-  goBack() { this.navHistory.navTo('/home'); }
-  vaiHome() { this.navHistory.navTo('/home'); }
-  navTo(route: string) { this.navHistory.navTo(route); }
+  goBack() { this.router.navigate(['/home']); }
 
   private async toast(message: string, color = 'primary') {
     const t = await this.toastCtrl.create({ message, duration: 2400, color, position: 'bottom' });

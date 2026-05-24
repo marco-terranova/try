@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import {
@@ -14,7 +14,6 @@ import {
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-gestione-spazi',
@@ -41,7 +40,7 @@ export class GestioneSpaziPage implements OnInit {
     private alertCtrl: AlertController,
     private dbService: DatabaseService,
     private router: Router,
-    private navHistory: NavigationHistoryService,
+    private location: Location,
   ) {
     addIcons({
       arrowBackOutline, archiveOutline, addCircleOutline,
@@ -121,10 +120,12 @@ export class GestioneSpaziPage implements OnInit {
   }
 
   goBack() {
-    this.navHistory.back('/area-personale');
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigateByUrl('/area-personale');
+    }
   }
 
-  vaiHome() { this.navHistory.navTo('/home'); }
-  navTo(route: string) { this.navHistory.navTo(route); }
-
+  vaiHome() { this.router.navigateByUrl('/home'); }
 }

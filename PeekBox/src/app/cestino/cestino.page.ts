@@ -12,7 +12,6 @@ import {
   shareSocialOutline, refreshOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-cestino',
@@ -37,8 +36,7 @@ export class CestinoPage implements OnInit {
     private dbService: DatabaseService,
     private router: Router,
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController,
-    private navHistory: NavigationHistoryService
+    private toastCtrl: ToastController
   ) {
     addIcons({
       home, add, qrCodeOutline,
@@ -174,6 +172,4 @@ export class CestinoPage implements OnInit {
   vaiHome() {
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
-  navTo(route: string) { this.navHistory.navTo(route); }
-
 }

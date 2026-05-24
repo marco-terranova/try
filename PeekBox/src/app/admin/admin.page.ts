@@ -15,7 +15,6 @@ import {
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-admin',
@@ -41,7 +40,6 @@ export class AdminPage implements OnInit {
     private alertCtrl: AlertController,
     private dbService: DatabaseService,
     private router: Router,
-    private navHistory: NavigationHistoryService,
   ) {
     addIcons({
       peopleOutline, trashOutline, archiveOutline, cubeOutline,
@@ -87,7 +85,9 @@ export class AdminPage implements OnInit {
   }
 
   // ── Aggiunto goBack() ────────────────────────────
-  goBack() { this.navHistory.back('/home'); }
+  goBack() {
+    this.router.navigateByUrl('/home');
+  }
 
   async confermaEliminazione(utente: any) {
     const alert = await this.alertCtrl.create({
@@ -132,9 +132,9 @@ export class AdminPage implements OnInit {
   }
 
   // ── NAVBAR ──────────────────────────────────────────────────
-  vaiHome()    { this.navHistory.navTo('/home'); }
-  vaiSearch()  { this.navHistory.navTo('/search'); }
-  vaiProfilo() { this.navHistory.navTo('/area-personale'); }
+  vaiHome()    { this.router.navigateByUrl('/home'); }
+  vaiSearch()  { this.router.navigateByUrl('/search'); }
+  vaiProfilo() { this.router.navigateByUrl('/area-personale'); }
 
   inizialeAdmin(): string {
     return this.nomeAdmin.charAt(0) || 'A';

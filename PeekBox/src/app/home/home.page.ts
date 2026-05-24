@@ -18,7 +18,6 @@ import {
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-home',
@@ -55,8 +54,7 @@ export class HomePage {
   constructor(
     private alertCtrl: AlertController,
     private dbService: DatabaseService,
-    private router: Router,
-    private navHistory: NavigationHistoryService
+    private router: Router
   ) {
     addIcons({
       add, filter, home, search, person, star, starOutline,
@@ -64,8 +62,6 @@ export class HomePage {
       flashOutline, shareSocialOutline, qrCodeOutline
     });
   }
-
-  navTo(route: string) { this.navHistory.navTo(route); }
 
   ionViewWillEnter() {
     this.utenteId = localStorage.getItem('utente_id');
@@ -76,7 +72,7 @@ export class HomePage {
   }
 
   apriScanner() {
-    this.navHistory.navTo('/scan-qr');
+    this.router.navigate(['/scan-qr']);
   }
 
   caricaDatiDalServer(idUtente: string) {

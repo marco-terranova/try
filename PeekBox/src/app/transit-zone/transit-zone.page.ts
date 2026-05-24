@@ -16,7 +16,6 @@ import {
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 import { ExportService } from '../services/export';
 
 @Component({
@@ -63,8 +62,7 @@ export class TransitZonePage implements OnInit, OnDestroy {
     private toastCtrl:        ToastController,
     private actionSheetCtrl:  ActionSheetController,
     private router:           Router,
-    private route:            ActivatedRoute,
-    private navHistory:       NavigationHistoryService
+    private route:            ActivatedRoute
   ) {
     addIcons({
       home, add, qrCodeOutline, shareSocialOutline,
@@ -384,6 +382,4 @@ export class TransitZonePage implements OnInit, OnDestroy {
   }
 
   vaiHome() { this.router.navigateByUrl('/home', { replaceUrl: true }); }
-  navTo(route: string) { this.navHistory.navTo(route); }
-
 }

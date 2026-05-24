@@ -27,7 +27,6 @@ import {
   searchOutline,
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-crea-box',
@@ -58,8 +57,7 @@ export class CreaBoxPage implements OnInit {
   constructor(
     private alertController: AlertController,
     private router: Router,
-    private dbService: DatabaseService,
-    private navHistory: NavigationHistoryService
+    private dbService: DatabaseService
   ) {
     addIcons({
       add,
@@ -120,11 +118,8 @@ export class CreaBoxPage implements OnInit {
   salvaNuovaBox() {
     if (!this.nome_box || !this.rif_armadio) return;
     this.dbService.creaBox(this.nome_box, this.rif_armadio, this.is_preferito, false, this.descrizione).subscribe({
-      next: () => { this.navHistory.navTo('/home'); },
+      next: () => { this.router.navigate(['/home']); },
       error: (err: any) => console.error(err)
     });
   }
-
-  navTo(route: string) { this.navHistory.navTo(route); }
-
 }

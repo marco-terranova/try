@@ -83,7 +83,7 @@
           </div>
           <h2 class="empty-title">NESSUNA BOX TROVATA</h2>
           <p class="empty-subtitle">Il tuo spazio è attualmente vuoto. Inizia a catalogare i tuoi oggetti per ritrovarli in un istante.</p>
-          <button class="btn-create-first" (click)="navTo('/crea-box')">
+          <button class="btn-create-first" routerLink="/crea-box">
             <ion-icon name="add-circle-outline"></ion-icon>
             <span>Crea la tua prima Box</span>
           </button>
@@ -223,13 +223,13 @@
     <span>Home</span>
   </div>
 
-  <div class="nav-item" (click)="navTo('/box-ricevute')">
+  <div class="nav-item" routerLink="/condividi">
     <ion-icon name="share-social-outline"></ion-icon>
     <span>Condividi</span>
   </div>
 
   <div class="nav-fab-wrapper">
-    <button class="nav-fab" (click)="navTo('/crea-box')">
+    <button class="nav-fab" routerLink="/crea-box">
       <ion-icon name="add"></ion-icon>
     </button>
   </div>
@@ -239,7 +239,7 @@
     <span>Scan</span>
   </div>
 
-  <div class="nav-item" (click)="navTo('/area-personale')">
+  <div class="nav-item" routerLink="/area-personale">
     <div class="avatar-circle">
       {{ nomeUtente ? nomeUtente.charAt(0).toUpperCase() : 'U' }}
     </div>

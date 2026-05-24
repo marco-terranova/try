@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonContent, IonButton, IonIcon, IonItem, IonLabel,
-  IonToggle, IonRange, IonSpinner, IonInput,
+  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
+  IonButton, IonIcon, IonItem, IonLabel,
+  IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+  IonRange, IonSpinner, IonBadge, IonInput,
   AlertController, ToastController
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BackButtonComponent } from '../components/back-button/back-button.component';
 import { addIcons } from 'ionicons';
 import {
   locationOutline, shieldCheckmarkOutline, warningOutline,
-  trashOutline, saveOutline, navigateOutline, refreshOutline,
-  arrowForwardOutline
+  trashOutline, saveOutline, navigateOutline, refreshOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 import { GpsService } from '../services/gps';
 
 /**
@@ -34,9 +35,11 @@ import { GpsService } from '../services/gps';
   styleUrls: ['./geofence-armadio.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
-    IonContent, IonButton, IonIcon, IonItem, IonLabel,
-    IonToggle, IonRange, IonSpinner, IonInput
+BackButtonComponent,     CommonModule, FormsModule,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
+    IonButton, IonIcon, IonItem, IonLabel,
+    IonToggle, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+    IonRange, IonSpinner, IonBadge, IonInput
   ]
 })
 export class GeofenceArmadioPage implements OnInit {
@@ -68,10 +71,9 @@ export class GeofenceArmadioPage implements OnInit {
     private dbService: DatabaseService,
     private gpsService: GpsService,
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController,
-    private navHistory: NavigationHistoryService
+    private toastCtrl: ToastController
   ) {
-    addIcons({ locationOutline, shieldCheckmarkOutline, warningOutline, trashOutline, saveOutline, navigateOutline, refreshOutline, arrowForwardOutline });
+    addIcons({ locationOutline, shieldCheckmarkOutline, warningOutline, trashOutline, saveOutline, navigateOutline, refreshOutline });
   }
 
   ngOnInit() {
@@ -81,7 +83,7 @@ export class GeofenceArmadioPage implements OnInit {
     if (!parsedId || isNaN(parsedId) || parsedId <= 0) {
       // ID non valido: torna indietro e avvisa
       this.mostraToast('ID archivio non valido. Torna indietro e riprova.', 'danger').then(() => {
-        this.navHistory.navTo('/home');
+        this.router.navigate(['/home']);
       });
       return;
     }
@@ -215,7 +217,4 @@ export class GeofenceArmadioPage implements OnInit {
     const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'bottom' });
     await toast.present();
   }
-
-  navTo(route: string) { this.navHistory.navTo(route); }
-
 }

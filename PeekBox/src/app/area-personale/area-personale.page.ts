@@ -16,7 +16,6 @@ import {
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-area-personale',
@@ -53,8 +52,7 @@ export class AreaPersonalePage implements OnInit {
     private alertCtrl: AlertController,
     private dbService: DatabaseService,
     private router: Router,
-    private datePipe: DatePipe,
-    private navHistory: NavigationHistoryService
+    private datePipe: DatePipe
   ) {
     addIcons({
       archiveOutline, cubeOutline, timeOutline, logOutOutline,
@@ -178,7 +176,6 @@ export class AreaPersonalePage implements OnInit {
 
   eseguiLogout() {
     localStorage.clear();
-    this.navHistory.clearHistory();
     this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
@@ -191,14 +188,10 @@ export class AreaPersonalePage implements OnInit {
   }
 
   vaiSearch() {
-    this.router.navigateByUrl('/search', { replaceUrl: true });
+    this.router.navigateByUrl('/search');
   }
 
   vaiAdmin() {
-    this.router.navigateByUrl('/admin', { replaceUrl: true });
+    this.router.navigateByUrl('/admin');
   }
-  navTo(route: string) { this.navHistory.navTo(route); }
-
-  navForward(route: string) { this.router.navigateByUrl(route); }
-
 }

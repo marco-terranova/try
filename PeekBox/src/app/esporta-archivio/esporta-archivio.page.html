@@ -101,23 +101,23 @@
     <span>Home</span>
   </div>
 
-  <div class="nav-item" (click)="navTo('/box-ricevute')">
+  <div class="nav-item" routerLink="/condividi">
     <ion-icon name="share-social-outline"></ion-icon>
     <span>Condividi</span>
   </div>
 
   <div class="nav-fab-wrapper">
-    <button class="nav-fab" (click)="navTo('/crea-box')">
+    <button class="nav-fab" routerLink="/crea-box">
       <ion-icon name="add"></ion-icon>
     </button>
   </div>
 
-  <div class="nav-item" (click)="navTo('/scan-qr')">
+  <div class="nav-item" routerLink="/scan-qr">
     <ion-icon name="qr-code-outline"></ion-icon>
     <span>Scan</span>
   </div>
 
-  <div class="nav-item" (click)="navTo('/area-personale')">
+  <div class="nav-item" routerLink="/area-personale">
     <div class="avatar-circle-nav">
       {{ nomeUtente ? nomeUtente.charAt(0).toUpperCase() : 'U' }}
     </div>

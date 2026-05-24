@@ -1,10 +1,8 @@
-@import '../../theme/variables';
-
-$bg-saas:     $page;
-$dark-text:   $dark;
-$slate-gray:  $mid;
-$brand-blue:  $blue;
-$brand-green: $green;
+$bg-saas:     #F8FAFC;
+$dark-text:   #0F172A;
+$slate-gray:  #64748B;
+$brand-blue:  #3AABDB;
+$brand-green: #7DC740;
 
 // ── FIX TAB BAR: padding-bottom per non nascondere contenuto ──
 ion-content {
@@ -50,11 +48,10 @@ ion-content {
 }
 
 .quadrante-card {
-  background: $white;
+  background: #ffffff;
   border-radius: 24px;
   padding: 28px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
-  border: 1px solid $brd-light;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -115,8 +112,8 @@ ion-content {
 }
 
 .password-forms ion-input {
-  --background: #{$bg-saas};
-  --border-color: #{$brd-light};
+  --background: #F8FAFC;
+  --border-color: #E2E8F0;
   --border-radius: 16px;
   --border-style: solid;
   --border-width: 1px;
@@ -133,8 +130,8 @@ ion-content {
 .input-wrapper {
   display: flex;
   align-items: center;
-  background: $bg-saas;
-  border: 1px solid $brd-light;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
   border-radius: 16px;
   padding: 0 16px;
   transition: 0.3s ease;
@@ -144,7 +141,7 @@ ion-content {
   &:focus-within {
     border-color: #{$brand-blue};
     box-shadow: 0 0 0 4px rgba(58, 171, 219, 0.1);
-    background: $white;
+    background: white;
   }
 
   .icon-brand {
@@ -167,8 +164,8 @@ ion-content {
   }
 
   &.disabled-wrapper {
-    background: $surf;
-    border-color: $brd-light;
+    background: #F1F5F9;
+    border-color: #E2E8F0;
     input { color: #94A3B8; cursor: not-allowed; }
     .ban-icon {
       margin-left: auto;
@@ -277,8 +274,8 @@ ion-content {
 
 .btn-submit-smart {
   width: 100%;
-  background: $surf;
-  color: $slate-gray;
+  background: #E2E8F0;
+  color: #94A3B8;
   border: none;
   padding: 20px;
   border-radius: 16px;
@@ -318,12 +315,12 @@ ion-content {
 }
 
 .transit-tab-bar {
-  --background: #{$white};
+  --background: #ffffff;
   border-radius: 30px;
   margin: 0 15px 15px 15px;
   box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
   height: 70px;
-  border: 1px solid $brd-light;
+  border: 1px solid rgba(255, 255, 255, 0.8);
   overflow: visible;
 }
 

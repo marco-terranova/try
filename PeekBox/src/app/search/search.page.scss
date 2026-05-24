@@ -1,5 +1,11 @@
-@import '../../theme/variables';
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
+$blue:    #3AABDB;
+$blue-d:  #1A7FA8;
+$green:   #7DC740;
+$white:   #FFFFFF;
+$dark:    #0D2A3A;
+$red:     #F87171;
 
 :host {
   display: block;
@@ -8,23 +14,23 @@
 }
 
 ion-header ion-toolbar {
-  --background: #{$page};
-  --color: #{$dark};
-  --border-color: #{$brd-light};
+  --background: #0A1A28;
+  --color: #{$white};
+  --border-color: rgba(58,171,219,.18);
   --border-width: 0 0 1px 0;
   --border-style: solid;
 }
 
 .search-content {
-  --background: #{$page};
-  --color: #{$dark};
+  --background: #{$dark};
+  --color: #{$white};
 }
 
-.brand-title .pk { color: #{$blue-dk}; }
-.brand-title .bx { color: #{$green}; }
+.brand-title .pk { color: $white; }
+.brand-title .bx { color: $green; }
 
 .search-page-title {
-  color: #{$dark};
+  color: $white;
   font-family: 'Outfit', sans-serif;
   font-weight: 900;
   letter-spacing: -0.5px;
@@ -32,15 +38,13 @@ ion-header ion-toolbar {
 }
 
 ion-searchbar {
-  --background: #{$white};
-  --color: #{$dark};
-  --placeholder-color: rgba(74,122,148,.6);
+  --background: rgba(255,255,255,.07);
+  --color: #{$white};
+  --placeholder-color: rgba(255,255,255,.35);
   --icon-color: #{$blue};
-  --clear-button-color: rgba(74,122,148,.5);
+  --clear-button-color: rgba(255,255,255,.5);
   --border-radius: 50px;
-  --box-shadow: 0 4px 16px rgba(58,171,219,.08);
-  border: 1px solid #{$brd-light};
-  border-radius: 50px;
+  --box-shadow: 0 2px 16px rgba(0,0,0,.3);
   padding: 0 0 16px 0 !important;
 }
 
@@ -53,7 +57,7 @@ ion-searchbar {
     color: rgba(58,171,219,.35) !important;
   }
   p {
-    color: #{$mid} !important;
+    color: rgba(255,255,255,.5) !important;
     font-family: 'DM Sans', sans-serif;
   }
 }
@@ -61,20 +65,20 @@ ion-searchbar {
 .spinner-wrap {
   margin-top: 60px;
   text-align: center;
-  ion-spinner { --color: #{$blue} !important; color: #{$blue} !important; }
-  p { color: #{$mid} !important; margin-top: 10px; font-family: 'DM Sans', sans-serif; }
+  ion-spinner { --color: #{$blue} !important; color: $blue !important; }
+  p { color: rgba(255,255,255,.55) !important; margin-top: 10px; font-family: 'DM Sans', sans-serif; }
 }
 
 .risultati-count {
-  color: #{$mid};
+  color: rgba(255,255,255,.55);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.85rem;
   margin: 4px 0 10px;
 }
 
 .risultato-item {
-  --background: #{$card-bg};
-  --color: #{$dark};
+  --background: rgba(255,255,255,.05);
+  --color: #{$white};
   --border-radius: 14px;
   --padding-start: 12px;
   --padding-end: 12px;
@@ -82,18 +86,18 @@ ion-searchbar {
   --padding-bottom: 10px;
   margin-bottom: 10px;
   border-radius: 14px;
-  border: 1px solid #{$brd-light};
-  border-left: 3px solid #{$green};
-  box-shadow: 0 4px 16px rgba(58,171,219,.04);
+  border: 1px solid rgba(58,171,219,.2);
+  border-left: 3px solid $green;
+  box-shadow: 0 2px 14px rgba(0,0,0,.25);
   backdrop-filter: blur(10px);
 
   ion-label h2 {
-    color: #{$dark} !important;
+    color: $white !important;
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
   }
   ion-label p {
-    color: #{$mid} !important;
+    color: rgba(255,255,255,.55) !important;
     font-family: 'DM Sans', sans-serif;
   }
 }
@@ -102,8 +106,8 @@ ion-searchbar {
   width: 52px;
   height: 52px;
   border-radius: 10px;
-  background: #{$surf};
-  border: 1px solid #{$brd-light};
+  background: rgba(58,171,219,.1);
+  border: 1px solid rgba(58,171,219,.22);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,25 +122,25 @@ ion-searchbar {
 
   ion-icon {
     font-size: 1.6rem;
-    color: #{$blue};
+    color: $blue;
   }
 }
 
 .search-footer ion-toolbar {
-  --background: #{$topbar-bg};
-  --color: #{$dark};
-  --border-color: #{$brd-light};
+  --background: rgba(13,42,58,.97);
+  --color: #{$white};
+  --border-color: rgba(58,171,219,.15);
 }
 
 .search-footer {
   .nav-item {
-    color: #{$mid};
+    color: rgba(255,255,255,.35);
     ion-icon { font-size: 1.6rem; }
     span { font-size: 0.75rem; font-weight: 500; }
   }
   .nav-item--active {
-    color: #{$blue};
-    ion-icon { color: #{$blue}; }
-    span { font-weight: 700; color: #{$blue}; }
+    color: $blue;
+    ion-icon { color: $blue; }
+    span { font-weight: 700; color: $blue; }
   }
 }

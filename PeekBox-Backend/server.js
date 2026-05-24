@@ -5,8 +5,6 @@ const jwt = require('jsonwebtoken');
 const os = require('os');
 const path = require('path');
 const db = require('./db');
-const crypto = require('crypto');
-
 
 const app = express();
 const PORT = 3000;
@@ -727,219 +725,30 @@ app.get('/api/cerca', verificaToken, (req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// QR TOKEN & SEGNALAZIONI GUEST
+// QR TOKEN
 // ─────────────────────────────────────────────
 
-app.all('/api/box/:id/qr-token', verificaToken, (req, res) => {
-    if (req.method !== 'GET' && req.method !== 'POST') {
-        return res.status(405).json({ error: "Metodo non consentito." });
-    }
+app.get('/api/box/:id/qr-token', verificaToken, (req, res) => {
     const boxId = req.params.id;
-
-    // Verifica se il box esiste ed appartiene all'utente
-    const sql = `
-        SELECT box.*, armadi.rif_utente
-        FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE box.id = ?
-    `;
-    db.get(sql, [boxId], (err, boxRow) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (!boxRow) return res.status(404).json({ error: "Box non trovata." });
-        if (String(boxRow.rif_utente) !== String(req.user.id)) {
-            return res.status(403).json({ error: "Non autorizzato." });
-        }
-
-        // Cerca se esiste già un token per questo box
-        db.get('SELECT token FROM qr_token WHERE rif_box = ?', [boxId], (errTok, tokRow) => {
-            if (errTok) return res.status(500).json({ error: errTok.message });
-
-            if (tokRow) {
-                return res.json({ token: tokRow.token });
-            } else {
-                // Genera un token UUID sicuro
-                const newToken = crypto.randomUUID();
-                db.run('INSERT INTO qr_token (rif_box, token) VALUES (?, ?)', [boxId, newToken], function(insErr) {
-                    if (insErr) {
-                        return res.status(500).json({ error: insErr.message });
-                    }
-                    return res.json({ token: newToken });
-                });
-            }
-        });
-    });
+    const token = jwt.sign({ box_id: boxId }, SECRET_KEY, { expiresIn: '30d' });
+    res.json({ token });
 });
 
 app.get('/api/scan/:boxId', (req, res) => {
-    const boxId = req.params.boxId;
     const { token } = req.query;
     if (!token) return res.status(400).json({ error: "Token mancante." });
-
-    db.get('SELECT * FROM qr_token WHERE rif_box = ? AND token = ?', [boxId, token], (err, qrRow) => {
-        if (err) return res.status(500).json({ error: err.message });
-
-        const retrieveBox = () => {
-            db.get(
-                `SELECT box.*, armadi.nome as nome_armadio, utenti.username as proprietario 
-                 FROM box 
-                 JOIN armadi ON box.rif_armadio = armadi.id 
-                 JOIN utenti ON armadi.rif_utente = utenti.id
-                 WHERE box.id = ?`,
-                [boxId],
-                (errBox, row) => {
-                    if (errBox || !row) return res.status(404).json({ error: "Box non trovata." });
-                    res.json({ box: row });
-                }
-            );
-        };
-
-        if (qrRow) {
-            retrieveBox();
-        } else {
-            // Fallback a JWT per compatibilità
-            try {
-                const decoded = jwt.verify(token, SECRET_KEY);
-                if (String(decoded.box_id) !== String(boxId)) {
-                    return res.status(403).json({ error: "Token non valido per questa box." });
-                }
-                retrieveBox();
-            } catch (e) {
-                return res.status(403).json({ error: "Token scaduto o non valido." });
-            }
-        }
-    });
-});
-
-// Endpoint pubblico per recuperare info base sul collo per scan.html
-app.get('/api/public/box/:boxId', (req, res) => {
-    const boxId = req.params.boxId;
-    const sql = `
-        SELECT box.id, box.nome, box.descrizione, box.moving_mode, utenti.username as proprietario
-        FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        JOIN utenti ON armadi.rif_utente = utenti.id
-        WHERE box.id = ?
-    `;
-    db.get(sql, [boxId], (err, row) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (!row) return res.status(404).json({ error: "Box non trovata." });
-        res.json({
-            company: row.proprietario,
-            box: {
-                id: row.id,
-                nome: row.nome,
-                descrizione: row.descrizione,
-                moving_mode: row.moving_mode
-            }
-        });
-    });
-});
-
-// Endpoint pubblico per registrare una segnalazione da parte di un ospite (guest)
-app.post('/api/public/segnalazione', (req, res) => {
-    const { box_id, token, nota, gps } = req.body;
-    if (!box_id) return res.status(400).json({ error: "box_id obbligatorio." });
-
-    const procediRegistrazione = () => {
-        const lat = gps ? gps.latitudine : null;
-        const lng = gps ? gps.longitudine : null;
-        const acc = gps ? gps.accuratezza : null;
-        const ipHash = crypto.createHash('sha256').update(req.ip || '').digest('hex');
-
-        db.run(
-            `INSERT INTO segnalazioni_guest (rif_box, latitudine, longitudine, accuratezza, nota, ip_hash, timestamp)
-             VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
-            [box_id, lat, lng, acc, nota, ipHash],
-            function(errSegn) {
-                if (errSegn) return res.status(500).json({ error: errSegn.message });
-                const segnalazioneId = this.lastID;
-
-                const sqlInfo = `
-                    SELECT b.nome as box_nome, b.moving_mode, a.id as armadio_id, a.nome as armadio_nome, a.rif_utente as proprietario_id
-                    FROM box b
-                    JOIN armadi a ON b.rif_armadio = a.id
-                    WHERE b.id = ?
-                `;
-                db.get(sqlInfo, [box_id], (errInfo, boxInfo) => {
-                    if (errInfo || !boxInfo) {
-                        return res.status(201).json({ id: segnalazioneId, message: "Segnalazione registrata." });
-                    }
-
-                    if (gps && boxInfo.moving_mode === 1) {
-                        // Inseriamo in checkpoint_gps
-                        const sqlCheckpoint = `
-                            INSERT INTO checkpoint_gps (rif_box, rif_utente, latitudine, longitudine, accuratezza, label, timestamp)
-                            VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
-                        `;
-                        db.run(sqlCheckpoint, [box_id, boxInfo.proprietario_id, lat, lng, acc, "Rilevamento Guest"], function(errCp) {
-                            if (errCp) console.error("Errore checkpoint guest:", errCp.message);
-                        });
-
-                        // Verifica Geofencing
-                        db.get('SELECT * FROM geofence WHERE rif_armadio = ? AND attivo = 1', [boxInfo.armadio_id], (errGf, gfRow) => {
-                            if (!errGf && gfRow) {
-                                const dist = calcolaDistanza(lat, lng, gfRow.latitudine, gfRow.longitudine);
-                                if (dist > gfRow.raggio_m) {
-                                    const msg = `Anomalia GPS (Segnalazione Guest): la box "${boxInfo.box_nome}" è stata rilevata a ${Math.round(dist)} metri dall'archivio "${boxInfo.armadio_nome}" (limite consentito: ${gfRow.raggio_m}m).`;
-                                    db.run(
-                                        `INSERT INTO notifiche_geofence (rif_armadio, rif_box, messaggio, latitudine, longitudine, timestamp, letto)
-                                         VALUES (?, ?, ?, ?, ?, datetime('now'), 0)`,
-                                        [boxInfo.armadio_id, box_id, msg, lat, lng],
-                                        (errN) => {
-                                            if (errN) console.error("Errore notifica geofence:", errN.message);
-                                        }
-                                    );
-                                }
-							}
-                        });
-                    }
-
-                    res.status(201).json({ id: segnalazioneId, message: "Segnalazione registrata con successo." });
-                });
-            }
-        );
-    };
-
-    if (!token) {
-        return res.status(400).json({ error: "Token mancante." });
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY);
+        if (String(decoded.box_id) !== String(req.params.boxId))
+            return res.status(403).json({ error: "Token non valido per questa box." });
+        db.get('SELECT box.*, armadi.nome as nome_armadio FROM box JOIN armadi ON box.rif_armadio = armadi.id WHERE box.id = ?',
+            [req.params.boxId], (err, row) => {
+                if (err || !row) return res.status(404).json({ error: "Box non trovata." });
+                res.json({ box: row });
+            });
+    } catch (e) {
+        res.status(403).json({ error: "Token scaduto o non valido." });
     }
-
-    db.get('SELECT * FROM qr_token WHERE rif_box = ? AND token = ?', [box_id, token], (err, qrRow) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (qrRow) {
-            procediRegistrazione();
-        } else {
-            // Fallback a JWT
-            try {
-                const decoded = jwt.verify(token, SECRET_KEY);
-                if (String(decoded.box_id) !== String(box_id)) {
-                    return res.status(403).json({ error: "Token non valido per questa box." });
-                }
-                procediRegistrazione();
-            } catch (e) {
-                return res.status(403).json({ error: "Token scaduto o non valido." });
-            }
-        }
-    });
-});
-
-// Endpoint proprietario per leggere le segnalazioni di una box
-app.get('/api/box/:boxId/segnalazioni', verificaToken, (req, res) => {
-    const boxId = req.params.boxId;
-    const sqlCheck = `
-        SELECT box.id FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE box.id = ? AND armadi.rif_utente = ?
-    `;
-    db.get(sqlCheck, [boxId, req.user.id], (err, row) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (!row) return res.status(403).json({ error: "Non autorizzato." });
-
-        db.all('SELECT * FROM segnalazioni_guest WHERE rif_box = ? ORDER BY timestamp DESC', [boxId], (errS, rows) => {
-            if (errS) return res.status(500).json({ error: errS.message });
-            res.json({ segnalazioni: rows || [] });
-        });
-    });
 });
 
 // ─────────────────────────────────────────────
@@ -1002,19 +811,6 @@ app.get('/api/condivisioni/inviate', verificaToken, (req, res) => {
     });
 });
 
-app.get('/api/condivisioni/:armadioId', verificaToken, (req, res) => {
-    const sql = `
-        SELECT c.*, u.username AS ospite_username, u.email AS ospite_email
-        FROM condivisioni_armadio c
-        JOIN utenti u ON c.rif_ospite = u.id
-        WHERE c.rif_armadio = ?
-    `;
-    db.all(sql, [req.params.armadioId], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ condivisioni: rows || [] });
-    });
-});
-
 app.put('/api/condivisioni/:id/accetta', verificaToken, (req, res) => {
     db.get('SELECT * FROM condivisioni_armadio WHERE id = ? AND rif_ospite = ?',
         [req.params.id, req.user.id], (err, row) => {
@@ -1044,248 +840,6 @@ app.delete('/api/condivisioni/:id', verificaToken, (req, res) => {
             if (this.changes === 0) return res.status(404).json({ error: "Condivisione non trovata." });
             res.json({ message: "Condivisione rimossa." });
         });
-});
-
-// ─────────────────────────────────────────────
-// NUOVI ENDPOINT CONDIVISIONI (PER COMPATIBILITÀ FRONTEND)
-// ─────────────────────────────────────────────
-
-app.get('/api/condivisioni/in-attesa/:utenteId', verificaToken, (req, res) => {
-    if (String(req.user.id) !== String(req.params.utenteId)) {
-        return res.status(403).json({ error: "Non autorizzato." });
-    }
-    const sql = `
-        SELECT c.id, c.id AS condivisione_id, a.nome AS armadio_nome, a.nome AS nome_archivio,
-               u.username AS proprietario_username, c.creato_il, c.ruolo
-        FROM condivisioni_armadio c
-        JOIN armadi a ON c.rif_armadio = a.id
-        JOIN utenti u ON c.rif_proprietario = u.id
-        WHERE c.rif_ospite = ? AND c.stato = 'in_attesa'
-        ORDER BY c.creato_il DESC
-    `;
-    db.all(sql, [req.params.utenteId], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ richieste: rows || [] });
-    });
-});
-
-app.get('/api/condivisioni/ricevute/:utenteId', verificaToken, (req, res) => {
-    if (String(req.user.id) !== String(req.params.utenteId)) {
-        return res.status(403).json({ error: "Non autorizzato." });
-    }
-    const sql = `
-        SELECT c.id, c.id AS condivisione_id, c.rif_armadio AS armadio_id, a.nome AS armadio_nome,
-               u.username AS proprietario_username, c.ruolo, c.stato
-        FROM condivisioni_armadio c
-        JOIN armadi a ON c.rif_armadio = a.id
-        JOIN utenti u ON c.rif_proprietario = u.id
-        WHERE c.rif_ospite = ?
-        ORDER BY c.creato_il DESC
-    `;
-    db.all(sql, [req.params.utenteId], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ archivi_condivisi: rows || [] });
-    });
-});
-
-app.patch('/api/condivisioni/:id/accetta', verificaToken, (req, res) => {
-    db.get('SELECT * FROM condivisioni_armadio WHERE id = ? AND rif_ospite = ?',
-        [req.params.id, req.user.id], (err, row) => {
-            if (err || !row) return res.status(404).json({ error: "Condivisione non trovata." });
-            db.run("UPDATE condivisioni_armadio SET stato = 'accettata' WHERE id = ?", [req.params.id], function(runErr) {
-                if (runErr) return res.status(500).json({ error: runErr.message });
-                res.json({ message: "Condivisione accettata!" });
-            });
-        });
-});
-
-app.delete('/api/condivisioni/:id/rifiuta', verificaToken, (req, res) => {
-    db.get('SELECT * FROM condivisioni_armadio WHERE id = ? AND rif_ospite = ?',
-        [req.params.id, req.user.id], (err, row) => {
-            if (err || !row) return res.status(404).json({ error: "Condivisione non trovata." });
-            db.run('DELETE FROM condivisioni_armadio WHERE id = ?', [req.params.id], function(runErr) {
-                if (runErr) return res.status(500).json({ error: runErr.message });
-                res.json({ message: "Condivisione rifiutata ed eliminata." });
-            });
-        });
-});
-
-// ─────────────────────────────────────────────
-// GEOFENCING & GEOLOCALIZZAZIONE
-// ─────────────────────────────────────────────
-
-function calcolaDistanza(lat1, lon1, lat2, lon2) {
-    const R = 6371e3; // Raggio della Terra in metri
-    const phi1 = lat1 * Math.PI / 180;
-    const phi2 = lat2 * Math.PI / 180;
-    const deltaPhi = (lat2 - lat1) * Math.PI / 180;
-    const deltaLambda = (lon2 - lon1) * Math.PI / 180;
-
-    const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
-              Math.cos(phi1) * Math.cos(phi2) *
-              Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c; // Distanza in metri
-}
-
-app.get('/api/geofence/notifiche', verificaToken, (req, res) => {
-    const userId = req.user.id;
-    const sql = `
-        SELECT n.*, a.nome AS nome_archivio, b.nome AS nome_box
-        FROM notifiche_geofence n
-        JOIN armadi a ON n.rif_armadio = a.id
-        LEFT JOIN box b ON n.rif_box = b.id
-        WHERE a.rif_utente = ?
-           OR a.id IN (SELECT rif_armadio FROM condivisioni_armadio WHERE rif_ospite = ? AND stato = 'accettata')
-        ORDER BY n.timestamp DESC
-    `;
-    db.all(sql, [userId, userId], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ notifiche: rows || [] });
-    });
-});
-
-app.get('/api/geofence/:armadioId', verificaToken, (req, res) => {
-    db.get('SELECT * FROM geofence WHERE rif_armadio = ?', [req.params.armadioId], (err, row) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ geofence: row || null });
-    });
-});
-
-app.post('/api/geofence', verificaToken, (req, res) => {
-    const { armadio_id, latitudine, longitudine, raggio_m, attivo } = req.body;
-    if (!armadio_id || latitudine == null || longitudine == null) {
-        return res.status(400).json({ error: "armadio_id, latitudine e longitudine sono obbligatori." });
-    }
-    const raggio = raggio_m != null ? raggio_m : 100;
-    const active = attivo !== undefined ? (attivo ? 1 : 0) : 1;
-
-    db.run(
-        `INSERT OR REPLACE INTO geofence (rif_armadio, latitudine, longitudine, raggio_m, attivo)
-         VALUES (?, ?, ?, ?, ?)`,
-        [armadio_id, latitudine, longitudine, raggio, active],
-        function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ message: "Geofence salvato con successo!", id: this.lastID });
-        }
-    );
-});
-
-app.delete('/api/geofence/:armadioId', verificaToken, (req, res) => {
-    db.run('DELETE FROM geofence WHERE rif_armadio = ?', [req.params.armadioId], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ message: "Geofence rimosso con successo." });
-    });
-});
-
-app.post('/api/geofence/verifica', verificaToken, (req, res) => {
-    const { box_id, latitudine, longitudine } = req.body;
-    if (latitudine == null || longitudine == null) {
-        return res.status(400).json({ error: "Latitudine e longitudine sono obbligatorie." });
-    }
-
-    // Nota: Il parametro box_id nel frontend viene usato sia per box_id che per armadio_id
-    const sql = `
-        SELECT g.*, a.nome AS armadio_nome
-        FROM geofence g
-        JOIN armadi a ON g.rif_armadio = a.id
-        WHERE g.rif_armadio = ? OR g.rif_armadio = (SELECT rif_armadio FROM box WHERE id = ?)
-    `;
-
-    db.get(sql, [box_id, box_id], (err, gf) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (!gf) {
-            return res.json({ sicuro: true, message: "Nessun perimetro configurato per questo spazio." });
-        }
-        if (!gf.attivo) {
-            return res.json({ sicuro: true, message: "Perimetro configurato ma disattivato." });
-        }
-
-        const dist = calcolaDistanza(latitudine, longitudine, gf.latitudine, gf.longitudine);
-        const sicuro = dist <= gf.raggio_m;
-
-        res.json({
-            sicuro,
-            distanza_m: Math.round(dist),
-            raggio_m: gf.raggio_m,
-            nome_armadio: gf.armadio_nome,
-            centro: { latitudine: gf.latitudine, longitudine: gf.longitudine }
-        });
-    });
-});
-
-app.post('/api/checkpoint/sicuro', verificaToken, (req, res) => {
-    const { rif_box, latitudine, longitudine, accuratezza, label } = req.body;
-    if (!rif_box || latitudine == null || longitudine == null) {
-        return res.status(400).json({ error: "rif_box, latitudine e longitudine sono obbligatori." });
-    }
-
-    // 1. Salva il checkpoint normalmente
-    const sqlInsert = `INSERT INTO checkpoint_gps (rif_box, rif_utente, latitudine, longitudine, accuratezza, label, timestamp)
-                       VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`;
-    db.run(sqlInsert, [rif_box, req.user.id, latitudine, longitudine, accuratezza || null, label || null], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        const checkpointId = this.lastID;
-
-        // 2. Verifica se il checkpoint viola il Geofence dell'armadio di appartenenza
-        const sqlCheck = `
-            SELECT b.nome AS box_nome, a.id AS armadio_id, a.nome AS armadio_nome,
-                   g.latitudine AS gf_lat, g.longitudine AS gf_lng, g.raggio_m AS gf_raggio, g.attivo AS gf_attivo
-            FROM box b
-            JOIN armadi a ON b.rif_armadio = a.id
-            LEFT JOIN geofence g ON g.rif_armadio = a.id
-            WHERE b.id = ?
-        `;
-
-        db.get(sqlCheck, [rif_box], (errGf, row) => {
-            if (errGf || !row || !row.gf_lat || !row.gf_attivo) {
-                // Nessun geofence attivo configurato
-                return res.status(201).json({ id: checkpointId, sicuro: true, message: "Checkpoint salvato. Nessun geofence attivo." });
-            }
-
-            const dist = calcolaDistanza(latitudine, longitudine, row.gf_lat, row.gf_lng);
-            const sicuro = dist <= row.gf_raggio;
-
-            if (!sicuro) {
-                // Crea una notifica di anomalia geofence
-                const msg = `Anomalia GPS: la box "${row.box_nome}" è stata rilevata a ${Math.round(dist)} metri dall'archivio "${row.armadio_nome}" (limite consentito: ${row.gf_raggio}m).`;
-                const sqlNotif = `INSERT INTO notifiche_geofence (rif_armadio, rif_box, messaggio, latitudine, longitudine, timestamp, letto)
-                                  VALUES (?, ?, ?, ?, ?, datetime('now'), 0)`;
-                db.run(sqlNotif, [row.armadio_id, rif_box, msg, latitudine, longitudine], function(errN) {
-                    if (errN) console.error("❌ Errore salvataggio notifica geofence:", errN.message);
-                });
-            }
-
-            res.status(201).json({
-                id: checkpointId,
-                sicuro,
-                distanza_m: Math.round(dist),
-                raggio_m: row.gf_raggio,
-                message: sicuro ? "Checkpoint salvato correttamente." : "Anomalia: box all'esterno del perimetro!"
-            });
-        });
-    });
-});
-
-// ─────────────────────────────────────────────
-// NOTIFICHE GEOFENCE
-// ─────────────────────────────────────────────
-
-app.patch('/api/geofence/notifiche/:id/letta', verificaToken, (req, res) => {
-    const sql = `UPDATE notifiche_geofence SET letto = 1 WHERE id = ?`;
-    db.run(sql, [req.params.id], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ message: "Notifica segnata come letta." });
-    });
-});
-
-app.delete('/api/geofence/notifiche/:id', verificaToken, (req, res) => {
-    const sql = `DELETE FROM notifiche_geofence WHERE id = ?`;
-    db.run(sql, [req.params.id], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ message: "Notifica eliminata." });
-    });
 });
 
 // ─────────────────────────────────────────────

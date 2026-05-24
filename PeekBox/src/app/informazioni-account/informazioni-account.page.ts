@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 import { addIcons } from 'ionicons';
 import {
   personOutline, mailOutline, banOutline, shieldCheckmarkOutline,
@@ -40,7 +39,6 @@ export class InformazioniAccountPage implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private dbService: DatabaseService,
-    private navHistory: NavigationHistoryService,
   ) {
     addIcons({
       personOutline, mailOutline, banOutline, shieldCheckmarkOutline,
@@ -121,7 +119,4 @@ export class InformazioniAccountPage implements OnInit {
     });
     await toast.present();
   }
-
-  navTo(route: string) { this.navHistory.navTo(route); }
-
 }

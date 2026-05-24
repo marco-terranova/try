@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { IonButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline } from 'ionicons/icons';
-import { NavigationHistoryService } from '../../services/navigation-history';
 
 @Component({
   selector: 'app-back-button',
@@ -18,11 +18,15 @@ import { NavigationHistoryService } from '../../services/navigation-history';
 export class BackButtonComponent {
   @Input() fallbackRoute = '/home';
 
-  constructor(private navHistory: NavigationHistoryService) {
+  constructor(private location: Location, private router: Router) {
     addIcons({ arrowBackOutline });
   }
 
   goBack() {
-    this.navHistory.back(this.fallbackRoute);
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigateByUrl(this.fallbackRoute);
+    }
   }
 }

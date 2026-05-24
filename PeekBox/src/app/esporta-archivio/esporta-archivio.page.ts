@@ -16,7 +16,6 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-esporta-archivio',
@@ -42,7 +41,6 @@ export class EsportaArchivioPage implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private dbService: DatabaseService,
-    private navHistory: NavigationHistoryService,
   ) {
     addIcons({
       cloudDownloadOutline, filterCircleOutline, documentTextOutline,
@@ -313,6 +311,4 @@ export class EsportaArchivioPage implements OnInit {
   vaiHome() {
     this.router.navigateByUrl('/home', { replaceUrl: true });
   }
-  navTo(route: string) { this.navHistory.navTo(route); }
-
 }
