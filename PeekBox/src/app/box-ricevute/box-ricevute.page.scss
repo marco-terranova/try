@@ -14,8 +14,10 @@ $brand-dark:   $blue-dk;
 $radius-card:  20px;
 $shadow-card:  0 4px 20px rgba(0,0,0,0.06);
 
+// FIX: rimuove il contain che blocca position:fixed del floating-nav
 :host {
   display: block;
+  contain: layout !important;
 }
 
 // ─── Toolbar & Header ─────────────────────────────────────
@@ -45,10 +47,16 @@ ion-toolbar.peek-toolbar {
   align-items: center;
   gap: 10px;
 
+  // Logo unificato — stessa dimensione di home/area-personale
   .header-logo {
     height: 32px;
     width: auto;
     object-fit: contain;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+
+    &:hover { opacity: 0.75; }
+    &:active { opacity: 0.55; }
   }
 }
 

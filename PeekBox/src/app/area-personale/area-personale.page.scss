@@ -28,10 +28,16 @@ ion-content {
   display: flex;
   align-items: center;
 
+  // Logo unificato — stessa dimensione e comportamento di home/box-ricevute
   .top-left-logo {
-    height: 35px;
+    height: 32px;
     width: auto;
     object-fit: contain;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+
+    &:hover  { opacity: 0.75; }
+    &:active { opacity: 0.55; }
   }
 }
 
@@ -46,7 +52,7 @@ ion-content {
 .profile-layout {
   display: flex;
   gap: 32px;
-  align-items: stretch;  // ← le due colonne pareggiano l'altezza
+  align-items: stretch;
   margin-top: 32px;
 
   @media (max-width: 900px) {
@@ -190,7 +196,7 @@ ion-content {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  margin-top: auto;  // ← spinge il logout in fondo alla sidebar
+  margin-top: auto;
   padding: 13px 20px;
   border: 2px solid rgba(220,53,69,0.2);
   border-radius: 50px;
@@ -244,7 +250,6 @@ ion-content {
     border: 1.5px solid rgba($brand-dark, 0.15);
   }
 
-  // Placeholder card (non cliccabile, desaturata)
   &--placeholder {
     cursor: default;
     opacity: 0.45;
@@ -295,7 +300,6 @@ ion-content {
 }
 
 // === SEZIONE BOX ELIMINATE ===
-// === BOX ELIMINATE — NUOVO LAYOUT FLOATING ===
 .elim-page-wrapper {
   display: flex;
   flex-direction: column;
@@ -348,7 +352,6 @@ ion-content {
       padding-right: 10px;
       flex: 1;
 
-      // Scrollbar sottile e stilosa
       &::-webkit-scrollbar { width: 4px; }
       &::-webkit-scrollbar-track { background: transparent; }
       &::-webkit-scrollbar-thumb {

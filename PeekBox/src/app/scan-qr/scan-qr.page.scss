@@ -1,446 +1,425 @@
 @import '../../theme/variables';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&display=swap');
 
-$bg-saas:    $page;
-$dark-text:  $dark;
-$slate-gray: $mid;
-$brand-blue: $blue;
-$brand-green:$green;
+$accent-blue:  #3AABDB;
+$accent-green: #7DC740;
+$text-primary: #15425C;
+$text-muted:   #64748B;
+$bg-card:      #ffffff;
+$bg-page:      #F4F7FA;
+$border-light: rgba(58,171,219,0.12);
+$shadow-card:  0 4px 20px rgba(15,23,42,0.06);
 
-ion-content.bg-light-saas {
-  --background: #{$bg-saas} !important;
+:host { display: block; }
+
+// Fix Ionic contain per position:fixed
+.ion-page { contain: layout !important; }
+
+ion-content {
+  --background: #{$bg-page};
+}
+
+.bg-light-saas {
+  --background: #{$bg-page};
 }
 
 .page-wrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 15px 24px 110px 24px;
-  box-sizing: border-box;
+  padding: 0 0 24px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
+// ── Top Bar ─────────────────────────────────────────────────
 .top-compact-bar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  padding: 14px 20px 10px;
+  gap: 10px;
+}
 
-  .logo-group .logo-peek {
+.logo-group {
+  // Logo unificato: stessa altezza e comportamento di home/area-personale
+  .logo-peek {
     height: 32px;
     width: auto;
     object-fit: contain;
-  }
+    cursor: pointer;
+    transition: opacity 0.2s ease;
 
-  .title-group {
-    text-align: center;
-
-    h2 {
-      font-size: 1.35rem;
-      font-weight: 900;
-      margin: 0;
-      color: #{$dark-text};
-    }
-
-    p {
-      font-size: 0.8rem;
-      color: #{$slate-gray};
-      margin: 1px 0 0 0;
-    }
-  }
-
-  .avatar-compact {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: white;
-    display: grid;
-    place-items: center;
-    color: #{$brand-blue};
-    font-size: 1.3rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    &:hover  { opacity: 0.75; }
+    &:active { opacity: 0.55; }
   }
 }
 
+.title-group {
+  flex: 1;
+  text-align: center;
+
+  h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: $text-primary;
+    margin: 0 0 2px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;
+    color: $text-muted;
+    margin: 0;
+  }
+}
+
+.profile-compact {
+  .avatar-compact {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba($accent-blue, 0.12);
+    color: $accent-blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid rgba($accent-blue, 0.25);
+
+    ion-icon { font-size: 1.1rem; }
+  }
+}
+
+// ── Scan Grid ───────────────────────────────────────────────
 .scan-plancia-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  width: 100%;
-  max-width: 1150px;
-  margin: 0 auto;
-  flex-grow: 1;
-  max-height: calc(100vh - 185px);
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 0 16px;
+
+  @media (min-width: 700px) {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
+// ── Quadrante Card ──────────────────────────────────────────
 .quadrante-card {
-  background: $white;
+  background: $bg-card;
   border-radius: 24px;
-  padding: 28px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
-  border: 1px solid $brd-light;
+  padding: 20px;
+  box-shadow: $shadow-card;
+  border: 1px solid $border-light;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  box-sizing: border-box;
+  gap: 16px;
 }
 
 .quadrante-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 10px;
 
   h3 {
-    font-size: 1.1rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
     font-weight: 800;
-    color: #{$dark-text};
+    color: $text-primary;
     margin: 0;
   }
 }
 
 .icon-cerchio {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  font-size: 1.25rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon { font-size: 1.15rem; }
 
   &.verde {
-    background: rgba(125, 199, 64, 0.1);
-    color: #{$brand-green};
+    background: rgba($accent-green, 0.12);
+    color: $accent-green;
   }
 
   &.azzurro {
-    background: rgba(58, 171, 219, 0.1);
-    color: #{$brand-blue};
+    background: rgba($accent-blue, 0.12);
+    color: $accent-blue;
   }
 }
 
-/* Contenitore fotocamera: bordo scuro, occupa lo spazio disponibile */
+// ── Camera Preview ──────────────────────────────────────────
 .camera-preview-container {
-  flex-grow: 1;
-  background: $dark-text;
-  border-radius: 20px;
   position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 18px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 16px;
-  min-height: 200px;
+  background: #0F172A;
+  border: 1px solid $border-light;
 }
 
-/* Video reale: riempie tutto il container mantenendo aspect ratio */
 .camera-video-stream {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 20px;
 
-  &.hidden {
-    display: none;
+  &.hidden { display: none; }
+}
+
+.hidden { display: none !important; }
+
+.scanner-target-box {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+
+  .laser-line-anim {
+    position: absolute;
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $accent-green, transparent);
+    border-radius: 2px;
+    animation: laserScan 2s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba($accent-green, 0.6);
   }
 }
 
-.hidden {
-  display: none !important;
+@keyframes laserScan {
+  0%   { top: 20%; }
+  50%  { top: 78%; }
+  100% { top: 20%; }
 }
 
-.camera-off-placeholder {
-  text-align: center;
-  color: $slate-gray;
+.camera-off-placeholder,
+.camera-error-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgba(255,255,255,0.5);
 
-  ion-icon {
-    font-size: 3rem;
-    margin-bottom: 8px;
-    opacity: 0.6;
-  }
+  ion-icon { font-size: 2.5rem; }
 
   p {
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    text-align: center;
+    max-width: 80%;
     margin: 0;
   }
 }
 
 .camera-error-placeholder {
-  text-align: center;
-  color: #EF4444;
-  padding: 16px;
-
-  ion-icon {
-    font-size: 2.4rem;
-    margin-bottom: 8px;
-  }
-
-  p {
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin: 0;
-    line-height: 1.4;
-  }
+  color: rgba(239,68,68,0.8);
 }
 
-/* Mirino QR sovrapposto al video */
-.scanner-target-box {
-  width: 180px;
-  height: 180px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 5;
-  background:
-    linear-gradient(to right, #{$brand-green} 4px, transparent 4px) 0 0,
-    linear-gradient(to bottom, #{$brand-green} 4px, transparent 4px) 0 0,
-    linear-gradient(to left, #{$brand-green} 4px, transparent 4px) 100% 0,
-    linear-gradient(to bottom, #{$brand-green} 4px, transparent 4px) 100% 0,
-    linear-gradient(to right, #{$brand-green} 4px, transparent 4px) 0 100%,
-    linear-gradient(to top, #{$brand-green} 4px, transparent 4px) 0 100%,
-    linear-gradient(to left, #{$brand-green} 4px, transparent 4px) 100% 100%,
-    linear-gradient(to top, #{$brand-green} 4px, transparent 4px) 100% 100%;
-  background-repeat: no-repeat;
-  background-size: 30px 30px;
-}
-
-.laser-line-anim {
-  width: 100%;
-  height: 2px;
-  background: #{$brand-green};
-  box-shadow: 0 0 12px 4px rgba(125, 199, 64, 0.4);
-  position: absolute;
-  top: 0;
-  animation: movingLaser 2s infinite linear;
-}
-
-@keyframes movingLaser {
-  0%   { top: 0; }
-  50%  { top: 100%; }
-  100% { top: 0; }
-}
-
+// ── Toggle Fotocamera ────────────────────────────────────────
 .btn-fotocamera-toggle {
-  background: $dark-text;
-  color: white;
-  padding: 15px;
-  border-radius: 16px;
-  border: none;
-  font-weight: 700;
-  font-size: 0.95rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  cursor: pointer;
-  transition: 0.2s;
   width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba($accent-blue, 0.1);
+  color: $accent-blue;
+  transition: all 0.2s;
 
-  &:hover {
-    background: #1E293B;
-  }
+  ion-icon { font-size: 1.2rem; }
 
   &.active {
-    background: #EF4444;
+    background: rgba(239,68,68,0.08);
+    color: #EF4444;
   }
+
+  &:hover { filter: brightness(0.95); }
+  &:active { transform: scale(0.97); }
 }
 
+// ── Utility Actions (Controls Card) ─────────────────────────
 .utility-actions-layout {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  flex-grow: 1;
+  gap: 16px;
 }
 
 .quick-tools-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-
-  .tool-btn-premium {
-    background: $bg-saas;
-    border: 1px solid $brd-light;
-    border-radius: 16px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: #{$dark-text};
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: 0.2s;
-
-    ion-icon {
-      font-size: 1.4rem;
-      color: #{$brand-blue};
-    }
-
-    &:hover:not(:disabled) {
-      background: white;
-      border-color: #{$brand-blue};
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
+  display: flex;
+  gap: 10px;
 }
 
+.tool-btn-premium {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: none;
+  background: rgba($accent-blue, 0.08);
+  color: $accent-blue;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  ion-icon { font-size: 1rem; }
+
+  &:hover {
+    background: $accent-blue;
+    color: #fff;
+  }
+  &:active { transform: scale(0.96); }
+}
+
+// ── Manual Input ────────────────────────────────────────────
 .manual-input-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+}
 
-  .section-mini-title {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: #{$slate-gray};
-    margin-left: 4px;
-  }
+.section-mini-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .custom-input-group-premium {
   display: flex;
   align-items: center;
-  background: $bg-saas;
-  border: 1px solid $brd-light;
-  border-radius: 16px;
-  padding: 6px 6px 6px 16px;
+  background: rgba($accent-blue, 0.04);
+  border: 1px solid $border-light;
+  border-radius: 12px;
+  padding: 4px 4px 4px 12px;
+  gap: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: $accent-blue;
+    box-shadow: 0 4px 12px rgba($accent-blue, 0.08);
+  }
 
   .prefix-icon {
-    font-size: 1.25rem;
-    color: $slate-gray;
-    margin-right: 12px;
+    color: $text-muted;
+    font-size: 1rem;
+    flex-shrink: 0;
   }
 
   input {
+    flex: 1;
     border: none;
     background: transparent;
-    flex-grow: 1;
-    min-width: 0;
-    font-size: 0.95rem;
-    color: #{$dark-text};
     outline: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    color: $text-primary;
+    padding: 8px 0;
+
+    &::placeholder { color: rgba($text-muted, 0.7); }
   }
 
   .btn-submit-code-green {
-    background: #{$brand-green};
-    color: white;
+    background: linear-gradient(135deg, #A8FF78, $accent-green);
+    color: #fff;
     border: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    font-size: 1.2rem;
+    border-radius: 10px;
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(125, 199, 64, 0.25);
-    transition: 0.2s;
     flex-shrink: 0;
+    transition: all 0.2s;
+
+    ion-icon { font-size: 1.1rem; }
 
     &:disabled {
-      background: #CBD5E1;
-      box-shadow: none;
+      opacity: 0.4;
       cursor: not-allowed;
     }
+    &:not(:disabled):hover { transform: scale(1.08); }
+    &:not(:disabled):active { transform: scale(0.94); }
   }
 }
 
+// ── Info Footer ─────────────────────────────────────────────
 .info-footer-box {
-  margin-top: auto;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  background: $bg-saas;
-  padding: 12px 16px;
-  border-radius: 14px;
-  border: 1px solid $brd-light;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+  background: rgba($accent-green, 0.06);
+  border-radius: 12px;
+  border: 1px solid rgba($accent-green, 0.12);
+
+  ion-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .color-green { color: $accent-green; }
 
   p {
-    font-size: 0.8rem;
-    color: #{$slate-gray};
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.75rem;
+    color: $text-muted;
     margin: 0;
-    line-height: 1.4;
-  }
-
-  .color-green {
-    color: #{$brand-green};
-    font-size: 1.2rem;
-    flex-shrink: 0;
+    line-height: 1.45;
   }
 }
 
+// ── Tab Bar (footer) ────────────────────────────────────────
 .custom-tab-bar {
-  --background: #{$white};
-  border-top: 1px solid $brd-light;
-  padding-bottom: 5px;
-}
+  --background: rgba(255,255,255,0.9);
+  --border: none;
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba($accent-blue, 0.08);
+  height: 60px;
 
-.add-btn-circle {
-  background: #{$brand-blue};
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  color: white;
-  font-size: 1.8rem;
-  transform: translateY(-10px);
-  box-shadow: 0 4px 10px rgba(58, 171, 219, 0.3);
-}
+  ion-tab-button {
+    --color: #{$text-muted};
+    --color-selected: #{$accent-blue};
 
-.tab-selected {
-  color: #{$brand-blue} !important;
-}
-
-@media (max-width: 760px) {
-  .page-wrapper {
-    padding: 10px 14px 96px;
-  }
-
-  .top-compact-bar {
-    margin-bottom: 12px;
-
-    .logo-group .logo-peek {
-      height: 26px;
+    &.tab-selected {
+      --color: #{$accent-blue};
     }
-
-    .title-group h2 { font-size: 1rem; }
-    .title-group p   { display: none; }
   }
 
-  .scan-plancia-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    max-height: calc(100vh - 150px);
-  }
+  .add-button-tab {
+    --color: #{$accent-green};
 
-  .quadrante-card {
-    border-radius: 18px;
-    padding: 16px;
-  }
+    .add-btn-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #A8FF78, $accent-green);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba($accent-green, 0.35);
+      margin-bottom: 4px;
 
-  .quadrante-header {
-    margin-bottom: 12px;
-    h3 { font-size: 0.98rem; }
+      ion-icon { font-size: 1.6rem; }
+    }
   }
-
-  .camera-preview-container {
-    min-height: 220px;
-  }
-
-  .scanner-target-box {
-    width: 140px;
-    height: 140px;
-  }
-
-  .utility-actions-layout { gap: 14px; }
-  .quick-tools-row        { gap: 10px; }
 }

@@ -1,219 +1,130 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
-import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonButton, IonIcon, IonFooter,
-} from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
+import { SupabaseService } from '../services/supabase.service';
 import { AlertController } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import {
-  archiveOutline, cubeOutline, timeOutline, logOutOutline,
-  chevronForwardOutline, arrowBackOutline, trashOutline,
-  informationCircleOutline, personCircleOutline, home, search,
-  closeOutline, checkmarkCircleOutline, shieldCheckmarkOutline,
-  locationOutline, shareSocialOutline, add, qrCodeOutline,
-  person,
-} from 'ionicons/icons';
-
-import { DatabaseService } from '../services/database';
-import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
   selector: 'app-area-personale',
-  templateUrl: 'area-personale.page.html',
-  styleUrls: ['area-personale.page.scss'],
-  standalone: true,
-  providers: [DatePipe],
-  imports: [
-    CommonModule, RouterModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-    IonButton, IonIcon, IonFooter,
-  ],
+  templateUrl: './area-personale.page.html',
+  styleUrls: ['./area-personale.page.scss'],
 })
 export class AreaPersonalePage implements OnInit {
 
-  // Dati utente
-  utenteId: string | null = null;
   nomeUtente: string = '';
   emailUtente: string = '';
   isAdmin: boolean = false;
-
-  // Statistiche
   totaleBox: number = 0;
   totaleArticoli: number = 0;
 
-  // Stato sezione
   vistaCorrente: 'profilo' | 'box-eliminate' = 'profilo';
 
   // Box eliminate
   boxEliminate: any[] = [];
-  isLoadingEliminate = false;
+  isLoadingEliminate: boolean = false;
 
   constructor(
-    private alertCtrl: AlertController,
-    private dbService: DatabaseService,
     private router: Router,
-    private datePipe: DatePipe,
-    private navHistory: NavigationHistoryService
-  ) {
-    addIcons({
-      'archive-outline': archiveOutline,
-      'cube-outline': cubeOutline,
-      'time-outline': timeOutline,
-      'log-out-outline': logOutOutline,
-      'chevron-forward-outline': chevronForwardOutline,
-      'arrow-back-outline': arrowBackOutline,
-      'trash-outline': trashOutline,
-      'information-circle-outline': informationCircleOutline,
-      'person-circle-outline': personCircleOutline,
-      'home': home,
-      'search': search,
-      'close-outline': closeOutline,
-      'checkmark-circle-outline': checkmarkCircleOutline,
-      'shield-checkmark-outline': shieldCheckmarkOutline,
-      'location-outline': locationOutline,
-      'share-social-outline': shareSocialOutline,
-      'add': add,
-      'qr-code-outline': qrCodeOutline,
-      'person': person
-    });
+    private navCtrl: NavController,
+    private supabase: SupabaseService,
+    private alertCtrl: AlertController
+  ) {}
+
+  async ngOnInit() {
+    await this.caricaProfilo();
   }
 
-  ngOnInit() {}
+  async caricaProfilo() {
+    try {
+      const user = await this.supabase.getCurrentUser();
+      if (!user) { this.router.navigate(['/login']); return; }
 
-  ionViewWillEnter() {
-    this.utenteId = localStorage.getItem('utente_id');
-    this.nomeUtente = (localStorage.getItem('utente_nome') || '').toUpperCase();
-    this.emailUtente = localStorage.getItem('utente_email') || '';
-    this.isAdmin = localStorage.getItem('is_admin') === '1';
+      this.emailUtente = user.email || '';
+      const { data: profilo } = await this.supabase.client
+        .from('profili')
+        .select('nome, ruolo')
+        .eq('id', user.id)
+        .single();
 
-    if (this.utenteId) {
-      this.caricaStatistiche(this.utenteId);
-    }
+      if (profilo) {
+        this.nomeUtente = profilo.nome || '';
+        this.isAdmin = profilo.ruolo === 'admin';
+      }
 
-    this.vistaCorrente = 'profilo';
-  }
+      const { count: nBox } = await this.supabase.client
+        .from('box')
+        .select('id', { count: 'exact', head: true })
+        .eq('proprietario_id', user.id)
+        .is('eliminato_il', null);
+      this.totaleBox = nBox || 0;
 
-  // =====================================================
-  // CARICAMENTO DATI
-  // =====================================================
+      const { count: nArt } = await this.supabase.client
+        .from('oggetti')
+        .select('id', { count: 'exact', head: true })
+        .eq('proprietario_id', user.id);
+      this.totaleArticoli = nArt || 0;
 
-  caricaStatistiche(idUtente: string) {
-    this.dbService.getBox(idUtente).subscribe({
-      next: (res: any) => {
-        const box: any[] = res.box || [];
-        this.totaleBox = box.length;
-        this.totaleArticoli = box.reduce(
-          (acc: number, b: any) => acc + (b.num_oggetti || 0), 0
-        );
-      },
-      error: () => {}
-    });
-  }
-
-  apriBoxEliminate() {
-    this.vistaCorrente = 'box-eliminate';
-    this.isLoadingEliminate = true;
-    this.boxEliminate = [];
-
-    if (this.utenteId) {
-      this.dbService.getBoxEliminate(this.utenteId).subscribe({
-        next: (res: any) => {
-          const trentaMs = 30 * 24 * 60 * 60 * 1000;
-          const ora = Date.now();
-          this.boxEliminate = (res.box_eliminate || []).filter((b: any) => {
-            const diff = ora - new Date(b.data_eliminazione).getTime();
-            return diff <= trentaMs;
-          });
-          this.isLoadingEliminate = false;
-        },
-        error: () => { this.isLoadingEliminate = false; }
-      });
+    } catch (e) {
+      console.error('Errore caricaProfilo', e);
     }
   }
 
-  tornaAlProfilo() {
-    if (this.vistaCorrente !== 'profilo') {
-      // Se siamo in un sottomodulo (es. box-eliminate), torna alla vista principale del profilo
-      this.vistaCorrente = 'profilo';
-    } else {
-      // Se siamo già nella main view, vai alla Home pulendo la history
-      // replaceUrl: true evita loop col tasto indietro e sincronizza l'URL
-      this.router.navigateByUrl('/home', { replaceUrl: true });
-    }
+  navTo(path: string) {
+    this.navCtrl.navigateForward(path);
   }
 
-  // =====================================================
-  // UTILITY
-  // =====================================================
-
-  /** Giorni rimasti prima della rimozione definitiva */
-  giorniRimasti(dataEliminazione: string): number {
-    const diff = Date.now() - new Date(dataEliminazione).getTime();
-    const giorniPassati = Math.floor(diff / (1000 * 60 * 60 * 24));
-    return Math.max(0, 30 - giorniPassati);
+  navForward(path: string) {
+    this.navCtrl.navigateForward(path);
   }
 
-  /** Percentuale del tempo trascorso (per la barra progresso) */
-  percentualeScadenza(dataEliminazione: string): number {
-    const diff = Date.now() - new Date(dataEliminazione).getTime();
-    const giorniPassati = diff / (1000 * 60 * 60 * 24);
-    return Math.min(100, Math.round((giorniPassati / 30) * 100));
+  /** Logo cliccabile: torna alla home */
+  navBack() {
+    this.navCtrl.navigateBack('/home');
   }
 
-  /** Classe colore badge in base ai giorni rimasti */
-  badgeClass(dataEliminazione: string): string {
-    const gg = this.giorniRimasti(dataEliminazione);
-    if (gg <= 5) return 'badge--red';
-    if (gg <= 10) return 'badge--amber';
-    return 'badge--blue';
+  vaiHome() {
+    this.navCtrl.navigateBack('/home');
   }
 
-  iniziale(): string {
-    return this.nomeUtente.charAt(0) || '?';
+  vaiAdmin() {
+    this.navCtrl.navigateForward('/admin');
   }
-
-  // =====================================================
-  // LOGOUT
-  // =====================================================
 
   async confermaLogout() {
     const alert = await this.alertCtrl.create({
-      cssClass: 'peekbox-alert',
-      header: 'Logout',
+      header: 'Conferma Logout',
       message: 'Sei sicuro di voler uscire dal tuo account?',
       buttons: [
         { text: 'Annulla', role: 'cancel' },
-        { text: 'Esci', role: 'destructive', handler: () => this.eseguiLogout() }
+        {
+          text: 'Esci',
+          role: 'destructive',
+          handler: async () => {
+            await this.supabase.signOut();
+            this.router.navigate(['/login']);
+          }
+        }
       ]
     });
     await alert.present();
   }
 
-  eseguiLogout() {
-    localStorage.clear();
-    this.navHistory.clearHistory();
-    this.router.navigateByUrl('/login', { replaceUrl: true });
+  badgeClass(dataEl: string): string {
+    const giorni = this.giorniRimasti(dataEl);
+    if (giorni > 15) return 'badge--blue';
+    if (giorni > 7)  return 'badge--amber';
+    return 'badge--red';
   }
 
-  // =====================================================
-  // NAVIGAZIONE NAVBAR
-  // =====================================================
-
-  vaiHome() {
-    this.router.navigateByUrl('/home', { replaceUrl: true });
+  giorniRimasti(dataEl: string): number {
+    const scadenza = new Date(dataEl);
+    scadenza.setDate(scadenza.getDate() + 30);
+    const diff = scadenza.getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / 86400000));
   }
 
-  vaiSearch() {
-    this.router.navigateByUrl('/search', { replaceUrl: true });
+  percentualeScadenza(dataEl: string): number {
+    const giorni = this.giorniRimasti(dataEl);
+    return Math.round((giorni / 30) * 100);
   }
-
-  vaiAdmin() {
-    this.router.navigateByUrl('/admin', { replaceUrl: true });
-  }
-  navTo(route: string) { this.navHistory.navTo(route); }
-
-  navForward(route: string) { this.router.navigateByUrl(route); }
-
 }
