@@ -1349,8 +1349,6 @@ app.get('/api/admin/utenti', verificaAdmin, (req, res) => {
         res.json({ utenti: rows });
     });
 });
-});
-});
 
 app.get('/api/admin/stats', verificaAdmin, (req, res) => {
     db.get('SELECT COUNT(*) as tot_utenti FROM utenti', [], (err1, u) => {
