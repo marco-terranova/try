@@ -8,7 +8,7 @@ import { addIcons } from 'ionicons';
 import {
   cloudDownloadOutline, filterCircleOutline, documentTextOutline,
   documentOutline, gridOutline, codeSlashOutline, sparkles,
-  homeOutline, shareSocialOutline, addOutline, qrCodeOutline,
+  homeOutline, shareSocialOutline, addOutline, qrCodeOutline, chatbubblesOutline,
   home, add, search, person
 } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
@@ -55,6 +55,7 @@ export class EsportaArchivioPage implements OnInit {
       'sparkles': sparkles,
       'home-outline': homeOutline,
       'share-social-outline': shareSocialOutline,
+      'chatbubbles-outline': chatbubblesOutline,
       'add-outline': addOutline,
       'qr-code-outline': qrCodeOutline,
       'home': home,

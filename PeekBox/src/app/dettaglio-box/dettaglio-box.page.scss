@@ -99,14 +99,19 @@ ion-content {
 .main-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 16px;
   display: grid;
-  grid-template-columns: 1fr 1fr; // Simmetria perfetta
+  grid-template-columns: 1fr 1fr;
   gap: 24px;
 
+  @media (min-width: 768px) {
+    padding: 20px 24px;
+  }
+  @media (min-width: 1024px) {
+    padding: 20px 40px;
+  }
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
-    padding: 16px;
   }
 }
 

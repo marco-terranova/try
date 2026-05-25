@@ -3,7 +3,7 @@ import {
   getElement,
   h,
   registerInstance
-} from "./chunk-OZ4OQQLJ.js";
+} from "./chunk-FZ2KBQUE.js";
 import "./chunk-QXFS4N4X.js";
 
 // node_modules/@ionic/pwa-elements/dist/esm-es5/pwa-camera-modal-instance.entry.js

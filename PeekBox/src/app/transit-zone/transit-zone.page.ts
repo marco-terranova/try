@@ -8,7 +8,7 @@ import {
 import { ToastController, ActionSheetController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
-  home, add, qrCodeOutline, shareSocialOutline,
+  home, add, qrCodeOutline, shareSocialOutline, chatbubblesOutline,
   swapHorizontalOutline, archiveOutline, checkmarkCircleOutline,
   arrowForwardOutline, downloadOutline, documentTextOutline,
   cubeOutline, chevronDownOutline, arrowDownCircleOutline,
@@ -72,6 +72,7 @@ export class TransitZonePage implements OnInit, OnDestroy {
       'add': add,
       'qr-code-outline': qrCodeOutline,
       'share-social-outline': shareSocialOutline,
+      'chatbubbles-outline': chatbubblesOutline,
       'swap-horizontal-outline': swapHorizontalOutline,
       'archive-outline': archiveOutline,
       'checkmark-circle-outline': checkmarkCircleOutline,

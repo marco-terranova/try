@@ -80,6 +80,8 @@ ion-content {
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 // ═══════════════════════════════════════════════
@@ -401,8 +403,6 @@ ion-content {
   }
   .page-wrapper {
     padding: 18px 24px 24px;
-    max-width: 720px;
-    margin: 0 auto;
   }
   .add-space-row {
     max-width: 600px;
@@ -416,8 +416,6 @@ ion-content {
   }
   .page-wrapper {
     padding: 20px 40px 28px;
-    max-width: 900px;
-    margin: 0 auto;
   }
   .add-space-row {
     max-width: 700px;

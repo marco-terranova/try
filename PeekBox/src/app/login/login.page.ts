@@ -6,7 +6,7 @@ import {
   AlertController
 } from '@ionic/angular/standalone';
 import { RouterModule, Router } from '@angular/router';
-import { switchMap, catchError, EMPTY, of } from 'rxjs';
+import { switchMap, catchError, EMPTY } from 'rxjs';
 import { DatabaseService } from '../services/database';
 import { LoginResponse, PendingResponse } from '../../types/models';
 
@@ -64,36 +64,11 @@ export class LoginPage implements OnInit {
       })
     ).subscribe((res: PendingResponse) => {
       if (res.pending > 0) {
-        this.mostraPopupBoxRicevute(res.pending);
+        this.router.navigateByUrl('/box-ricevute', { replaceUrl: true });
       } else {
         this.router.navigateByUrl('/home', { replaceUrl: true });
       }
     });
-  }
-
-  private async mostraPopupBoxRicevute(quantita: number) {
-    const testoSingolare = quantita === 1
-      ? 'Hai ricevuto <strong>1 nuova box condivisa</strong> in attesa di approvazione!'
-      : `Hai ricevuto <strong>${quantita} nuove box condivise</strong> in attesa di approvazione!`;
-
-    const alert = await this.alertController.create({
-      cssClass: 'peekbox-alert peekbox-alert--notify',
-      header: '📦 Box Ricevute',
-      message: testoSingolare,
-      buttons: [
-        {
-          text: 'Vai alla Home',
-          role: 'cancel',
-          handler: () => { this.router.navigateByUrl('/home', { replaceUrl: true }); }
-        },
-        {
-          text: 'Visualizza Box',
-          cssClass: 'alert-btn-primary',
-          handler: () => { this.router.navigateByUrl('/box-ricevute', { replaceUrl: true }); }
-        }
-      ]
-    });
-    await alert.present();
   }
 
   async recuperaPassword(event: Event) {

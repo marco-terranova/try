@@ -24,16 +24,14 @@
     <!-- BODY DIALOG -->
     <div class="geo-body">
 
-      <!-- SEZIONE MAPPA / GPS -->
+      <!-- SEZIONE MAPPA / GPS (Leaflet) -->
       <div class="geo-section geo-section--map">
-        <div class="map-placeholder">
-          <ion-icon name="map-outline" class="map-icon"></ion-icon>
-          <div class="map-overlay">
-            <button class="btn-gps-main" (click)="usaPosizioneCorrcome()" [disabled]="isGettingGps">
-              <ion-spinner *ngIf="isGettingGps" name="crescent"></ion-spinner>
-              <span *ngIf="!isGettingGps">🎯 USA POSIZIONE GPS CORRENTE</span>
-            </button>
-          </div>
+        <div #mapContainer class="leaflet-map"></div>
+        <div class="map-overlay-bar">
+          <button class="btn-gps-main" (click)="usaPosizioneCorrcome()" [disabled]="isGettingGps">
+            <ion-spinner *ngIf="isGettingGps" name="crescent"></ion-spinner>
+            <span *ngIf="!isGettingGps">USA GPS</span>
+          </button>
         </div>
       </div>
 
@@ -55,7 +53,7 @@
             <label>RAGGIO DI TOLLERANZA</label>
             <span class="range-val">{{ raggioLabel }}</span>
           </div>
-          <ion-range min="10" max="5000" step="10" [(ngModel)]="raggioM" class="geo-range"></ion-range>
+          <ion-range min="10" max="5000" step="10" [(ngModel)]="raggioM" (ionChange)="onRaggioChange()" class="geo-range"></ion-range>
         </div>
       </div>
 

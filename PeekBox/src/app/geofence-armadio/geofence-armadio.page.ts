@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -16,18 +16,8 @@ import {
 import { DatabaseService } from '../services/database';
 import { NavigationHistoryService } from '../services/navigation-history';
 import { GpsService } from '../services/gps';
+import * as L from 'leaflet';
 
-/**
- * GeofenceArmadioPage
- * ─────────────────────
- * Configura il perimetro virtuale (geofence) attorno a una struttura logistica.
- * Il proprietario imposta il centro (latitudine/longitudine) e il raggio in metri.
- * Supporta acquisizione automatica della posizione GPS corrente come centro.
- *
- * Al momento della scansione QR (checkpoint/sicuro), il backend verifica
- * automaticamente la posizione dell'asset rispetto a questo perimetro e
- * genera un'eccezione di sicurezza in caso di anomalia.
- */
 @Component({
   selector: 'app-geofence-armadio',
   templateUrl: './geofence-armadio.page.html',
@@ -39,26 +29,24 @@ import { GpsService } from '../services/gps';
     IonToggle, IonRange, IonSpinner, IonInput
   ]
 })
-export class GeofenceArmadioPage implements OnInit {
+export class GeofenceArmadioPage implements OnInit, OnDestroy, AfterViewInit {
+
+  @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
 
   armadioId!: number;
   armadioNome: string = '';
 
-  // Configurazione geofence
   latitudine: number | null = null;
   longitudine: number | null = null;
   raggioM: number = 100;
   attivo: boolean = true;
 
-  // Stato esistente
   geofenceEsistente: any = null;
   hasGeofence = false;
 
-  // Verifica posizione corrente
   verificaResult: any = null;
   isVerifying = false;
 
-  /** Computed: true = dentro, false = fuori, null = non ancora verificato */
   get verificaRisultato(): boolean | null {
     if (this.verificaResult === null) return null;
     if (typeof this.verificaResult?.dentro_perimetro !== 'undefined') {
@@ -70,6 +58,12 @@ export class GeofenceArmadioPage implements OnInit {
   isLoading = false;
   isSaving = false;
   isGettingGps = false;
+
+  private map: L.Map | null = null;
+  private centerMarker: L.Marker | null = null;
+  private circle: L.Circle | null = null;
+  private checkpointMarkers: L.Marker[] = [];
+  private userMarker: L.Marker | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -102,12 +96,10 @@ export class GeofenceArmadioPage implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     const parsedId = id ? Number(id) : NaN;
 
-    // Recupero opzionale del boxId per tornare indietro correttamente
     const bId = this.route.snapshot.queryParamMap.get('boxId');
     this.boxId = bId ? Number(bId) : null;
 
     if (!parsedId || isNaN(parsedId) || parsedId <= 0) {
-      // ID non valido: torna indietro e avvisa
       this.mostraToast('ID archivio non valido. Torna indietro e riprova.', 'danger').then(() => {
         this.chiudi();
       });
@@ -117,6 +109,135 @@ export class GeofenceArmadioPage implements OnInit {
     this.armadioId = parsedId;
     this.armadioNome = this.route.snapshot.queryParamMap.get('nome') || `Archivio #${this.armadioId}`;
     this.caricaGeofence();
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => this.inizializzaMappa(), 300);
+  }
+
+  ngOnDestroy() {
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+    }
+  }
+
+  private inizializzaMappa() {
+    if (!this.mapContainer) return;
+    const el = this.mapContainer.nativeElement;
+
+    this.map = L.map(el, {
+      center: [41.9028, 12.4964],
+      zoom: 13,
+      zoomControl: true,
+      attributionControl: false
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(this.map);
+
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      this.latitudine = parseFloat(e.latlng.lat.toFixed(6));
+      this.longitudine = parseFloat(e.latlng.lng.toFixed(6));
+      this.aggiornaMarcatoreCentro();
+    });
+
+    if (this.latitudine && this.longitudine) {
+      this.aggiornaMarcatoreCentro();
+    }
+
+    this.caricaCheckpoints();
+  }
+
+  private aggiornaMarcatoreCentro() {
+    if (!this.map) return;
+    if (this.centerMarker) {
+      this.centerMarker.setLatLng([this.latitudine!, this.longitudine!]);
+    } else {
+      const icon = L.divIcon({
+        html: '<div style="width: 20px; height: 20px; background: #3AABDB; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+        className: ''
+      });
+      this.centerMarker = L.marker([this.latitudine!, this.longitudine!], { icon }).addTo(this.map);
+    }
+
+    if (this.circle) {
+      this.circle.setLatLng([this.latitudine!, this.longitudine!]);
+      this.circle.setRadius(this.raggioM);
+    } else {
+      this.circle = L.circle([this.latitudine!, this.longitudine!], {
+        radius: this.raggioM,
+        color: '#3AABDB',
+        fillColor: '#3AABDB',
+        fillOpacity: 0.1,
+        weight: 2
+      }).addTo(this.map);
+    }
+
+    this.map.setView([this.latitudine!, this.longitudine!], this.map.getZoom());
+  }
+
+  private caricaCheckpoints() {
+    if (!this.armadioId) return;
+    this.dbService.getGeofenceCheckpoints(this.armadioId).subscribe({
+      next: (res: any) => {
+        const checkpoints: any[] = res.checkpoints || [];
+        this.aggiungiCheckpoints(checkpoints);
+      },
+      error: (err) => console.error('Errore caricamento checkpoints:', err)
+    });
+  }
+
+  private aggiungiCheckpoints(checkpoints: any[]) {
+    this.checkpointMarkers.forEach(m => m.remove());
+    this.checkpointMarkers = [];
+
+    if (!this.map) return;
+    if (checkpoints.length === 0) return;
+
+    const group = L.featureGroup();
+    const icon = L.divIcon({
+      html: `<div style="width: 14px; height: 14px; background: #F59E0B; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 1px 4px rgba(0,0,0,0.3);"></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+      className: ''
+    });
+
+    checkpoints.forEach(cp => {
+      if (cp.latitudine == null || cp.longitudine == null) return;
+      const marker = L.marker([cp.latitudine, cp.longitudine], { icon })
+        .bindPopup(`<b>${cp.nome_box || 'Box'}</b><br>${new Date(cp.timestamp).toLocaleString('it-IT')}${cp.label ? '<br>' + cp.label : ''}`);
+      this.checkpointMarkers.push(marker);
+      group.addLayer(marker);
+    });
+
+    group.addTo(this.map);
+
+    if (this.latitudine && this.longitudine) {
+      this.map.setView([this.latitudine, this.longitudine], this.map.getZoom());
+    } else if (checkpoints.length > 0) {
+      this.map.fitBounds(group.getBounds().pad(0.3));
+    }
+  }
+
+  private aggiornaMappaUtente(lat: number, lng: number) {
+    if (!this.map) return;
+    if (this.userMarker) {
+      this.userMarker.setLatLng([lat, lng]);
+    } else {
+      const icon = L.divIcon({
+        html: `<div style="width: 16px; height: 16px; background: #7DC840; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                 <div style="width: 6px; height: 6px; background: #fff; border-radius: 50%; margin: 2px auto;"></div>
+               </div>`,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
+        className: ''
+      });
+      this.userMarker = L.marker([lat, lng], { icon }).addTo(this.map);
+    }
   }
 
   caricaGeofence() {
@@ -131,20 +252,22 @@ export class GeofenceArmadioPage implements OnInit {
           this.longitudine = res.geofence.longitudine;
           this.raggioM = res.geofence.raggio_m;
           this.attivo = res.geofence.attivo === 1;
+          this.aggiornaMarcatoreCentro();
         }
       },
       error: () => { this.isLoading = false; }
     });
   }
 
-  /** Acquisisce la posizione GPS corrente come centro del geofence */
   async usaPosizioneCorrcome() {
     this.isGettingGps = true;
     try {
       const pos = await this.gpsService.getPosizione();
       this.latitudine = pos.latitudine;
       this.longitudine = pos.longitudine;
-      await this.mostraToast(`📍 Posizione acquisita (±${Math.round(pos.accuratezza)} m)`, 'success');
+      this.aggiornaMarcatoreCentro();
+      this.aggiornaMappaUtente(pos.latitudine, pos.longitudine);
+      await this.mostraToast(`Posizione acquisita (±${Math.round(pos.accuratezza)} m)`, 'success');
     } catch (err: any) {
       await this.mostraToast('GPS non disponibile: ' + err.message, 'danger');
     } finally {
@@ -153,7 +276,6 @@ export class GeofenceArmadioPage implements OnInit {
   }
 
   async salvaGeofence() {
-    // Conversione esplicita a numero per evitare errori di tipo stringa da input
     const lat = Number(this.latitudine);
     const lng = Number(this.longitudine);
     const raggio = Number(this.raggioM);
@@ -162,23 +284,19 @@ export class GeofenceArmadioPage implements OnInit {
       await this.mostraToast('Imposta le coordinate valide prima di salvare.', 'warning');
       return;
     }
-    
+
     if (isNaN(raggio) || raggio < 10 || raggio > 50000) {
       await this.mostraToast('Il raggio deve essere tra 10 e 50.000 metri.', 'warning');
       return;
     }
 
     this.isSaving = true;
-    // Assicuriamoci che i valori passati siano numeri
     this.dbService.impostaGeofence(this.armadioId, lat, lng, raggio, this.attivo).subscribe({
       next: async (res: any) => {
         this.isSaving = false;
-        // Aggiorna lo stato locale con la risposta del server
         this.hasGeofence = true;
         this.geofenceEsistente = res.geofence || { armadio_id: this.armadioId, latitudine: lat, longitudine: lng, raggio_m: raggio, attivo: this.attivo ? 1 : 0 };
-        
-        await this.mostraToast('✅ Geofence configurato con successo!', 'success');
-        // Ricarica per sicurezza per allineare tutto lo stato
+        await this.mostraToast('Geofence configurato con successo!', 'success');
         this.caricaGeofence();
       },
       error: async (err: any) => {
@@ -207,6 +325,11 @@ export class GeofenceArmadioPage implements OnInit {
                 this.latitudine = null;
                 this.longitudine = null;
                 this.raggioM = 100;
+                if (this.centerMarker) { this.centerMarker.remove(); this.centerMarker = null; }
+                if (this.circle) { this.circle.remove(); this.circle = null; }
+                this.checkpointMarkers.forEach(m => m.remove());
+                this.checkpointMarkers = [];
+                if (this.map) { this.map.setView([41.9028, 12.4964], 13); }
                 await this.mostraToast('Geofence rimosso.', 'medium');
               },
               error: async () => { await this.mostraToast('Errore durante l\'eliminazione.', 'danger'); }
@@ -218,7 +341,6 @@ export class GeofenceArmadioPage implements OnInit {
     await alert.present();
   }
 
-  /** Test in tempo reale: verifica la posizione GPS corrente rispetto al geofence */
   async verificaPosizioneLive() {
     if (!this.armadioId || isNaN(this.armadioId) || this.armadioId <= 0) {
       await this.mostraToast('ID archivio non disponibile.', 'warning');
@@ -228,6 +350,7 @@ export class GeofenceArmadioPage implements OnInit {
     this.verificaResult = null;
     try {
       const pos = await this.gpsService.getPosizione();
+      this.aggiornaMappaUtente(pos.latitudine, pos.longitudine);
       this.dbService.verificaGeofence(this.armadioId, pos.latitudine, pos.longitudine).subscribe({
         next: (res: any) => {
           this.isVerifying = false;
@@ -245,6 +368,12 @@ export class GeofenceArmadioPage implements OnInit {
     if (this.latitudine == null || this.longitudine == null) return;
     const url = this.gpsService.buildGoogleMapsUrl(this.latitudine, this.longitudine);
     window.open(url, '_blank');
+  }
+
+  onRaggioChange() {
+    if (this.circle && this.latitudine && this.longitudine) {
+      this.circle.setRadius(this.raggioM);
+    }
   }
 
   get raggioLabel(): string {

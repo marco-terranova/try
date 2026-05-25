@@ -10,7 +10,7 @@ import { addIcons } from 'ionicons';
 import {
   arrowBackOutline, archiveOutline, addCircleOutline,
   pencilOutline, trashOutline, checkmarkOutline, closeOutline,
-  home, shareSocialOutline, qrCodeOutline, add,
+  home, shareSocialOutline, qrCodeOutline, add, chatbubblesOutline,
   person,
 } from 'ionicons/icons';
 
@@ -54,6 +54,7 @@ export class GestioneSpaziPage implements OnInit {
       'close-outline': closeOutline,
       'home': home,
       'share-social-outline': shareSocialOutline,
+      'chatbubbles-outline': chatbubblesOutline,
       'qr-code-outline': qrCodeOutline,
       'add': add,
       'person': person

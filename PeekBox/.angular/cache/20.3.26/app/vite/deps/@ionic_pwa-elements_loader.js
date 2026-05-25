@@ -2,7 +2,7 @@ import {
   bootstrapLazy,
   promiseResolve,
   setNonce
-} from "./chunk-OZ4OQQLJ.js";
+} from "./chunk-FZ2KBQUE.js";
 import "./chunk-QXFS4N4X.js";
 
 // node_modules/@ionic/pwa-elements/dist/esm/polyfills/index.js

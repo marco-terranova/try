@@ -74,11 +74,6 @@ export const routes: Routes = [
     loadComponent: () => import('./transit-zone/transit-zone.page').then(m => m.TransitZonePage)
   },
   {
-    path: 'condivisione-archivio/:id',
-    canActivate: [authGuard],
-    loadComponent: () => import('./condivisione-archivio/condivisione-archivio.page').then(m => m.CondivisioneArchivioPage)
-  },
-  {
     path: 'geofence-armadio/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./geofence-armadio/geofence-armadio.page').then(m => m.GeofenceArmadioPage)

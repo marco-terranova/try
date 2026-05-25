@@ -18,7 +18,7 @@ import { addIcons } from 'ionicons';
 import {
   checkmarkCircleOutline, closeCircleOutline, archiveOutline,
   timeOutline, personOutline, homeOutline, arrowBackOutline,
-  refreshOutline, mailOpenOutline, shareSocialOutline, qrCodeOutline,
+  refreshOutline, mailOpenOutline, shareSocialOutline, qrCodeOutline, chatbubblesOutline,
   peopleOutline, locationOutline, warningOutline, alertCircleOutline,
   trashOutline, personAddOutline, mailOutline, checkmarkOutline,
   chevronForwardOutline, closeOutline, optionsOutline, addOutline,
@@ -88,6 +88,7 @@ export class BoxRicevutePage implements OnInit {
       'refresh-outline': refreshOutline,
       'mail-open-outline': mailOpenOutline,
       'share-social-outline': shareSocialOutline,
+      'chatbubbles-outline': chatbubblesOutline,
       'qr-code-outline': qrCodeOutline,
       'people-outline': peopleOutline,
       'location-outline': locationOutline,
@@ -110,7 +111,7 @@ export class BoxRicevutePage implements OnInit {
 
   ngOnInit() {
     this.utenteId = localStorage.getItem('utente_id');
-    this.nomeUtente = localStorage.getItem('username') || 'Utente';
+    this.nomeUtente = localStorage.getItem('utente_nome') || 'Utente';
     this.caricaTutto();
   }
 
@@ -124,16 +125,16 @@ export class BoxRicevutePage implements OnInit {
 
     // 1. Carica le richieste IN ATTESA
     this.dbService.getCondivisioniInAttesa(this.utenteId).subscribe({
-      next: (res) => {
-        this.richiestePending = res.richieste || [];
+      next: (res: any) => {
+        this.richiestePending = res.condivisioni || [];
       },
       error: (err) => console.error('Errore richieste pending:', err)
     });
 
     // 2. Carica gli archivi CONDIVISI CON ME (già accettati)
     this.dbService.getArchividCondivisiConMe(this.utenteId).subscribe({
-      next: (res) => {
-        this.archiviAccettati = (res.archivi_condivisi || [])
+      next: (res: any) => {
+        this.archiviAccettati = (res.condivisioni || [])
           .filter((c: any) => c.stato === 'accettata');
       },
       error: (err) => console.error('Errore archivi condivisi:', err)
@@ -370,14 +371,7 @@ export class BoxRicevutePage implements OnInit {
   // ─── NAVIGAZIONE & HELPERS ────────────────────────────────────────────────
 
   apriArchivioCondiviso(archivio: any) {
-    // Naviga alla lista box dell'archivio condiviso
-    this.router.navigate(['/dettaglio-archivio-condiviso', archivio.armadio_id || archivio.id], {
-      queryParams: {
-        nome: archivio.armadio_nome || archivio.nome_archivio,
-        ruolo: archivio.ruolo,
-        condivisa: 'true'
-      }
-    });
+    this.router.navigate(['/home']);
   }
 
   apriConfigGeofence(armadio: any) {
@@ -387,8 +381,8 @@ export class BoxRicevutePage implements OnInit {
   }
 
   apriDettagliSpazio(armadio: any) {
-    this.router.navigate(['/condivisione-archivio', armadio.id], {
-      queryParams: { nome: armadio.nome }
+    this.router.navigate(['/gestione-spazi'], {
+      queryParams: { armadio: armadio.id, nome: armadio.nome }
     });
   }
 

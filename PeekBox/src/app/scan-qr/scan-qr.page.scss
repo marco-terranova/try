@@ -1,12 +1,12 @@
 @import '../../theme/variables';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&display=swap');
 
-$accent-blue:  #3AABDB;
-$accent-green: #7DC740;
-$text-primary: #15425C;
-$text-muted:   #64748B;
-$bg-card:      #ffffff;
-$bg-page:      #F4F7FA;
+$bg-card:      $white;
+$bg-page:      $page;
+$text-primary: $dark;
+$text-muted:   $mid;
+$accent-blue:  $blue;
+$accent-green: $green;
 $border-light: rgba(58,171,219,0.12);
 $shadow-card:  0 4px 20px rgba(15,23,42,0.06);
 
@@ -17,6 +17,7 @@ $shadow-card:  0 4px 20px rgba(15,23,42,0.06);
 
 ion-content {
   --background: #{$bg-page};
+  --padding-bottom: 110px;
 }
 
 .bg-light-saas {
@@ -24,9 +25,16 @@ ion-content {
 }
 
 .page-wrapper {
-  padding: 0 0 24px;
-  max-width: 900px;
+  padding: 0 16px 24px;
+  max-width: 1200px;
   margin: 0 auto;
+
+  @media (min-width: 768px) {
+    padding: 0 24px 24px;
+  }
+  @media (min-width: 1024px) {
+    padding: 0 40px 24px;
+  }
 }
 
 // ── Top Bar ─────────────────────────────────────────────────
@@ -34,13 +42,13 @@ ion-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px 10px;
+  padding: 14px 0 10px;
   gap: 10px;
 }
 
 .logo-group {
   // Logo unificato: stessa altezza e comportamento di home/area-personale
-  .logo-peek {
+  .header-logo {
     height: 32px;
     width: auto;
     object-fit: contain;
@@ -54,23 +62,26 @@ ion-content {
 
 .title-group {
   flex: 1;
-  text-align: center;
+  text-align: left;
+}
 
-  h2 {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    color: $text-primary;
-    margin: 0 0 2px;
-    line-height: 1.2;
-  }
+.header-greeting {
+  font-family: 'Poppins', 'Montserrat', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 1.15rem !important;
+  color: $text-primary !important;
+  letter-spacing: 0.5px !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
 
-  p {
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.72rem;
-    color: $text-muted;
-    margin: 0;
-  }
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 900 !important;
+  text-shadow: 0px 4px 10px rgba(125, 199, 64, 0.3);
 }
 
 .profile-compact {
@@ -94,7 +105,7 @@ ion-content {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
-  padding: 0 16px;
+  padding: 0;
 
   @media (min-width: 700px) {
     grid-template-columns: 1fr 1fr;
@@ -387,39 +398,91 @@ ion-content {
   }
 }
 
-// ── Tab Bar (footer) ────────────────────────────────────────
-.custom-tab-bar {
-  --background: rgba(255,255,255,0.9);
-  --border: none;
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba($accent-blue, 0.08);
-  height: 60px;
+// ── Floating Bottom Nav (uguale alle altre pagine) ─────────
+.floating-nav {
+  position: fixed;
+  bottom: 18px; left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px); max-width: 520px; height: 66px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-radius: 40px;
+  border: 1px solid rgba(255,255,255,0.95);
+  box-shadow: 0 8px 32px rgba(58,171,219,0.13), 0 2px 8px rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 0 8px; z-index: 1000;
 
-  ion-tab-button {
-    --color: #{$text-muted};
-    --color-selected: #{$accent-blue};
+  .nav-glow {
+    position: absolute; bottom: -12px; left: 50%;
+    transform: translateX(-50%);
+    width: 55%; height: 22px;
+    background: radial-gradient(ellipse, rgba(58,171,219,0.22), transparent 70%);
+    pointer-events: none; z-index: -1;
+  }
 
-    &.tab-selected {
-      --color: #{$accent-blue};
+  .nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    cursor: pointer; padding: 5px 10px; border-radius: 18px;
+    transition: background 0.2s;
+    text-decoration: none;
+
+    ion-icon {
+      font-size: 1.35rem;
+      color: #3AABDB;
+      transition: color 0.2s;
+    }
+    span {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #3AABDB;
+    }
+
+    &.active {
+      ion-icon { color: #0284C7; }
+      span { color: #0284C7; }
+    }
+    &:not(.active):hover { background: rgba(0,0,0,0.04); }
+  }
+
+  .nav-fab-wrapper {
+    display: flex; align-items: center;
+    justify-content: center; margin-top: -26px;
+
+    .nav-fab {
+      width: 58px; height: 58px;
+      border-radius: 50%; border: none !important;
+      background: linear-gradient(135deg, #A8FF78, #7DC740) !important;
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 10px 25px rgba(125,199,64,0.4) !important;
+      transition: transform 0.2s, box-shadow 0.2s;
+
+      ion-icon { font-size: 1.7rem; color: #ffffff !important; }
+
+      &:hover {
+        transform: scale(1.1) translateY(-3px);
+        box-shadow: 0 15px 30px rgba(125,199,64,0.5) !important;
+      }
+      &:active { transform: scale(0.95); }
     }
   }
 
-  .add-button-tab {
-    --color: #{$accent-green};
+  .avatar-circle-nav {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(58,171,219,0.12);
+    color: #3AABDB;
+    font-size: 0.8rem; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    border: 1.5px solid rgba(58,171,219,0.4);
+    transition: all 0.2s;
 
-    .add-btn-circle {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #A8FF78, $accent-green);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 16px rgba($accent-green, 0.35);
-      margin-bottom: 4px;
-
-      ion-icon { font-size: 1.6rem; }
+    &.active {
+      background: rgba(58,171,219,0.18);
+      color: #0284C7;
+      border-color: #0284C7;
+      box-shadow: 0 2px 8px rgba(58,171,219,0.3);
     }
   }
 }

@@ -239,7 +239,7 @@ export class DatabaseService {
 
   condividiArchivio(armadio_id: number, email_ospite: string, ruolo: 'viewer' | 'editor') {
     return this.http.post(`${this.apiUrl}/condivisioni`,
-      { armadio_id, email_ospite, ruolo }, { headers: this.getAuthHeaders() });
+      { rif_armadio: armadio_id, email_ospite, ruolo }, { headers: this.getAuthHeaders() });
   }
 
   getCondivisioniArchivio(armadioId: number) {
@@ -287,15 +287,15 @@ export class DatabaseService {
   }
 
   accettaCondivisione(condivisioneId: number) {
-    return this.http.patch(
+    return this.http.put(
       `${this.apiUrl}/condivisioni/${condivisioneId}/accetta`,
       {}, { headers: this.getAuthHeaders() });
   }
 
   rifiutaCondivisione(condivisioneId: number) {
-    return this.http.delete(
+    return this.http.put(
       `${this.apiUrl}/condivisioni/${condivisioneId}/rifiuta`,
-      { headers: this.getAuthHeaders() });
+      {}, { headers: this.getAuthHeaders() });
   }
 
   // ─── GEOFENCING ───────────────────────────────────────────
@@ -316,9 +316,9 @@ export class DatabaseService {
       { headers: this.getAuthHeaders() });
   }
 
-  verificaGeofence(box_id: number, latitudine: number, longitudine: number) {
+  verificaGeofence(armadio_id: number, latitudine: number, longitudine: number) {
     return this.http.post(`${this.apiUrl}/geofence/verifica`,
-      { box_id, latitudine, longitudine },
+      { armadio_id, latitudine, longitudine },
       { headers: this.getAuthHeaders() });
   }
 
@@ -340,6 +340,11 @@ export class DatabaseService {
 
   eliminaNotificaGeofence(id: number) {
     return this.http.delete(`${this.apiUrl}/geofence/notifiche/${id}`,
+      { headers: this.getAuthHeaders() });
+  }
+
+  getGeofenceCheckpoints(armadioId: number) {
+    return this.http.get(`${this.apiUrl}/geofence/${armadioId}/checkpoints`,
       { headers: this.getAuthHeaders() });
   }
 

@@ -7,7 +7,7 @@
       <button class="hdr-action-btn" (click)="apriModale('history')" title="Cronologia Box">
         <ion-icon name="time-outline"></ion-icon>
       </button>
-      <button class="hdr-action-btn" [class.hdr-action-btn--active-star]="box?.is_preferito" (click)="togglePreferito()">
+      <button *ngIf="!isViewer" class="hdr-action-btn" [class.hdr-action-btn--active-star]="box?.is_preferito" (click)="togglePreferito()">
         <ion-icon [name]="box?.is_preferito ? 'star' : 'star-outline'"></ion-icon>
       </button>
     </div>
@@ -47,7 +47,7 @@
               <span class="item-name">{{ o.nome }}</span>
               <span class="item-meta">Q.tà: {{ o.quantita || 1 }} {{ o.fragile ? '• ⚠️ Fragile' : '' }}</span>
             </div>
-            <div class="item-actions">
+            <div class="item-actions" *ngIf="!isViewer">
               <button class="btn-action btn-action--edit" (click)="apriModificaOggetto(o)">
                 <ion-icon name="pencil-outline"></ion-icon>
               </button>
@@ -62,7 +62,7 @@
           <div style="font-size: 3rem; margin-bottom: 15px;">📥</div>
           <h3 style="margin: 0; font-size: 1.1rem; color: #1E293B;">Nessun oggetto</h3>
           <p style="color: #64748B; font-size: 0.9rem; margin: 10px 0 20px;">Il box è vuoto, aggiungi il primo articolo!</p>
-          <button class="btn-save-oggetto" (click)="apriModale('aggiungi')" style="width: auto; padding: 12px 24px; margin: 0 auto;">
+          <button *ngIf="!isViewer" class="btn-save-oggetto" (click)="apriModale('aggiungi')" style="width: auto; padding: 12px 24px; margin: 0 auto;">
             <ion-icon name="add-circle-outline"></ion-icon>
             Aggiungi Oggetto
           </button>
@@ -73,7 +73,7 @@
       <div class="right-col">
         
         <div class="actions-grid">
-          <div class="action-btn-card" (click)="apriModale('aggiungi')">
+          <div class="action-btn-card" *ngIf="!isViewer" (click)="apriModale('aggiungi')">
             <div class="action-icon" style="background: rgba(125,199,64,0.1); color: #7DC740;">➕</div>
             <span class="action-label">Aggiungi</span>
           </div>
@@ -88,7 +88,7 @@
             <span class="action-label">Geofence</span>
           </div>
 
-          <div class="action-btn-card action-btn-card--danger" (click)="svuotaBox()">
+          <div class="action-btn-card action-btn-card--danger" *ngIf="!isViewer" (click)="svuotaBox()">
             <div class="action-icon" style="background: rgba(239,68,68,0.08); color: #dc3545;">🗑️</div>
             <span class="action-label">Svuota</span>
           </div>

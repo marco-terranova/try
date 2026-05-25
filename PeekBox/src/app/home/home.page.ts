@@ -14,7 +14,7 @@ import { addIcons } from 'ionicons';
 import {
   trashOutline, star, starOutline, home, search,
   person, add, filter, cubeOutline, archiveOutline, closeOutline,
-  flashOutline, shareSocialOutline, qrCodeOutline,
+  flashOutline, shareSocialOutline, qrCodeOutline, chatbubblesOutline,
   addCircleOutline, closeCircleOutline
 } from 'ionicons/icons';
 
@@ -73,6 +73,7 @@ export class HomePage {
       'close-outline': closeOutline,
       'flash-outline': flashOutline,
       'share-social-outline': shareSocialOutline,
+      'chatbubbles-outline': chatbubblesOutline,
       'qr-code-outline': qrCodeOutline,
       'add-circle-outline': addCircleOutline,
       'close-circle-outline': closeCircleOutline
@@ -87,6 +88,10 @@ export class HomePage {
     if (this.utenteId) {
       this.caricaDatiDalServer(this.utenteId);
     }
+  }
+
+  navBack() {
+    this.navHistory.back();
   }
 
   apriScanner() {

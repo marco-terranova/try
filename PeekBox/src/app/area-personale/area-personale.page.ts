@@ -1,13 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
-import { SupabaseService } from '../services/supabase.service';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
+import { NavController, IonicModule } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import { DatabaseService } from '../services/database';
+import { addIcons } from 'ionicons';
+import {
+  shieldCheckmarkOutline, logOutOutline, trashOutline,
+  timeOutline, locationOutline, informationCircleOutline,
+  chevronForwardOutline, cubeOutline, personCircleOutline,
+  home, add, qrCodeOutline, shareSocialOutline, closeOutline, chatbubblesOutline
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-area-personale',
   templateUrl: './area-personale.page.html',
   styleUrls: ['./area-personale.page.scss'],
+  standalone: true,
+  imports: [CommonModule, RouterModule, IonicModule],
 })
 export class AreaPersonalePage implements OnInit {
 
@@ -26,47 +36,53 @@ export class AreaPersonalePage implements OnInit {
   constructor(
     private router: Router,
     private navCtrl: NavController,
-    private supabase: SupabaseService,
+    private dbService: DatabaseService,
     private alertCtrl: AlertController
-  ) {}
-
-  async ngOnInit() {
-    await this.caricaProfilo();
+  ) {
+    addIcons({
+      'shield-checkmark-outline': shieldCheckmarkOutline,
+      'log-out-outline': logOutOutline,
+      'trash-outline': trashOutline,
+      'time-outline': timeOutline,
+      'location-outline': locationOutline,
+      'information-circle-outline': informationCircleOutline,
+      'chevron-forward-outline': chevronForwardOutline,
+      'cube-outline': cubeOutline,
+      'person-circle-outline': personCircleOutline,
+      'home': home,
+      'add': add,
+      'qr-code-outline': qrCodeOutline,
+      'share-social-outline': shareSocialOutline,
+      'chatbubbles-outline': chatbubblesOutline,
+      'close-outline': closeOutline,
+    });
   }
 
-  async caricaProfilo() {
-    try {
-      const user = await this.supabase.getCurrentUser();
-      if (!user) { this.router.navigate(['/login']); return; }
+  ngOnInit() {
+    this.caricaProfilo();
+  }
 
-      this.emailUtente = user.email || '';
-      const { data: profilo } = await this.supabase.client
-        .from('profili')
-        .select('nome, ruolo')
-        .eq('id', user.id)
-        .single();
+  caricaProfilo() {
+    this.nomeUtente = localStorage.getItem('utente_nome') || '';
+    this.emailUtente = localStorage.getItem('utente_email') || '';
+    this.isAdmin = localStorage.getItem('is_admin') === '1';
 
-      if (profilo) {
-        this.nomeUtente = profilo.nome || '';
-        this.isAdmin = profilo.ruolo === 'admin';
-      }
-
-      const { count: nBox } = await this.supabase.client
-        .from('box')
-        .select('id', { count: 'exact', head: true })
-        .eq('proprietario_id', user.id)
-        .is('eliminato_il', null);
-      this.totaleBox = nBox || 0;
-
-      const { count: nArt } = await this.supabase.client
-        .from('oggetti')
-        .select('id', { count: 'exact', head: true })
-        .eq('proprietario_id', user.id);
-      this.totaleArticoli = nArt || 0;
-
-    } catch (e) {
-      console.error('Errore caricaProfilo', e);
+    const utenteId = localStorage.getItem('utente_id');
+    if (!utenteId) {
+      this.router.navigate(['/login']);
+      return;
     }
+
+    this.dbService.getBox(utenteId).subscribe({
+      next: (res: any) => {
+        const boxes = res.box || [];
+        this.totaleBox = boxes.length;
+        this.totaleArticoli = boxes.reduce((sum: number, b: any) => sum + (b.num_oggetti || 0), 0);
+      },
+      error: (err) => {
+        console.error('Errore caricaProfilo', err);
+      }
+    });
   }
 
   navTo(path: string) {
@@ -99,8 +115,13 @@ export class AreaPersonalePage implements OnInit {
         {
           text: 'Esci',
           role: 'destructive',
-          handler: async () => {
-            await this.supabase.signOut();
+          handler: () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('utente_id');
+            localStorage.removeItem('utente_nome');
+            localStorage.removeItem('utente_email');
+            localStorage.removeItem('tipo_profilo');
+            localStorage.removeItem('is_admin');
             this.router.navigate(['/login']);
           }
         }

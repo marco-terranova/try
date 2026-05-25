@@ -190,6 +190,22 @@ db.serialize(() => {
     FOREIGN KEY(rif_box) REFERENCES box(id) ON DELETE CASCADE
   )`);
 
+  // 11. NOTIFICHE GEOFENCE
+  db.run(`CREATE TABLE IF NOT EXISTS geofence_notifiche (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rif_box INTEGER NOT NULL,
+    rif_armadio INTEGER NOT NULL,
+    rif_utente INTEGER NOT NULL,
+    latitudine REAL,
+    longitudine REAL,
+    messaggio TEXT NOT NULL,
+    letto INTEGER NOT NULL DEFAULT 0,
+    timestamp TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY(rif_box) REFERENCES box(id) ON DELETE CASCADE,
+    FOREIGN KEY(rif_armadio) REFERENCES armadi(id) ON DELETE CASCADE,
+    FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
+  )`);
+
   console.log("✅ Schema tabelle SQLite pronto (Svuotato dagli elementi predefiniti).");
   popolaCatalogoDefault();
   popolaDatiEsempio();

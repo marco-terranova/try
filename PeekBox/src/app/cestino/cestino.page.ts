@@ -9,7 +9,7 @@ import { addIcons } from 'ionicons';
 import {
   home, add, qrCodeOutline,
   trashOutline, trashBinOutline, timeOutline,
-  shareSocialOutline, refreshOutline,
+  shareSocialOutline, refreshOutline, chatbubblesOutline,
   person, search
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
@@ -49,6 +49,7 @@ export class CestinoPage implements OnInit {
       'trash-bin-outline': trashBinOutline,
       'time-outline': timeOutline,
       'share-social-outline': shareSocialOutline,
+      'chatbubbles-outline': chatbubblesOutline,
       'refresh-outline': refreshOutline,
       'person': person,
       'search': search

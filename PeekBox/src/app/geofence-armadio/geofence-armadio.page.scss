@@ -117,7 +117,7 @@ $font: 'Poppins', sans-serif;
   gap: 12px;
 
   &--map {
-    height: 120px;
+    height: 220px;
     background: #EBF5FB;
     border-radius: 16px;
     overflow: hidden;
@@ -126,47 +126,45 @@ $font: 'Poppins', sans-serif;
   }
 }
 
-.map-placeholder {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
+.leaflet-map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
 
-  .map-icon {
-    font-size: 5rem;
-    color: rgba(58, 171, 219, 0.1);
-  }
-
-  .map-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(58, 171, 219, 0.05);
-  }
+.map-overlay-bar {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 8px;
 }
 
 .btn-gps-main {
   background: #FFFFFF;
   border: 1px solid rgba(58, 171, 219, 0.2);
-  padding: 10px 16px;
-  border-radius: 12px;
+  padding: 8px 14px;
+  border-radius: 10px;
   color: #1A7FA8;
   font-family: $font;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 800;
   letter-spacing: 0.3px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(58, 171, 219, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.2s;
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 6px;
 
   &:hover:not([disabled]) {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(58, 171, 219, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
     border-color: #3AABDB;
   }
 
   &[disabled] { opacity: 0.6; cursor: not-allowed; }
-  ion-spinner { --color: #3AABDB; width: 16px; height: 16px; }
+  ion-spinner { --color: #3AABDB; width: 14px; height: 14px; }
 }
 
 .coords-row {
@@ -300,7 +298,7 @@ $font: 'Poppins', sans-serif;
     }
   }
   .geo-section--map {
-    height: 100px;
+    height: 180px;
   }
 }
 
@@ -316,7 +314,7 @@ $font: 'Poppins', sans-serif;
     gap: 22px;
   }
   .geo-section--map {
-    height: 150px;
+    height: 280px;
   }
   .geo-header {
     padding: 20px 24px;

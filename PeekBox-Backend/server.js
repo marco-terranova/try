@@ -24,7 +24,8 @@ function getLocalIP() {
 const HOST = process.env.HOST || getLocalIP();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '524288000' }));
+app.use(express.urlencoded({ limit: '524288000', extended: true }));
 app.use(express.static('public'));
 
 app.get('/scan', (req, res) => {
@@ -48,49 +49,81 @@ function verificaAdmin(req, res, next) {
             if (err || !row || row.is_admin !== 1)
                 return res.status(403).json({ error: "Accesso riservato agli amministratori." });
             next();
-        });
+            });
     });
 }
 
-function verificaAccessoBoxScrittura(boxId, userId, res, cb) {
-    const sql = `
-        SELECT box.id, box.rif_armadio, armadi.rif_utente
-        FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE box.id = ? AND box.data_eliminazione IS NULL
-    `;
-
-    db.get(sql, [boxId], (err, box) => {
+function verificaAccessoArmadioScrittura(armadioId, userId, res, cb) {
+    db.get('SELECT * FROM armadi WHERE id = ?', [armadioId], (err, armadio) => {
         if (err) return res.status(500).json({ error: err.message });
-        if (!box) return res.status(404).json({ error: "Box non trovata." });
+        if (!armadio) return res.status(404).json({ error: "Archivio non trovato." });
 
-        if (String(box.rif_utente) === String(userId)) {
-            return cb(box);
+        if (String(armadio.rif_utente) === String(userId)) {
+            return cb(armadio);
         }
 
         db.get(
             `SELECT ruolo FROM condivisioni_armadio
-             WHERE rif_armadio = ?
-               AND rif_ospite = ?
-               AND stato = 'accettata'
-               AND ruolo = 'editor'`,
-            [box.rif_armadio, userId],
+             WHERE rif_armadio = ? AND rif_ospite = ? AND stato = 'accettata' AND ruolo = 'editor'`,
+            [armadioId, userId],
             (shareErr, share) => {
                 if (shareErr) return res.status(500).json({ error: shareErr.message });
-                if (!share) return res.status(403).json({ error: "Serve il ruolo editor per modificare questa box." });
-                cb(box);
+                if (!share) return res.status(403).json({ error: "Non hai i permessi per modificare questo archivio." });
+                cb(armadio);
             }
         );
     });
 }
 
-app.get('/', (req, res) => {
-    res.send('🚀 Backend PeekBox v3 attivo — GPS + Profili + Ripristina Box!');
-});
+function verificaAccessoArmadioLettura(armadioId, userId, res, cb) {
+    db.get('SELECT * FROM armadi WHERE id = ?', [armadioId], (err, armadio) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!armadio) return res.status(404).json({ error: "Archivio non trovato." });
+
+        if (String(armadio.rif_utente) === String(userId)) {
+            return cb(armadio);
+        }
+
+        db.get(
+            `SELECT ruolo FROM condivisioni_armadio
+             WHERE rif_armadio = ? AND rif_ospite = ? AND stato = 'accettata'`,
+            [armadioId, userId],
+            (shareErr, share) => {
+                if (shareErr) return res.status(500).json({ error: shareErr.message });
+                if (!share) return res.status(403).json({ error: "Non hai accesso a questo archivio." });
+                cb(armadio, share.ruolo);
+            }
+        );
+    });
+}
+
+function verificaAccessoBoxLettura(boxId, userId, res, cb) {
+    db.get('SELECT * FROM box WHERE id = ?', [boxId], (err, box) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!box) return res.status(404).json({ error: "Box non trovata." });
+        verificaAccessoArmadioLettura(box.rif_armadio, userId, res, (armadio, ruolo) => {
+            cb(box, ruolo);
+        });
+    });
+}
+
+function verificaAccessoBoxScrittura(boxId, userId, res, cb) {
+    db.get('SELECT * FROM box WHERE id = ?', [boxId], (err, box) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!box) return res.status(404).json({ error: "Box non trovata." });
+        verificaAccessoArmadioScrittura(box.rif_armadio, userId, res, () => {
+            cb();
+        });
+    });
+}
 
 // ─────────────────────────────────────────────
 // UTENTI
 // ─────────────────────────────────────────────
+
+app.get('/', (req, res) => {
+    res.send('🚀 Backend PeekBox v3 attivo — GPS + Profili + Ripristina Box!');
+});
 
 app.post('/api/registrazione', async (req, res) => {
     const { username, email, password, tipo_profilo = 'personal' } = req.body;
@@ -199,18 +232,19 @@ app.delete('/api/armadi/:id', verificaToken, (req, res) => {
 // ─────────────────────────────────────────────
 
 app.get('/api/box/singola/:id', verificaToken, (req, res) => {
-    const sql = `
-        SELECT box.*, armadi.nome as nome_armadio, armadi.rif_utente
-        FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE box.id = ?
-    `;
-    db.get(sql, [req.params.id], (err, row) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (!row) return res.status(404).json({ error: "Box non trovata." });
-        if (String(row.rif_utente) !== String(req.user.id))
-            return res.status(403).json({ error: "Non autorizzato." });
-        res.json({ box: row });
+    verificaAccessoBoxLettura(req.params.id, req.user.id, res, (box, ruolo) => {
+        const sql = `
+            SELECT box.*, armadi.nome as nome_armadio, armadi.rif_utente
+            FROM box
+            JOIN armadi ON box.rif_armadio = armadi.id
+            WHERE box.id = ?
+        `;
+        db.get(sql, [req.params.id], (err, row) => {
+            if (err) return res.status(500).json({ error: err.message });
+            if (!row) return res.status(404).json({ error: "Box non trovata." });
+            row.ruolo_condivisione = ruolo || null;
+            res.json({ box: row });
+        });
     });
 });
 
@@ -258,33 +292,51 @@ app.get('/api/box/:utenteId', verificaToken, (req, res) => {
 
 app.post('/api/box', verificaToken, (req, res) => {
     const { nome, descrizione = null, rif_armadio, is_preferito, moving_mode = 0 } = req.body;
-    db.run(
-        'INSERT INTO box (nome, descrizione, rif_armadio, is_preferito, moving_mode) VALUES (?, ?, ?, ?, ?)',
-        [nome, descrizione, rif_armadio, is_preferito ? 1 : 0, moving_mode ? 1 : 0],
-        function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.status(201).json({ id: this.lastID });
+
+    db.get('SELECT id, rif_utente FROM armadi WHERE id = ?', [rif_armadio], (err, armadio) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!armadio) return res.status(404).json({ error: "Armadio non trovato." });
+
+        if (String(armadio.rif_utente) !== String(req.user.id)) {
+            db.get(
+                `SELECT ruolo FROM condivisioni_armadio WHERE rif_armadio = ? AND rif_ospite = ? AND stato = 'accettata' AND ruolo = 'editor'`,
+                [rif_armadio, req.user.id],
+                (shareErr, share) => {
+                    if (shareErr) return res.status(500).json({ error: shareErr.message });
+                    if (!share) return res.status(403).json({ error: "Non hai i permessi per creare box in questo armadio." });
+                    inserisciBox();
+                }
+            );
+        } else {
+            inserisciBox();
         }
-    );
+
+        function inserisciBox() {
+            db.run(
+                'INSERT INTO box (nome, descrizione, rif_armadio, is_preferito, moving_mode) VALUES (?, ?, ?, ?, ?)',
+                [nome, descrizione, rif_armadio, is_preferito ? 1 : 0, moving_mode ? 1 : 0],
+                function(err) {
+                    if (err) return res.status(500).json({ error: err.message });
+                    res.status(201).json({ id: this.lastID });
+                }
+            );
+        }
+    });
 });
 
 app.put('/api/box/preferito/:id', verificaToken, (req, res) => {
-    const { is_preferito } = req.body;
-    db.run('UPDATE box SET is_preferito = ? WHERE id = ?', [is_preferito ? 1 : 0, req.params.id], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ message: "Stato preferito aggiornato!" });
+    verificaAccessoBoxScrittura(req.params.id, req.user.id, res, () => {
+        const { is_preferito } = req.body;
+        db.run('UPDATE box SET is_preferito = ? WHERE id = ?', [is_preferito ? 1 : 0, req.params.id], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: "Stato preferito aggiornato!" });
+        });
     });
 });
 
 app.put('/api/box/moving-mode/:id', verificaToken, (req, res) => {
-    const { moving_mode } = req.body;
-    const sqlCheck = `
-        SELECT box.id FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE box.id = ? AND armadi.rif_utente = ?
-    `;
-    db.get(sqlCheck, [req.params.id, req.user.id], (err, row) => {
-        if (err || !row) return res.status(403).json({ error: "Non autorizzato." });
+    verificaAccessoBoxScrittura(req.params.id, req.user.id, res, () => {
+        const { moving_mode } = req.body;
         db.run('UPDATE box SET moving_mode = ? WHERE id = ?', [moving_mode ? 1 : 0, req.params.id], function(runErr) {
             if (runErr) return res.status(500).json({ error: runErr.message });
             res.json({ message: `Moving Mode ${moving_mode ? 'attivato' : 'disattivato'}!`, moving_mode: moving_mode ? 1 : 0 });
@@ -310,10 +362,12 @@ app.delete('/api/box/:id/definitivo', verificaToken, (req, res) => {
 });
 
 app.delete('/api/box/:id', verificaToken, (req, res) => {
-    const now = new Date().toISOString();
-    db.run('UPDATE box SET data_eliminazione = ? WHERE id = ?', [now, req.params.id], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ message: "Box spostata nel cestino!" });
+    verificaAccessoBoxScrittura(req.params.id, req.user.id, res, () => {
+        const now = new Date().toISOString();
+        db.run('UPDATE box SET data_eliminazione = ? WHERE id = ?', [now, req.params.id], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: "Box spostata nel cestino!" });
+        });
     });
 });
 
@@ -373,14 +427,7 @@ app.post('/api/checkpoint', verificaToken, (req, res) => {
     if (!rif_box || latitudine == null || longitudine == null)
         return res.status(400).json({ error: "rif_box, latitudine e longitudine sono obbligatori." });
 
-    const sqlCheck = `
-        SELECT box.id, box.moving_mode FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE box.id = ? AND armadi.rif_utente = ?
-    `;
-    db.get(sqlCheck, [rif_box, req.user.id], (err, boxRow) => {
-        if (err || !boxRow) return res.status(403).json({ error: "Box non trovata o non autorizzato." });
-
+    verificaAccessoBoxScrittura(rif_box, req.user.id, res, () => {
         const sql = `INSERT INTO checkpoint_gps (rif_box, rif_utente, latitudine, longitudine, accuratezza, label, timestamp)
                      VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`;
         db.run(sql, [rif_box, req.user.id, latitudine, longitudine, accuratezza || null, label || null], function(runErr) {
@@ -391,13 +438,7 @@ app.post('/api/checkpoint', verificaToken, (req, res) => {
 });
 
 app.get('/api/checkpoint/:boxId', verificaToken, (req, res) => {
-    const sqlCheck = `
-        SELECT box.id FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE box.id = ? AND armadi.rif_utente = ?
-    `;
-    db.get(sqlCheck, [req.params.boxId, req.user.id], (err, row) => {
-        if (err || !row) return res.status(403).json({ error: "Non autorizzato." });
+    verificaAccessoBoxLettura(req.params.boxId, req.user.id, res, () => {
         db.all(
             'SELECT * FROM checkpoint_gps WHERE rif_box = ? ORDER BY timestamp ASC',
             [req.params.boxId],
@@ -410,13 +451,7 @@ app.get('/api/checkpoint/:boxId', verificaToken, (req, res) => {
 });
 
 app.get('/api/checkpoint/:boxId/ultimo', verificaToken, (req, res) => {
-    const sqlCheck = `
-        SELECT box.id FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE box.id = ? AND armadi.rif_utente = ?
-    `;
-    db.get(sqlCheck, [req.params.boxId, req.user.id], (err, row) => {
-        if (err || !row) return res.status(403).json({ error: "Non autorizzato." });
+    verificaAccessoBoxLettura(req.params.boxId, req.user.id, res, () => {
         db.get(
             'SELECT * FROM checkpoint_gps WHERE rif_box = ? ORDER BY timestamp DESC LIMIT 1',
             [req.params.boxId],
@@ -463,16 +498,190 @@ app.get('/api/dashboard/business/:utenteId', verificaToken, (req, res) => {
 });
 
 app.delete('/api/checkpoint/:boxId', verificaToken, (req, res) => {
-    const sqlCheck = `
-        SELECT box.id FROM box
-        JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE box.id = ? AND armadi.rif_utente = ?
-    `;
-    db.get(sqlCheck, [req.params.boxId, req.user.id], (err, row) => {
-        if (err || !row) return res.status(403).json({ error: "Non autorizzato." });
+    verificaAccessoBoxScrittura(req.params.boxId, req.user.id, res, () => {
         db.run('DELETE FROM checkpoint_gps WHERE rif_box = ?', [req.params.boxId], function(runErr) {
             if (runErr) return res.status(500).json({ error: runErr.message });
             res.json({ message: `Rimossi ${this.changes} checkpoint.` });
+        });
+    });
+});
+
+// ─────────────────────────────────────────────
+// GEOFENCE & NOTIFICHE
+// ─────────────────────────────────────────────
+
+const R = 6371000; // Raggio terrestre in metri (per formula Haversine)
+
+function calcolaDistanza(lat1, lng1, lat2, lng2) {
+    const toRad = (deg) => deg * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat / 2) ** 2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Salva/aggiorna geofence per un armadio
+app.post('/api/geofence', verificaToken, (req, res) => {
+    const { armadio_id, latitudine, longitudine, raggio_m, attivo } = req.body;
+    if (!armadio_id || latitudine == null || longitudine == null)
+        return res.status(400).json({ error: "armadio_id, latitudine e longitudine sono obbligatori." });
+
+    verificaAccessoArmadioScrittura(armadio_id, req.user.id, res, () => {
+        db.run(`INSERT INTO geofence (rif_armadio, latitudine, longitudine, raggio_m, attivo) VALUES (?, ?, ?, ?, ?)
+                 ON CONFLICT(rif_armadio) DO UPDATE SET latitudine = excluded.latitudine, longitudine = excluded.longitudine,
+                 raggio_m = excluded.raggio_m, attivo = excluded.attivo, creato_il = datetime('now')`,
+            [armadio_id, latitudine, longitudine, raggio_m || 100, attivo !== false ? 1 : 0],
+            function(err) {
+                if (err) return res.status(500).json({ error: err.message });
+                db.get('SELECT * FROM geofence WHERE rif_armadio = ?', [armadio_id], (getErr, geofence) => {
+                    if (getErr) return res.status(500).json({ error: getErr.message });
+                    res.json({ geofence, message: 'Geofence salvato!' });
+                });
+            }
+        );
+    });
+});
+
+// Ottieni geofence per armadio
+app.get('/api/geofence/:armadioId', verificaToken, (req, res) => {
+    verificaAccessoArmadioLettura(req.params.armadioId, req.user.id, res, () => {
+        db.get('SELECT * FROM geofence WHERE rif_armadio = ?', [req.params.armadioId], (err, geofence) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ geofence: geofence || null });
+        });
+    });
+});
+
+// Elimina geofence
+app.delete('/api/geofence/:armadioId', verificaToken, (req, res) => {
+    verificaAccessoArmadioScrittura(req.params.armadioId, req.user.id, res, () => {
+        db.run('DELETE FROM geofence WHERE rif_armadio = ?', [req.params.armadioId], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: 'Geofence rimosso.' });
+        });
+    });
+});
+
+// Verifica posizione rispetto al geofence (accetta armadio_id o box_id)
+app.post('/api/geofence/verifica', verificaToken, (req, res) => {
+    const { armadio_id, box_id, latitudine, longitudine } = req.body;
+    if ((!armadio_id && !box_id) || latitudine == null || longitudine == null)
+        return res.status(400).json({ error: "armadio_id o box_id, latitudine e longitudine sono obbligatori." });
+
+    let sql, params;
+    if (armadio_id) {
+        sql = 'SELECT * FROM geofence WHERE rif_armadio = ?';
+        params = [armadio_id];
+    } else {
+        sql = `SELECT g.*, b.rif_armadio FROM geofence g
+                 JOIN box b ON b.rif_armadio = g.rif_armadio WHERE b.id = ?`;
+        params = [box_id];
+    }
+
+    db.get(sql, params, (err, geofence) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!geofence) return res.json({ dentro_perimetro: true, motivo: 'Nessun geofence configurato.' });
+
+        if (!geofence.attivo) return res.json({ dentro_perimetro: true, motivo: 'Geofence disattivato.' });
+
+        const distanza = calcolaDistanza(latitudine, longitudine, geofence.latitudine, geofence.longitudine);
+        const dentro = distanza <= geofence.raggio_m;
+        res.json({ dentro_perimetro: dentro, distanza_m: Math.round(distanza), centro: { lat: geofence.latitudine, lng: geofence.longitudine }, raggio_m: geofence.raggio_m });
+    });
+});
+
+// Salva checkpoint con verifica geofence (usato da scansione QR / tracking)
+app.post('/api/checkpoint/sicuro', verificaToken, (req, res) => {
+    const { rif_box, latitudine, longitudine, accuratezza, label } = req.body;
+    if (!rif_box || latitudine == null || longitudine == null)
+        return res.status(400).json({ error: "rif_box, latitudine e longitudine sono obbligatori." });
+
+    verificaAccessoBoxScrittura(rif_box, req.user.id, res, () => {
+        // Salva checkpoint
+        db.run(`INSERT INTO checkpoint_gps (rif_box, rif_utente, latitudine, longitudine, accuratezza, label, timestamp)
+                 VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
+            [rif_box, req.user.id, latitudine, longitudine, accuratezza || null, label || null],
+            function(runErr) {
+                if (runErr) return res.status(500).json({ error: runErr.message });
+
+                // Verifica geofence
+                db.get(`SELECT g.*, b.rif_armadio FROM geofence g
+                         JOIN box b ON b.rif_armadio = g.rif_armadio
+                         WHERE b.id = ?`, [rif_box], (getErr, geofence) => {
+                    if (getErr || !geofence || !geofence.attivo) {
+                        return res.status(201).json({ id: this.lastID, message: 'Checkpoint salvato (nessun geofence).' });
+                    }
+
+                    const distanza = calcolaDistanza(latitudine, longitudine, geofence.latitudine, geofence.longitudine);
+                    if (distanza > geofence.raggio_m) {
+                        // Geofence violato — crea notifica
+                        const msg = `Il box è uscito dal perimetro di sicurezza (${Math.round(distanza)}m dal centro, raggio ${geofence.raggio_m}m).`;
+                        db.run(`INSERT INTO geofence_notifiche (rif_box, rif_armadio, rif_utente, latitudine, longitudine, messaggio)
+                                 VALUES (?, ?, ?, ?, ?, ?)`,
+                            [rif_box, geofence.rif_armadio, req.user.id, latitudine, longitudine, msg],
+                            function(notifyErr) {
+                                if (notifyErr) console.error('Errore creazione notifica geofence:', notifyErr.message);
+                                res.status(201).json({
+                                    id: this.lastID,
+                                    message: 'Checkpoint salvato!',
+                                    geofence_alert: { messaggio: msg }
+                                });
+                            }
+                        );
+                    } else {
+                        res.status(201).json({ id: this.lastID, message: 'Checkpoint salvato. Asset nel perimetro.' });
+                    }
+                });
+            }
+        );
+    });
+});
+
+// Ottieni tutte le notifiche geofence per l'utente loggato
+app.get('/api/geofence/notifiche', verificaToken, (req, res) => {
+    db.all(`SELECT n.*, a.nome as nome_archivio, b.nome as nome_box
+             FROM geofence_notifiche n
+             JOIN armadi a ON n.rif_armadio = a.id
+             LEFT JOIN box b ON n.rif_box = b.id
+             WHERE n.rif_utente = ?
+             ORDER BY n.timestamp DESC`, [req.user.id], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ notifiche: rows || [] });
+    });
+});
+
+// Segna notifica come letta
+app.patch('/api/geofence/notifiche/:id/letta', verificaToken, (req, res) => {
+    db.run('UPDATE geofence_notifiche SET letto = 1 WHERE id = ? AND rif_utente = ?',
+        [req.params.id, req.user.id], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: 'Notifica segnata come letta.' });
+        }
+    );
+});
+
+// Elimina notifica
+app.delete('/api/geofence/notifiche/:id', verificaToken, (req, res) => {
+    db.run('DELETE FROM geofence_notifiche WHERE id = ? AND rif_utente = ?',
+        [req.params.id, req.user.id], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: 'Notifica eliminata.' });
+        }
+    );
+});
+
+// Ottieni checkpoints per tutti i box di un armadio (per la mappa geofence)
+app.get('/api/geofence/:armadioId/checkpoints', verificaToken, (req, res) => {
+    verificaAccessoArmadioLettura(req.params.armadioId, req.user.id, res, () => {
+        const sql = `SELECT c.*, b.nome as nome_box, b.id as box_id
+                      FROM checkpoint_gps c
+                      JOIN box b ON c.rif_box = b.id
+                      WHERE b.rif_armadio = ? AND b.data_eliminazione IS NULL
+                      ORDER BY c.timestamp DESC`;
+        db.all(sql, [req.params.armadioId], (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ checkpoints: rows || [] });
         });
     });
 });
@@ -626,19 +835,34 @@ app.post('/api/box/:boxId/catalogo/:catalogoId/aggiungi', verificaToken, (req, r
 // ─────────────────────────────────────────────
 
 app.get('/api/oggetti/:boxId', verificaToken, (req, res) => {
-    db.all('SELECT * FROM oggetti WHERE rif_box = ?', [req.params.boxId], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ oggetti: rows });
+    verificaAccessoBoxLettura(req.params.boxId, req.user.id, res, () => {
+        db.all('SELECT * FROM oggetti WHERE rif_box = ?', [req.params.boxId], (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ oggetti: rows });
+        });
     });
 });
 
 app.post('/api/oggetti', verificaToken, (req, res) => {
-    const { nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo = null } = req.body;
-    db.run(`INSERT INTO oggetti (nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [nome, descrizione, tipo, fragile ? 1 : 0, quantita || 1, foto, rif_box, rif_catalogo], function(err) {
-        if (err) return res.status(500).json({ error: "Errore salvataggio." });
-        res.status(201).json({ id: this.lastID });
-    });
+    try {
+        const bodySize = JSON.stringify(req.body).length;
+        if (req.body && req.body.foto) {
+            console.log(`POST /api/oggetti - foto length: ${req.body.foto.length}, total body size: ${bodySize}`);
+        }
+        const { nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo = null } = req.body || {};
+        if (!nome || !rif_box) return res.status(400).json({ error: "nome e rif_box obbligatori." });
+        if (foto && foto.length > 10000000) return res.status(400).json({ error: "Foto troppo grande (max 10MB)." });
+        verificaAccessoBoxScrittura(rif_box, req.user.id, res, () => {
+            db.run(`INSERT INTO oggetti (nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                [nome, descrizione, tipo, fragile ? 1 : 0, quantita || 1, foto, rif_box, rif_catalogo], function(err) {
+                if (err) return res.status(500).json({ error: err.message });
+                res.status(201).json({ id: this.lastID });
+            });
+        });
+    } catch (err) {
+        console.error('POST /api/oggetti - Unexpected error:', err);
+        res.status(500).json({ error: err.message || 'Errore interno del server.' });
+    }
 });
 
 // ── FIX: era mancante la ) di chiusura del return res.status(400) ──
@@ -663,26 +887,41 @@ app.put('/api/oggetti/sposta', verificaToken, (req, res) => {
 });
 
 app.put('/api/oggetti/:id', verificaToken, (req, res) => {
-    const { nome, descrizione, tipo, fragile, quantita, foto } = req.body;
-    db.run(
-        `UPDATE oggetti SET nome = COALESCE(?, nome), descrizione = COALESCE(?, descrizione),
-         tipo = COALESCE(?, tipo), fragile = COALESCE(?, fragile),
-         quantita = COALESCE(?, quantita), foto = COALESCE(?, foto)
-         WHERE id = ?`,
-        [nome || null, descrizione || null, tipo || null,
-         fragile !== undefined ? (fragile ? 1 : 0) : null,
-         quantita || null, foto || null, req.params.id],
-        function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ message: "Oggetto aggiornato!" });
-        }
-    );
+    db.get('SELECT rif_box FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
+
+        verificaAccessoBoxScrittura(oggetto.rif_box, req.user.id, res, () => {
+            const { nome, descrizione, tipo, fragile, quantita, foto } = req.body;
+            if (foto && foto.length > 10000000) return res.status(400).json({ error: "Foto troppo grande (max 10MB)." });
+            db.run(
+                `UPDATE oggetti SET nome = COALESCE(?, nome), descrizione = COALESCE(?, descrizione),
+                 tipo = COALESCE(?, tipo), fragile = COALESCE(?, fragile),
+                 quantita = COALESCE(?, quantita), foto = COALESCE(?, foto)
+                 WHERE id = ?`,
+                [nome || null, descrizione || null, tipo || null,
+                 fragile !== undefined ? (fragile ? 1 : 0) : null,
+                 quantita || null, foto || null, req.params.id],
+                function(err) {
+                    if (err) return res.status(500).json({ error: err.message });
+                    res.json({ message: "Oggetto aggiornato!" });
+                }
+            );
+        });
+    });
 });
 
 app.delete('/api/oggetti/:id', verificaToken, (req, res) => {
-    db.run('DELETE FROM oggetti WHERE id = ?', [req.params.id], function(err) {
+    db.get('SELECT rif_box FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json({ message: "Oggetto eliminato!" });
+        if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
+
+        verificaAccessoBoxScrittura(oggetto.rif_box, req.user.id, res, () => {
+            db.run('DELETE FROM oggetti WHERE id = ?', [req.params.id], function(err) {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({ message: "Oggetto eliminato!" });
+            });
+        });
     });
 });
 
@@ -694,11 +933,13 @@ app.get('/api/cerca', verificaToken, (req, res) => {
     const q = `%${req.query.q || ''}%`;
     const userId = req.user.id;
 
+    const armadiCondivisi = `SELECT rif_armadio FROM condivisioni_armadio WHERE rif_ospite = ? AND stato = 'accettata'`;
+
     const sqlBox = `
         SELECT box.id, box.nome, 'box' as tipo, armadi.nome as contesto
         FROM box
         JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE armadi.rif_utente = ?
+        WHERE (armadi.rif_utente = ? OR armadi.id IN (${armadiCondivisi}))
           AND box.data_eliminazione IS NULL
           AND box.nome LIKE ?
         LIMIT 20
@@ -709,15 +950,15 @@ app.get('/api/cerca', verificaToken, (req, res) => {
         FROM oggetti
         JOIN box ON oggetti.rif_box = box.id
         JOIN armadi ON box.rif_armadio = armadi.id
-        WHERE armadi.rif_utente = ?
+        WHERE (armadi.rif_utente = ? OR armadi.id IN (${armadiCondivisi}))
           AND box.data_eliminazione IS NULL
           AND oggetti.nome LIKE ?
         LIMIT 30
     `;
 
-    db.all(sqlBox, [userId, q], (errBox, boxes) => {
+    db.all(sqlBox, [userId, userId, q], (errBox, boxes) => {
         if (errBox) return res.status(500).json({ error: errBox.message });
-        db.all(sqlOggetti, [userId, q], (errOgg, oggetti) => {
+        db.all(sqlOggetti, [userId, userId, q], (errOgg, oggetti) => {
             if (errOgg) return res.status(500).json({ error: errOgg.message });
             res.json({ risultati: [...(boxes || []), ...(oggetti || [])] });
         });
@@ -754,6 +995,79 @@ app.get('/api/scan/:boxId', (req, res) => {
 // ─────────────────────────────────────────────
 // CONDIVISIONE ARCHIVIO
 // ─────────────────────────────────────────────
+
+// GET pending count (usato dalla login)
+app.get('/api/condivisioni/pending/:utenteId', verificaToken, (req, res) => {
+    db.get('SELECT COUNT(*) as count FROM condivisioni_armadio WHERE rif_ospite = ? AND stato = ?',
+        [req.params.utenteId, 'in_attesa'], (err, row) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ pending: row?.count || 0 });
+        });
+});
+
+// GET richieste in attesa per un utente
+app.get('/api/condivisioni/in-attesa/:utenteId', verificaToken, (req, res) => {
+    const sql = `
+        SELECT c.id as condivisione_id, c.rif_armadio as armadio_id, a.nome as armadio_nome,
+               u.username as proprietario_username, c.ruolo, c.creato_il, c.stato
+        FROM condivisioni_armadio c
+        JOIN armadi a ON a.id = c.rif_armadio
+        JOIN utenti u ON u.id = c.rif_proprietario
+        WHERE c.rif_ospite = ? AND c.stato = ?
+        ORDER BY c.id DESC
+    `;
+    db.all(sql, [req.params.utenteId, 'in_attesa'], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ condivisioni: rows });
+    });
+});
+
+// GET archivi ricevuti (con parametro utenteId — compatibilità frontend)
+app.get('/api/condivisioni/ricevute/:utenteId', verificaToken, (req, res) => {
+    const sql = `
+        SELECT c.id as condivisione_id, c.rif_armadio as armadio_id, c.ruolo, c.stato, c.creato_il,
+               a.nome as armadio_nome, u.username as proprietario_username
+        FROM condivisioni_armadio c
+        JOIN armadi a ON a.id = c.rif_armadio
+        JOIN utenti u ON u.id = c.rif_proprietario
+        WHERE c.rif_ospite = ?
+        ORDER BY c.id DESC
+    `;
+    db.all(sql, [req.params.utenteId], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ condivisioni: rows });
+    });
+});
+
+// GET ospiti di un armadio
+app.get('/api/condivisioni/:armadioId', verificaToken, (req, res) => {
+    const sql = `
+        SELECT c.id, c.ruolo, c.stato, c.creato_il,
+               u.username as ospite_username, u.email as ospite_email
+        FROM condivisioni_armadio c
+        JOIN utenti u ON u.id = c.rif_ospite
+        WHERE c.rif_armadio = ?
+        ORDER BY c.id DESC
+    `;
+    db.all(sql, [req.params.armadioId], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ condivisioni: rows });
+    });
+});
+
+// PUT aggiorna ruolo
+app.put('/api/condivisioni/:id/ruolo', verificaToken, (req, res) => {
+    const { ruolo } = req.body;
+    if (!['viewer', 'editor'].includes(ruolo)) return res.status(400).json({ error: "ruolo non valido." });
+    db.get('SELECT * FROM condivisioni_armadio WHERE id = ? AND rif_proprietario = ?',
+        [req.params.id, req.user.id], (err, row) => {
+            if (err || !row) return res.status(404).json({ error: "Condivisione non trovata." });
+            db.run('UPDATE condivisioni_armadio SET ruolo = ? WHERE id = ?', [ruolo, req.params.id], function(runErr) {
+                if (runErr) return res.status(500).json({ error: runErr.message });
+                res.json({ message: "Ruolo aggiornato!" });
+            });
+        });
+});
 
 app.post('/api/condivisioni', verificaToken, (req, res) => {
     const { rif_armadio, email_ospite, ruolo = 'viewer' } = req.body;
@@ -865,6 +1179,15 @@ app.get('/api/admin/stats', verificaAdmin, (req, res) => {
             });
         });
     });
+});
+
+// ─────────────────────────────────────────────
+// GLOBAL ERROR HANDLER (cattura errori da body-parser e route handlers)
+// ─────────────────────────────────────────────
+app.use((err, req, res, next) => {
+    console.error('GLOBAL ERROR:', err);
+    const status = err.status || 500;
+    res.status(status).json({ error: err.message || 'Errore interno del server.' });
 });
 
 // ─────────────────────────────────────────────

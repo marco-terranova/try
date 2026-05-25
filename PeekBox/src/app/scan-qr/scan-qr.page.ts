@@ -5,10 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { NavigationHistoryService } from '../services/navigation-history';
 import {
   IonContent,
-  IonFooter,
   IonIcon,
-  IonTabBar,
-  IonTabButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -17,6 +14,8 @@ import {
   apertureOutline,
   arrowForwardOutline,
   cameraReverseOutline,
+  chatbubblesOutline,
+  home,
   homeOutline,
   imageOutline,
   keypadOutline,
@@ -42,10 +41,7 @@ declare const jsQR: any;
     FormsModule,
     RouterModule,
     IonContent,
-    IonFooter,
     IonIcon,
-    IonTabBar,
-    IonTabButton,
   ],
 })
 export class ScanQrPage implements OnInit, OnDestroy {
@@ -55,6 +51,7 @@ export class ScanQrPage implements OnInit, OnDestroy {
   isScanning = false;
   manualCode = '';
   cameraError: string | null = null;
+  nomeUtente = '';
 
   private stream: MediaStream | null = null;
   private animFrameId: number | null = null;
@@ -67,6 +64,8 @@ export class ScanQrPage implements OnInit, OnDestroy {
       apertureOutline,
       arrowForwardOutline,
       cameraReverseOutline,
+      chatbubblesOutline,
+      home,
       homeOutline,
       imageOutline,
       keypadOutline,
@@ -83,6 +82,10 @@ export class ScanQrPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadJsQR();
+  }
+
+  ionViewWillEnter() {
+    this.nomeUtente = (localStorage.getItem('utente_nome') || '').toUpperCase();
   }
 
   ngOnDestroy() {

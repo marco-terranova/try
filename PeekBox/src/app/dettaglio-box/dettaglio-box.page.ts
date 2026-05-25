@@ -63,6 +63,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
   box: any = null;
   oggetti: any[] = [];
   isLoading = true;
+  isViewer = false;
 
   modaleAperta: string | null = null;
 
@@ -144,7 +145,11 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
   caricaDati() {
     this.isLoading = true;
     this.dbService.getBoxSingola(this.boxId).subscribe({
-      next: (res: any) => { this.box = res.box; this.caricaOggetti(); },
+      next: (res: any) => {
+        this.box = res.box;
+        this.isViewer = this.box?.ruolo_condivisione === 'viewer';
+        this.caricaOggetti();
+      },
       error: () => { this.isLoading = false; this.toast('Impossibile caricare il box.', 'danger'); }
     });
   }
@@ -176,7 +181,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
   // ─── Preferito ────────────────────────────────────────────────────
 
   togglePreferito() {
-    if (!this.box) return;
+    if (!this.box || this.isViewer) return;
     const newVal = !this.box.is_preferito;
     this.dbService.updatePreferito(this.boxId, newVal).subscribe({
       next: () => { this.box.is_preferito = newVal; this.toast(newVal ? '⭐ Aggiunto ai preferiti' : 'Rimosso dai preferiti', 'primary'); },
@@ -187,6 +192,8 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
   // ─── Modali ─────────────────────────────────────────────────────
 
   apriModale(tipo: string) {
+    if (tipo === 'aggiungi' && this.isViewer) return;
+    if (tipo === 'modifica' && this.isViewer) return;
     this.modaleAperta = tipo;
     if (tipo === 'aggiungi') { this.resetFormOggetto(); }
     if (tipo === 'qr')       { this.caricaQr(); }
@@ -212,6 +219,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
   }
 
   apriModificaOggetto(o: any) {
+    if (this.isViewer) return;
     this.oggettoInModifica  = o;
     this.nomeOggetto        = o.nome || '';
     this.tipoOggetto        = o.tipo || '';
@@ -237,17 +245,18 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     if (this.modaleAperta === 'modifica' && this.oggettoInModifica) {
       this.dbService.aggiornaOggetto(this.oggettoInModifica.id, dati).subscribe({
         next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('Oggetto aggiornato!', 'success'); },
-        error: () => { this.isSaving = false; this.toast('Errore aggiornamento.', 'danger'); }
+        error: (err: any) => { this.isSaving = false; this.toast(err.error?.error || 'Errore aggiornamento.', 'danger'); }
       });
     } else {
       this.dbService.creaOggetto(dati).subscribe({
         next: () => { this.isSaving = false; this.caricaOggetti(); this.chiudiModale(); this.toast('Oggetto aggiunto!', 'success'); },
-        error: () => { this.isSaving = false; this.toast('Errore inserimento.', 'danger'); }
+        error: (err: any) => { this.isSaving = false; this.toast(err.error?.error || 'Errore inserimento.', 'danger'); }
       });
     }
   }
 
   async eliminaOggetto(o: any) {
+    if (this.isViewer) return;
     const alert = await this.alertCtrl.create({
       cssClass: 'peekbox-alert',
       header: 'Elimina oggetto',
@@ -266,6 +275,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
   }
 
   async svuotaBox() {
+    if (this.isViewer) return;
     if (this.oggetti.length === 0) { this.toast('Il box è già vuoto.', 'medium'); return; }
     const alert = await this.alertCtrl.create({
       cssClass: 'peekbox-alert',

@@ -4,7 +4,7 @@
 
       <div class="header-top">
         <div class="header-greet">
-          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" />
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="navBack()" style="cursor: pointer;" />
           <h1 class="header-greeting">BENTORNATO <span class="nome-verde">{{ (nomeUtente || 'Utente') | uppercase }}</span></h1>
         </div>
       </div>
@@ -119,6 +119,7 @@
             </span>
             <div class="card-actions">
               <button
+                *ngIf="box.ruolo_condivisione !== 'viewer'"
                 class="action-btn star-btn"
                 [class.is-fav]="box.is_preferito === 1"
                 (click)="togglePreferito(box, $event)"
@@ -126,6 +127,7 @@
                 <ion-icon [name]="box.is_preferito === 1 ? 'star' : 'star-outline'"></ion-icon>
               </button>
               <button
+                *ngIf="box.ruolo_condivisione !== 'viewer'"
                 class="action-btn delete-btn"
                 (click)="confermaEliminazione(box.id, $event)"
               >
@@ -174,7 +176,7 @@
                 <ion-item lines="none" *ngFor="let armadio of gliArmadi">
                   <ion-radio slot="start" [value]="armadio.id"></ion-radio>
                   <ion-label>{{ armadio.nome }}</ion-label>
-                  <ion-button slot="end" fill="clear" color="danger" (click)="confermaEliminaArmadio(armadio, $event)">
+                  <ion-button *ngIf="!armadio.ruolo_condivisione" slot="end" fill="clear" color="danger" (click)="confermaEliminaArmadio(armadio, $event)">
                     <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
                   </ion-button>
                 </ion-item>
@@ -224,8 +226,8 @@
   </div>
 
   <div class="nav-item" (click)="navTo('/box-ricevute')">
-    <ion-icon name="share-social-outline"></ion-icon>
-    <span>Condividi</span>
+    <ion-icon name="chatbubbles-outline"></ion-icon>
+    <span>Avvisi</span>
   </div>
 
   <div class="nav-fab-wrapper">

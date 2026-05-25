@@ -41,7 +41,16 @@ ion-content {
   align-items: center;
   gap: 10px;
 
-  .header-logo { height: 32px; width: auto; object-fit: contain; }
+  .header-logo {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+
+    &:hover { opacity: 0.75; }
+    &:active { opacity: 0.55; }
+  }
 }
 
 .header-greeting {
@@ -103,7 +112,7 @@ ion-content {
 }
 
 // === CONTENT ===
-.content-inner { padding: 14px 14px 24px; }
+.content-inner { padding: 16px; max-width: 1200px; margin: 0 auto; }
 
 // === FILTERS + ACTION ROW ===
 .filters-action-row {
