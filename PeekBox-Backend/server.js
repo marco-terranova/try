@@ -1350,6 +1350,106 @@ app.get('/api/admin/utenti', verificaAdmin, (req, res) => {
     });
 });
 
+// ─────────────────────────────────────────────
+// SEGNALAZIONI UTENTI (FEEDBACK/REPORT)
+// ─────────────────────────────────────────────
+
+// Invia una nuova segnalazione/feedback
+app.post('/api/segnalazioni', verificaToken, (req, res) => {
+    const { tipo, titolo, descrizione, priorita } = req.body;
+    
+    if (!tipo || !titolo) {
+        return res.status(400).json({ error: "Tipo e titolo sono obbligatori." });
+    }
+    
+    // Validazione tipo
+    const tipiValidi = ['feedback', 'report', 'suggerimento'];
+    if (!tipiValidi.includes(tipo)) {
+        return res.status(400).json({ error: "Tipo non valido. Usa: feedback, report o suggerimento." });
+    }
+    
+    // Validazione priorità
+    const prioritaValide = ['bassa', 'media', 'alta'];
+    if (priorita && !prioritaValide.includes(priorita)) {
+        return res.status(400).json({ error: "Priorità non valida. Usa: bassa, media o alta." });
+    }
+    
+    const sql = `INSERT INTO segnalazioni_utenti (rif_utente, tipo, titolo, descrizione, priorita) 
+                 VALUES (?, ?, ?, ?, ?)`;
+                 
+    db.run(sql, [req.user.id, tipo, titolo, descrizione || null, priorita || 'bassa'], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(201).json({ 
+            id: this.lastID,
+            message: "Segnalazione inviata con successo!" 
+        });
+    });
+});
+
+// Ottieni tutte le segnalazioni (solo per admin)
+app.get('/api/admin/segnalazioni', verificaAdmin, (req, res) => {
+    const sql = `
+        SELECT su.*, u.username, u.email
+        FROM segnalazioni_utenti su
+        JOIN utenti u ON su.rif_utente = u.id
+        ORDER BY 
+            CASE su.priorita 
+                WHEN 'alta' THEN 3
+                WHEN 'media' THEN 2
+                WHEN 'bassa' THEN 1
+            END DESC,
+            su.timestamp DESC
+    `;
+    
+    db.all(sql, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ segnalazioni: rows || [] });
+    });
+});
+
+// Aggiorna lo stato di una segnalazione (solo per admin)
+app.patch('/api/admin/segnalazioni/:id/stato', verificaAdmin, (req, res) => {
+    const { stato } = req.body;
+    const statiValidi = ['nuova', 'in_lavorazione', 'risolta', 'chiusa'];
+    
+    if (!stato || !statiValidi.includes(stato)) {
+        return res.status(400).json({ error: "Stato non valido. Usa: nuova, in_lavorazione, risolta o chiusa." });
+    }
+    
+    db.run('UPDATE segnalazioni_utenti SET stato = ? WHERE id = ?', [stato, req.params.id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        if (this.changes === 0) {
+            return res.status(404).json({ error: "Segnalazione non trovata." });
+        }
+        res.json({ message: "Stato segnalazione aggiornato!" });
+    });
+});
+
+// Elimina una segnalazione (solo per admin)
+app.delete('/api/admin/segnalazioni/:id', verificaAdmin, (req, res) => {
+    db.run('DELETE FROM segnalazioni_utenti WHERE id = ?', [req.params.id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        if (this.changes === 0) {
+            return res.status(404).json({ error: "Segnalazione non trovata." });
+        }
+        res.json({ message: "Segnalazione eliminata definitivamente!" });
+    });
+});
+
+// Ottieni le segnalazioni dell'utente loggato
+app.get('/api/segnalazioni/mie', verificaToken, (req, res) => {
+    const sql = `
+        SELECT * FROM segnalazioni_utenti 
+        WHERE rif_utente = ?
+        ORDER BY timestamp DESC
+    `;
+    
+    db.all(sql, [req.user.id], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ segnalazioni: rows || [] });
+    });
+});
+
 app.get('/api/admin/stats', verificaAdmin, (req, res) => {
     db.get('SELECT COUNT(*) as tot_utenti FROM utenti', [], (err1, u) => {
         db.get('SELECT COUNT(*) as tot_box FROM box WHERE data_eliminazione IS NULL', [], (err2, b) => {

@@ -388,9 +388,33 @@ export class DatabaseService {
   }
 
   // ─── ADMIN ────────────────────────────────────────────────
-
   adminGetUtenti() {
     return this.http.get(`${this.apiUrl}/admin/utenti`, { headers: this.getAuthHeaders() });
+  }
+
+  adminEliminaUtente(id: number) {
+    return this.http.delete(`${this.apiUrl}/admin/utenti/${id}`, { headers: this.getAuthHeaders() });
+  }
+
+  // ─── SEGNALAZIONI UTENTI ─────────────────────────────────
+  inviaSegnalazione(dati: any) {
+    return this.http.post(`${this.apiUrl}/segnalazioni`, dati, { headers: this.getAuthHeaders() });
+  }
+
+  adminGetSegnalazioni() {
+    return this.http.get(`${this.apiUrl}/admin/segnalazioni`, { headers: this.getAuthHeaders() });
+  }
+
+  adminAggiornaStatoSegnalazione(id: number, stato: string) {
+    return this.http.patch(`${this.apiUrl}/admin/segnalazioni/${id}/stato`, { stato }, { headers: this.getAuthHeaders() });
+  }
+
+  adminEliminaSegnalazione(id: number) {
+    return this.http.delete(`${this.apiUrl}/admin/segnalazioni/${id}`, { headers: this.getAuthHeaders() });
+  }
+
+  getMieSegnalazioni() {
+    return this.http.get(`${this.apiUrl}/segnalazioni/mie`, { headers: this.getAuthHeaders() });
   }
 
   adminEliminaUtente(id: number) {
