@@ -133,7 +133,7 @@ export class DatabaseService {
   }
 
   getQrToken(boxId: number) {
-    return this.http.post(`${this.apiUrl}/box/${boxId}/qr-token`, {}, { headers: this.getAuthHeaders() });
+    return this.http.get(`${this.apiUrl}/box/${boxId}/qr-token`, { headers: this.getAuthHeaders() });
   }
 
   buildQrUrl(boxId: number, token: string): string {

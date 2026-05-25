@@ -1316,10 +1316,40 @@ app.delete('/api/condivisioni/:id', verificaToken, (req, res) => {
 // ─────────────────────────────────────────────
 
 app.get('/api/admin/utenti', verificaAdmin, (req, res) => {
-    db.all('SELECT id, username, email, tipo_profilo, is_admin FROM utenti ORDER BY id ASC', [], (err, rows) => {
+    db.all(`
+        SELECT 
+            u.*,
+            COALESCE(armadi_count.armadi, 0) as num_armadi,
+            COALESCE(box_count.box, 0) as num_box,
+            COALESCE(oggetti_count.oggetti, 0) as num_oggetti
+        FROM utenti u
+        LEFT JOIN (
+            SELECT rif_utente, COUNT(*) as armadi 
+            FROM armadi 
+            GROUP BY rif_utente
+        ) armadi_count ON u.id = armadi_count.rif_utente
+        LEFT JOIN (
+            SELECT a.rif_utente, COUNT(*) as box 
+            FROM box b
+            JOIN armadi a ON b.rif_armadio = a.id
+            WHERE b.data_eliminazione IS NULL
+            GROUP BY a.rif_utente
+        ) box_count ON u.id = box_count.rif_utente
+        LEFT JOIN (
+            SELECT a.rif_utente, COUNT(*) as oggetti 
+            FROM oggetti o
+            JOIN box b ON o.rif_box = b.id
+            JOIN armadi a ON b.rif_armadio = a.id
+            WHERE o.data_eliminazione IS NULL
+            GROUP BY a.rif_utente
+        ) oggetti_count ON u.id = oggetti_count.rif_utente
+        ORDER BY u.id ASC
+    `, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ utenti: rows });
     });
+});
+});
 });
 
 app.get('/api/admin/stats', verificaAdmin, (req, res) => {

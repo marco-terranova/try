@@ -31,6 +31,13 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
   passwordReg: string = '';
   tipoProfilo: 'personal' | 'business' = 'personal';
 
+  get loginValido(): boolean {
+    return !!this.email?.trim() && !!this.password?.trim();
+  }
+  get registerValido(): boolean {
+    return !!this.nomeProfilo?.trim() && !!this.emailReg?.trim() && !!this.passwordReg?.trim();
+  }
+
   @ViewChild('tiltCard', { static: false }) cardRef!: ElementRef<HTMLElement>;
   @ViewChild('stageRef', { static: false }) stageRef!: ElementRef<HTMLElement>;
 

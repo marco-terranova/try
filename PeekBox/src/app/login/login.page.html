@@ -8,12 +8,12 @@
       <!-- ───── LEFT: HERO PANEL ───── -->
       <div class="hero-panel">
 
-        <!-- Mesh gradient background -->
-        <div class="hp-mesh">
-          <div class="hp-sphere hp-sphere--1"></div>
-          <div class="hp-sphere hp-sphere--2"></div>
-          <div class="hp-sphere hp-sphere--3"></div>
-          <div class="hp-sphere hp-sphere--4"></div>
+        <!-- Animated blob background -->
+        <div class="hp-blobs">
+          <div class="hpb-blob hpb-blob--1"></div>
+          <div class="hpb-blob hpb-blob--2"></div>
+          <div class="hpb-blob hpb-blob--3"></div>
+          <div class="hpb-blob hpb-blob--4"></div>
         </div>
 
         <!-- Subtle grid pattern -->
@@ -26,29 +26,22 @@
           <defs><linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7DC740" stop-opacity="0"/><stop offset="50%" stop-color="#7DC740"/><stop offset="100%" stop-color="#3AABDB" stop-opacity="0"/></linearGradient></defs>
         </svg>
 
-        <!-- Floating stat cards -->
-        <div class="hp-stat hp-stat--1">
-          <div class="hp-stat-icon">
-            <svg viewBox="0 0 20 20" fill="none" stroke="#7DC740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>
-              <polyline points="12 10 10 12 8 10"/><line x1="10" y1="12" x2="10" y2="6"/>
-            </svg>
-          </div>
-          <div class="hp-stat-body">
-            <span class="hp-stat-num">50.<span class="hp-stat-num-accent">000+</span></span>
-            <span class="hp-stat-label">Scatole tracciate</span>
+        <!-- Floating testimonial cards -->
+        <div class="hp-testimonial hp-testimonial--1">
+          <svg class="hp-t-quote" viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="1.5"><path d="M9 12H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/><path d="M21 12h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/></svg>
+          <p class="hp-t-text">&ldquo;Da quando usiamo PeekBox abbiamo ridotto i tempi di ricerca del 70%. Straordinario.&rdquo;</p>
+          <div class="hp-t-author">
+            <span class="hp-t-name">Laura Bianchi</span>
+            <span class="hp-t-role">Warehouse Coordinator, LogiCorp</span>
           </div>
         </div>
 
-        <div class="hp-stat hp-stat--2">
-          <div class="hp-stat-icon">
-            <svg viewBox="0 0 20 20" fill="none" stroke="#3AABDB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/>
-            </svg>
-          </div>
-          <div class="hp-stat-body">
-            <span class="hp-stat-num">10.<span class="hp-stat-num-accent">000+</span></span>
-            <span class="hp-stat-label">Utenti attivi</span>
+        <div class="hp-testimonial hp-testimonial--2">
+          <svg class="hp-t-quote" viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="1.5"><path d="M9 12H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/><path d="M21 12h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/></svg>
+          <p class="hp-t-text">&ldquo;La geolocalizzazione ci ha cambiato la vita. Ogni scatola &egrave; sempre al suo posto.&rdquo;</p>
+          <div class="hp-t-author">
+            <span class="hp-t-name">Alessandro Conti</span>
+            <span class="hp-t-role">Operations Manager, MoveFast</span>
           </div>
         </div>
 
@@ -115,6 +108,12 @@
 
       <!-- ───── RIGHT: LOGIN / REGISTER CARD ───── -->
       <div class="form-panel">
+        <div class="fp-blobs">
+          <div class="fpb-blob fpb-blob--1"></div>
+          <div class="fpb-blob fpb-blob--2"></div>
+          <div class="fpb-blob fpb-blob--3"></div>
+          <div class="fpb-blob fpb-blob--4"></div>
+        </div>
         <div #tiltCard class="login-card">
 
           <div class="card-glare"></div>
@@ -165,7 +164,7 @@
                 </div>
               </div>
               <div class="card-divider"></div>
-              <button class="btn-accedi" (click)="accedi()">
+              <button class="btn-accedi" [disabled]="!loginValido" (click)="accedi()">
                 <span>Accedi</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 <span class="btn-shimmer"></span>
@@ -179,8 +178,7 @@
           <!-- ── REGISTER MODE ── -->
           <ng-container *ngIf="isRegister">
             <div class="card-header card-header--center">
-              <div class="ch-title-row">
-                <h1 class="card-title">Registrati</h1>
+              <div class="ch-header-row">
                 <div class="ch-icon-wrap ch-icon-back" (click)="toggleMode()">
                   <svg viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
@@ -189,6 +187,7 @@
                   </svg>
                 </div>
               </div>
+              <h1 class="card-title">Registrati</h1>
               <p class="card-sub">Crea il tuo account PeekBox</p>
             </div>
             <div class="card-body">
@@ -232,7 +231,7 @@
                 </button>
               </div>
               <div class="card-divider"></div>
-              <button class="btn-accedi" (click)="registrati()">
+              <button class="btn-accedi" [disabled]="!registerValido" (click)="registrati()">
                 <span>Registrati</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 <span class="btn-shimmer"></span>

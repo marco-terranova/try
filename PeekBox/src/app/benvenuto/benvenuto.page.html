@@ -1,183 +1,179 @@
 <ion-content [fullscreen]="true" class="welcome-content">
 
-  <!-- ===== HERO ===== -->
-  <section class="hero-section">
+  <div #stageRef class="welcome-stage">
 
-    <!-- Slideshow 5 foto reali -->
-        <div class="slideshow">
-      <div class="slide active">
-        <img src="assets/icon/slide1.jpg" alt="" />
+    <!-- ════════════════════════════════════════════════ HERO ══════ -->
+    <section class="hero-section">
+      <div class="hero-bg">
+        <div class="hb-blob hb-blob--1"></div>
+        <div class="hb-blob hb-blob--2"></div>
+        <div class="hb-blob hb-blob--3"></div>
+        <div class="hb-blob hb-blob--4"></div>
       </div>
-     <div class="slide">
-       <img src="assets/icon/slide2.jpg" alt="" />
-      </div>
-      <div class="slide">
-        <img src="assets/icon/slide3.jpg" alt="" />
-      </div>
-     <div class="slide">
-       <img src="assets/icon/slide4.jpg" alt="" />
-      </div>
-      <div class="slide">
-       <img src="assets/icon/slide5.jpg" alt="" />
-      </div>
-    </div>
-    <div class="hero-overlay"></div>
-    <div class="hero-fade-bottom"></div>
 
-    <!-- TOP BAR -->
-    <header class="topbar">
-      <div class="topbar-logo">
-        <img src="assets/icon/logoTitolo1.png" alt="PeekBox" class="topbar-logo-img" />
-        <span class="logo-txt">
-          <span class="pk">Peek</span><span class="bx">Box</span>
-        </span>
-      </div>
-      <button class="btn-nav" routerLink="/login">
-        Accedi
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-        </svg>
-      </button>
-    </header>
-
-    <!-- HERO CONTENT -->
-    <div class="hero-content">
-      <div class="hero-left">
-        <div class="badge">
-          <span class="badge-dot"></span>
-          SISTEMA AVANZATO DI TRACCIABILITÀ
+      <header class="topbar">
+        <div class="topbar-logo">
+          <img src="assets/icon/logoTitolo1.png" alt="" class="topbar-img" />
+          <span class="topbar-txt"><span class="pk">Peek</span><span class="bx">Box</span></span>
         </div>
-        <h1 class="hero-title">
-          Traccia <br>
-          <span class="title-accent">Gestisci Spedisci</span>
-        </h1>
-        <p class="hero-sub">
-          <strong>Dimentica l'inventario cartaceo.</strong> PeekBox cataloga, gestisce e geolocalizza
-          i tuoi asset aziendali o i tuoi traslochi in tempo reale.
-        </p>
-        <div class="cta-row">
-          <button class="btn-primary" routerLink="/registrazione">
-            <span>Inizia gratuitamente</span>
-            <div class="shimmer"></div>
+        <div class="topbar-actions">
+          <button class="btn-accedi-top" routerLink="/login">
+            Accedi
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </button>
-          <button class="btn-secondary" routerLink="/login">Hai già un account →</button>
+          <a href="https://t.me/peekbox" target="_blank" rel="noopener" class="btn-telegram-top" title="Contattaci su Telegram">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 11.96c-.72-.24-.73-.72.16-1.07l16.3-6.28c.6-.24 1.18.14.95 1.05l-2.78 13.1c-.14.7-.56.87-1.13.55l-3.1-2.29-1.5 1.45c-.16.16-.3.3-.65.3z"/></svg>
+          </a>
+        </div>
+      </header>
+
+      <div class="hero-body">
+        <div class="hc-circuit">
+          <div class="hcc-rail"></div>
+          <div class="hcc-orbit">
+            <div class="hcc-dot"></div>
+          </div>
+        </div>
+        <div class="hero-center">
+          <h1 class="hero-title">
+            Il tuo inventario.<br>
+            <span class="ht-accent">Sempre con te.</span>
+          </h1>
+          <p class="hero-sub">Benvenuto su PeekBox. Il posto pi&ugrave; sicuro per i tuoi oggetti, sempre a portata di mano.</p>
         </div>
       </div>
+    </section>
 
-      <div class="hero-right">
-        <div class="stats-card">
-          <div class="stats-card-title">Cosa puoi fare</div>
-          <div class="stat-row">
-            <div class="stat-icon si-blue">📦</div>
-            <div class="stat-info">
-              <span class="stat-label">Box digitali</span>
-              <span class="stat-desc">Cataloga ogni scatola con nome, foto e categoria</span>
+    <div class="section-divider"><div class="sd-led"></div></div>
+
+    <!-- ═══════════════════════════════════════════ FEATURES ══════ -->
+    <section class="features-section">
+      <div class="features-header" [class.fh-hidden]="showCarousel">
+        <p class="sec-sub">Dimentica l'inventario cartaceo. Con PeekBox ogni scatola ha un profilo digitale completo, sempre a portata di scansione.</p>
+      </div>
+
+      @if (!showCarousel) {
+        <div class="features-grid">
+          <div class="feat-card" tabindex="0">
+            <div class="feat-bar feat-bar--blue"></div>
+            <div class="feat-body">
+              <span class="feat-icon">📦</span>
+              <h3>Box digitali</h3>
+              <p>Cataloga ogni scatola con nome, foto e categoria. Ogni box ha un profilo digitale completo.</p>
             </div>
           </div>
-          <div class="stat-sep"></div>
-          <div class="stat-row">
-            <div class="stat-icon si-green">🔍</div>
-            <div class="stat-info">
-              <span class="stat-label">Ricerca istantanea</span>
-              <span class="stat-desc">Trova qualsiasi oggetto filtrando per nome, categoria o magazzino</span>
+          <div class="feat-card" tabindex="0">
+            <div class="feat-bar feat-bar--green"></div>
+            <div class="feat-body">
+              <span class="feat-icon">🔍</span>
+              <h3>Ricerca istantanea</h3>
+              <p>Trova qualsiasi oggetto filtrando per nome, categoria o posizione. Zero perdite di tempo.</p>
             </div>
           </div>
-          <div class="stat-sep"></div>
-          <div class="stat-row">
-            <div class="stat-icon si-teal">📲</div>
-            <div class="stat-info">
-              <span class="stat-label">QR Code integrato</span>
-              <span class="stat-desc">Scansiona la scatola fisica e vedi subito il contenuto</span>
+          <div class="feat-card" tabindex="0">
+            <div class="feat-bar feat-bar--teal"></div>
+            <div class="feat-body">
+              <span class="feat-icon">📲</span>
+              <h3>QR Code integrato</h3>
+              <p>Stampa e attacca i QR Code sulle scatole. Una scansione e sai tutto del contenuto.</p>
             </div>
           </div>
-          <div class="stat-sep"></div>
-          <div class="stat-row">
-            <div class="stat-icon si-blue">📍</div>
-            <div class="stat-info">
-              <span class="stat-label">Tracciamento GPS</span>
-              <span class="stat-desc">Zero smarrimenti. Ogni scansione aggiorna la mappa in tempo reale</span>
+          <div class="feat-card" tabindex="0">
+            <div class="feat-bar feat-bar--purple"></div>
+            <div class="feat-body">
+              <span class="feat-icon">📍</span>
+              <h3>Tracciamento GPS</h3>
+              <p>Geolocalizza ogni box in tempo reale. Ogni spostamento viene registrato automaticamente.</p>
+            </div>
+          </div>
+        </div>
+        <button class="feat-toggle" (click)="toggleCarousel()">
+          <span>Scopri le schermate</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      } @else {
+        <button class="feat-toggle feat-toggle--top" (click)="toggleCarousel()">
+          <span>Mostra funzionalità</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="features-carousel">
+          <div class="fc-split">
+            <div class="fc-visual">
+              <div class="fc-box">
+                <img [src]="slides[current].img" [alt]="slides[current].title" />
+              </div>
+              <div class="fc-nav">
+                @for (s of slides; track $index) {
+                  <button class="fc-seg" [class.fc-seg--active]="$index === current" (click)="goTo($index)">
+                    <span class="fc-seg-fill"></span>
+                  </button>
+                }
+              </div>
+            </div>
+            <div class="fc-meta">
+              <h3 class="fc-title">{{ slides[current].title }}</h3>
+              <p class="fc-desc">{{ slides[current].desc }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+
+    <div class="section-divider"><div class="sd-led"></div></div>
+
+    <!-- ════════════════════════════════════════════════ STATS ════════ -->
+    <section class="stats-section">
+      <div class="stats-bg-orb stats-bg-orb--1"></div>
+      <div class="stats-bg-orb stats-bg-orb--2"></div>
+
+      <div class="stats-inner">
+        <div class="stats-left">
+          <div class="sl-glow"></div>
+          <div class="sl-card">
+            <div class="slc-icon-wrap">
+              <img src="assets/icon/logoApp.jpg" alt="PeekBox" class="slc-logo" />
+              <div class="slc-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="slc-brand"><span class="pk">Peek</span><span class="bx">Box</span></div>
+            <div class="slc-stars">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+              <span class="slc-rating">4.9</span>
+            </div>
+            <div class="slc-meta">
+              <span class="slc-users">+12.000 utenti attivi</span>
+              <span class="slc-dot"></span>
+              <span class="slc-boxes">50.000+ box</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-right">
+          <div class="sr-grid">
+            <div class="sr-card">
+              <span class="src-num">📦 50k+</span>
+              <span class="src-lbl">Box digitalizzati</span>
+              <div class="src-bar"><div class="srcb-fill" style="width:98%"></div></div>
+            </div>
+            <div class="sr-card">
+              <span class="src-num">⭐ 4.9★</span>
+              <span class="src-lbl">Valutazione media</span>
+              <div class="src-bar"><div class="srcb-fill" style="width:95%"></div></div>
+            </div>
+            <div class="sr-card">
+              <span class="src-num">👥 12k+</span>
+              <span class="src-lbl">Utenti attivi</span>
+              <div class="src-bar"><div class="srcb-fill" style="width:85%"></div></div>
+            </div>
+            <div class="sr-card">
+              <span class="src-num">📍 150+</span>
+              <span class="src-lbl">Posizioni tracciate</span>
+              <div class="src-bar"><div class="srcb-fill" style="width:75%"></div></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Slide dots -->
-    <div class="slide-indicators">
-      <button class="slide-dot active" *ngFor="let s of slides; let i = index"
-        [class.active]="i === currentSlide"
-        (click)="goToSlide(i)">
-      </button>
-    </div>
-
-  </section>
-
-  <!-- ===== TRE PASSI ===== -->
-  <section class="features-section">
-    <div class="feat-inner">
-      <div class="feat-header">
-        <span class="sec-label">Come funziona</span>
-        <h2 class="sec-title">Tre passi, zero caos</h2>
-        <p class="sec-sub">Dal disordine fisico all'inventario digitale in meno di un minuto. Semplice da usare, potente nei risultati.</p>
-      </div>
-      <div class="steps-row">
-        <div class="step-card">
-          <div class="step-num">01</div>
-          <div class="step-icon ic-blue">
-            <svg fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" stroke-width="1.8">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-            </svg>
-          </div>
-          <h3>Crea gli spazi</h3>
-          <p>Definisci i tuoi spazi fisici — armadi, scaffali, cantine, magazzini. Assegnagli un nome e una posizione: sono le fondamenta del tuo inventario.</p>
-        </div>
-        <div class="step-card">
-          <div class="step-num">02</div>
-          <div class="step-icon ic-green">
-            <svg fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" stroke-width="1.8">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
-            </svg>
-          </div>
-          <h3>Cataloga & fotografa</h3>
-          <p>Scatta una foto agli oggetti, aggiungi nome e categoria. Ogni box riceve un QR Code univoco da stampare e attaccare.</p>
-        </div>
-        <div class="step-card">
-          <div class="step-num">03</div>
-          <div class="step-icon ic-teal">
-            <svg fill="none" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" stroke-width="1.8">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-          </div>
-          <h3>Cerca & trova</h3>
-          <p>Digita il nome di qualsiasi oggetto o scansiona un QR Code — PeekBox ti dice esattamente dove si trova. Zero domande, zero stress.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== BANNER ===== -->
-  <section class="banner-section">
-    <div class="banner-inner">
-      <div class="banner-text">
-        <p class="b-eyebrow">Logistica alla portata di tutti</p>
-        <h2 class="b-headline">
-            Non aprire ogni scatola.<br>
-          <span class="ag">Pensa → Cerca → Trova.</span>
-        </h2>
-        <p class="b-body">
-          PeekBox trasforma l'organizzazione domestica e la gestione del magazzino in un
-          unico flusso digitale. Monitora i tuoi ricordi o i tuoi materiali aziendali
-          controllando la loro posizione ovunque tu sia.
-        </p>
-      </div>
-      <div class="banner-logo">
-        <div class="banner-glow"></div>
-        <img src="assets/icon/logoApp.jpg" alt="PeekBox" class="banner-logo-img" />
-        <div class="b-brand"><span class="pk">Peek</span><span class="bx">Box</span></div>
-        <div class="b-tagline">Il tuo inventario<br>sempre con te.</div>
-      </div>
-    </div>
-  </section>
+  </div>
 
 </ion-content>
