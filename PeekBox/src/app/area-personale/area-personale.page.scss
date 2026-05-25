@@ -5,14 +5,11 @@ $bg-page:      $page;
 $bg-card:      $white;
 $text-primary: $dark;
 $text-muted:   $mid;
-$accent-blue:  $blue;
-$accent-green: $green;
-$brand-dark:   $blue-dk;
 $shadow-soft:  0 16px 32px rgba(0,0,0,0.03);
 
 :host { display: block; }
 
-ion-toolbar {
+ion-toolbar.peek-toolbar {
   --background: #{$page};
   --border-width: 0;
 }
@@ -23,28 +20,62 @@ ion-content {
   --padding-bottom: 110px;
 }
 
-// === HEADER: solo logo ===
-.profile-header {
-  padding: 14px 2cm;
+.header-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.header-top {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 10px clamp(20px, 3.5vw, 56px) 6px;
+}
 
-  // Logo unificato — stessa dimensione e comportamento di home/box-ricevute
-  .header-logo {
-    height: 32px;
-    width: auto;
-    object-fit: contain;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    &:hover  { opacity: 0.75; }
-    &:active { opacity: 0.55; }
-  }
+.header-logo {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  &:hover  { opacity: 0.75; }
+  &:active { opacity: 0.55; }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba($green, 0.25);
 }
 
 // === PAGE WRAPPER ===
 .page-wrapper {
-  padding: 24px 2cm 40px;
+  padding: 24px clamp(20px, 3.5vw, 56px) 40px;
+  max-width: min(92vw, 1400px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 200px);
 }
 
 // === PROFILE LAYOUT (2 colonne stretch) ===
@@ -52,7 +83,7 @@ ion-content {
   display: flex;
   gap: 32px;
   align-items: stretch;
-  margin-top: 32px;
+  flex: 1;
 
   @media (max-width: 900px) {
     flex-direction: column;
@@ -90,7 +121,7 @@ ion-content {
     position: absolute;
     width: 110px; height: 110px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(58,171,219,0.25), transparent 70%);
+    background: radial-gradient(circle, rgba($blue, 0.25), transparent 70%);
     pointer-events: none;
     animation: pulse-glow 3s ease-in-out infinite;
   }
@@ -99,14 +130,14 @@ ion-content {
 .avatar-circle-large {
   width: 88px; height: 88px;
   border-radius: 50%;
-  background: linear-gradient(135deg, $accent-blue, $accent-green);
-  color: #fff;
+  background: linear-gradient(135deg, $blue, $green);
+  color: $white;
   font-size: 2.4rem;
   font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(58,171,219,0.40);
+  box-shadow: 0 8px 24px rgba($blue, 0.40);
   position: relative;
   z-index: 1;
 }
@@ -137,8 +168,8 @@ ion-content {
   align-items: center;
   gap: 5px;
   padding: 5px 14px;
-  background: rgba($brand-dark, 0.08);
-  color: $brand-dark;
+  background: rgba($blue-dk, 0.08);
+  color: $blue-dk;
   font-size: 0.72rem;
   font-weight: 700;
   border-radius: 50px;
@@ -197,10 +228,10 @@ ion-content {
   width: 100%;
   margin-top: auto;
   padding: 13px 20px;
-  border: 2px solid rgba(220,53,69,0.2);
+  border: 2px solid rgba($red, 0.2);
   border-radius: 50px;
-  background: rgba(220,53,69,0.05);
-  color: #dc3545;
+  background: rgba($red, 0.05);
+  color: $red;
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
@@ -209,8 +240,8 @@ ion-content {
   ion-icon { font-size: 1.1rem; }
 
   &:hover {
-    background: rgba(220,53,69,0.10);
-    border-color: rgba(220,53,69,0.4);
+    background: rgba($red, 0.10);
+    border-color: rgba($red, 0.4);
     transform: translateY(-2px);
   }
 }
@@ -221,6 +252,7 @@ ion-content {
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   flex: 1;
+  align-content: stretch;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -239,6 +271,8 @@ ion-content {
   border: 1px solid $brd-light;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+  box-sizing: border-box;
 
   &:hover {
     transform: translateY(-4px);
@@ -246,13 +280,7 @@ ion-content {
   }
 
   &--admin {
-    border: 1.5px solid rgba($brand-dark, 0.15);
-  }
-
-  &--placeholder {
-    cursor: default;
-    opacity: 0.45;
-    &:hover { transform: none; box-shadow: $shadow-soft; }
+    border: 1.5px solid rgba($blue-dk, 0.15);
   }
 
   .option-icon-wrap {
@@ -293,7 +321,7 @@ ion-content {
   }
 
   &:hover:not(.action-card--placeholder) .option-arrow {
-    color: $accent-blue;
+    color: $blue;
     transform: translateX(3px);
   }
 }
@@ -373,7 +401,7 @@ ion-content {
   .spinner {
     width: 36px; height: 36px;
     border: 3px solid $brd-light;
-    border-top-color: $accent-blue;
+    border-top-color: $blue;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -435,7 +463,7 @@ ion-content {
 
       &.badge--blue  { background: rgba($blue, 0.12); color: $blue-d; }
       &.badge--amber { background: rgba($blue-dk, 0.08);  color: $blue-dk; }
-      &.badge--red   { background: rgba(220,53,69,0.12);   color: #dc3545; }
+      &.badge--red   { background: rgba($red, 0.12);   color: $red; }
     }
   }
 
@@ -469,11 +497,11 @@ ion-content {
   bottom: 18px; left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 32px); max-width: 520px; height: 66px;
-  background: rgba(255,255,255,0.85);
+  background: rgba($white, 0.85);
   backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border-radius: 40px;
-  border: 1px solid rgba(255,255,255,0.95);
-  box-shadow: 0 8px 32px rgba(58,171,219,0.13), 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid rgba($white, 0.95);
+  box-shadow: 0 8px 32px rgba($blue, 0.13), 0 2px 8px rgba(0,0,0,0.06);
   display: flex; align-items: center; justify-content: space-around;
   padding: 0 8px; z-index: 1000;
 
@@ -481,7 +509,7 @@ ion-content {
     position: absolute; bottom: -12px; left: 50%;
     transform: translateX(-50%);
     width: 55%; height: 22px;
-    background: radial-gradient(ellipse, rgba(58,171,219,0.22), transparent 70%);
+    background: radial-gradient(ellipse, rgba($blue, 0.22), transparent 70%);
     pointer-events: none; z-index: -1;
   }
 
@@ -494,19 +522,19 @@ ion-content {
 
     ion-icon {
       font-size: 1.35rem;
-      color: #3AABDB;
+      color: $blue;
       transition: color 0.2s;
     }
     span {
       font-family: 'Poppins', sans-serif;
       font-size: 0.65rem;
       font-weight: 700;
-      color: #3AABDB;
+      color: $blue;
     }
 
     &.active {
-      ion-icon { color: #0284C7; }
-      span { color: #0284C7; }
+      ion-icon { color: $sky; }
+      span { color: $sky; }
     }
     &:not(.active):hover { background: rgba(0,0,0,0.04); }
   }
@@ -518,17 +546,17 @@ ion-content {
     .nav-fab {
       width: 58px; height: 58px;
       border-radius: 50%; border: none !important;
-      background: linear-gradient(135deg, #A8FF78, #7DC740) !important;
-      color: #fff; cursor: pointer;
+      background: linear-gradient(135deg, $green-l, $green) !important;
+      color: $white; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 10px 25px rgba(125,199,64,0.4) !important;
+      box-shadow: 0 10px 25px rgba($green, 0.4) !important;
       transition: transform 0.2s, box-shadow 0.2s;
 
-      ion-icon { font-size: 1.7rem; color: #ffffff !important; }
+      ion-icon { font-size: 1.7rem; color: $white !important; }
 
       &:hover {
         transform: scale(1.1) translateY(-3px);
-        box-shadow: 0 15px 30px rgba(125,199,64,0.5) !important;
+        box-shadow: 0 15px 30px rgba($green, 0.5) !important;
       }
       &:active { transform: scale(0.95); }
     }
@@ -536,18 +564,18 @@ ion-content {
 
   .avatar-circle-nav {
     width: 28px; height: 28px; border-radius: 50%;
-    background: rgba(58,171,219,0.12);
-    color: #3AABDB;
+    background: rgba($blue, 0.12);
+    color: $blue;
     font-size: 0.8rem; font-weight: 900;
     display: flex; align-items: center; justify-content: center;
-    border: 1.5px solid rgba(58,171,219,0.4);
+    border: 1.5px solid rgba($blue, 0.4);
     transition: all 0.2s;
 
     &.active {
-      background: rgba(58,171,219,0.18);
-      color: #0284C7;
-      border-color: #0284C7;
-      box-shadow: 0 2px 8px rgba(58,171,219,0.3);
+      background: rgba($blue, 0.18);
+      color: $sky;
+      border-color: $sky;
+      box-shadow: 0 2px 8px rgba($blue, 0.3);
     }
   }
 }

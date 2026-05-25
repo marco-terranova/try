@@ -1,8 +1,13 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-title style="font-size: 2.3rem; font-weight: 900; letter-spacing: 1px;" class="ion-text-center brand-title">
-      <span class="pk">Peek</span><span class="bx">Box</span>
-    </ion-title>
+  <ion-toolbar class="peek-toolbar">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="navTo('/home')" style="cursor: pointer;" />
+          <h1 class="header-greeting">CERCA <span class="nome-verde">OGGETTI</span></h1>
+        </div>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 

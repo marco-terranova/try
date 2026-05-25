@@ -6,11 +6,6 @@ $bg-page:      $page;
 $bg-card:      $white;
 $text-primary: $dark;
 $text-muted:   $mid;
-$accent-blue:  $blue;
-$accent-green: $green;
-$accent-red:   #EF4444;
-$accent-orange:#F59E0B;
-$brand-dark:   $blue-dk;
 $radius-card:  20px;
 $shadow-card:  0 4px 20px rgba(0,0,0,0.06);
 
@@ -30,7 +25,7 @@ ion-toolbar.peek-toolbar {
 }
 
 .header-inner {
-  padding: 16px 2cm 10px;
+  padding: 16px clamp(20px, 3.5vw, 56px) 10px;
 }
 
 .header-top {
@@ -74,7 +69,7 @@ ion-toolbar.peek-toolbar {
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   font-weight: 900 !important;
-  text-shadow: 0px 4px 10px rgba(125, 199, 64, 0.3);
+  text-shadow: 0px 4px 10px rgba($green, 0.3);
 }
 
 .action-btn-refresh {
@@ -86,7 +81,7 @@ ion-toolbar.peek-toolbar {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $accent-blue;
+  color: $blue;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba($blue, 0.08);
   transition: all 0.2s ease;
@@ -136,7 +131,7 @@ ion-toolbar.peek-toolbar {
 
   &.active {
     background: $white;
-    color: $accent-blue;
+    color: $blue;
     box-shadow: 0 4px 12px rgba($blue, 0.12);
   }
 }
@@ -155,11 +150,11 @@ ion-toolbar.peek-toolbar {
   line-height: 1;
 
   &.badge-warning {
-    background: $accent-orange;
+    background: $amber;
   }
 
   &.badge-danger {
-    background: $accent-red;
+    background: $red;
   }
 }
 
@@ -171,7 +166,9 @@ ion-toolbar.peek-toolbar {
 }
 
 .content-inner {
-  padding: 16px 2cm 24px;
+  padding: 16px clamp(20px, 3.5vw, 56px) 24px;
+  max-width: min(92vw, 1400px);
+  margin: 0 auto;
 }
 
 // ─── Loading spinner ──────────────────────────────────────
@@ -265,11 +262,11 @@ ion-toolbar.peek-toolbar {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &--pending {
-    border-left: 4px solid $accent-orange;
+    border-left: 4px solid $amber;
   }
 
   &--accepted {
-    border-left: 4px solid $accent-green;
+    border-left: 4px solid $green;
     cursor: pointer;
 
     &:hover {
@@ -303,8 +300,8 @@ ion-toolbar.peek-toolbar {
     flex-shrink: 0;
     margin-top: 2px;
 
-    &.icon-pending { color: $accent-orange; }
-    &.icon-accepted { color: $accent-green; }
+    &.icon-pending { color: $amber; }
+    &.icon-accepted { color: $green; }
   }
 
   .card-info {
@@ -334,7 +331,7 @@ ion-toolbar.peek-toolbar {
 
     ion-icon {
       font-size: 0.85rem;
-      color: $accent-blue;
+      color: $blue;
     }
   }
 
@@ -345,7 +342,7 @@ ion-toolbar.peek-toolbar {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     background: rgba($blue, 0.1);
-    color: $accent-blue;
+    color: $blue;
     padding: 3px 8px;
     border-radius: 12px;
     white-space: nowrap;
@@ -381,11 +378,11 @@ ion-toolbar.peek-toolbar {
       ion-icon { font-size: 1.1rem; }
 
       &--danger {
-        background: rgba(239, 68, 68, 0.1);
-        color: $accent-red;
+        background: rgba($red, 0.1);
+        color: $red;
 
         &:hover {
-          background: $accent-red;
+          background: $red;
           color: $white;
         }
       }
@@ -395,7 +392,7 @@ ion-toolbar.peek-toolbar {
         color: $green-d;
 
         &:hover {
-          background: $accent-green;
+          background: $green;
           color: $white;
         }
       }
@@ -411,7 +408,7 @@ ion-toolbar.peek-toolbar {
     font-family: 'Poppins', sans-serif;
     font-size: 0.72rem;
     font-weight: 600;
-    color: $accent-green;
+    color: $green;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -437,7 +434,7 @@ ion-toolbar.peek-toolbar {
     font-family: 'Poppins', sans-serif;
     font-size: 0.95rem;
     font-weight: 800;
-    color: $accent-blue;
+    color: $blue;
     margin: 0 0 16px 0;
 
     ion-icon {
@@ -475,12 +472,12 @@ ion-toolbar.peek-toolbar {
 
     &:focus-within {
       --background: #{$white};
-      border-color: $accent-blue;
+      border-color: $blue;
       box-shadow: 0 4px 12px rgba($blue, 0.08);
     }
 
     .custom-select {
-      --placeholder-color: #94A3B8;
+      --placeholder-color: $slate-400;
       --placeholder-opacity: 1;
       font-family: 'Poppins', sans-serif;
       font-size: 0.85rem;
@@ -502,7 +499,7 @@ ion-toolbar.peek-toolbar {
 
     &:focus-within {
       background-color: $white;
-      border-color: $accent-blue;
+      border-color: $blue;
       box-shadow: 0 4px 12px rgba($blue, 0.08);
     }
 
@@ -524,7 +521,7 @@ ion-toolbar.peek-toolbar {
     padding: 8px 0;
 
     &::placeholder {
-      color: #94A3B8;
+      color: $slate-400;
     }
   }
 
@@ -595,7 +592,7 @@ ion-toolbar.peek-toolbar {
 
   .space-icon {
     font-size: 1.3rem;
-    color: $accent-blue;
+    color: $blue;
     flex-shrink: 0;
   }
 
@@ -635,10 +632,10 @@ ion-toolbar.peek-toolbar {
 
   &--geo {
     background: rgba($blue, 0.1);
-    color: $accent-blue;
+    color: $blue;
 
     &:hover {
-      background: $accent-blue;
+      background: $blue;
       color: $white;
     }
   }
@@ -648,7 +645,7 @@ ion-toolbar.peek-toolbar {
     color: $green-d;
 
     &:hover {
-      background: $accent-green;
+      background: $green;
       color: $white;
     }
   }
@@ -710,7 +707,7 @@ ion-toolbar.peek-toolbar {
   height: 32px;
   border-radius: 50%;
   background: rgba($blue, 0.15);
-  color: $accent-blue;
+  color: $blue;
   font-family: 'Poppins', sans-serif;
   font-size: 0.85rem;
   font-weight: 800;
@@ -768,8 +765,8 @@ ion-toolbar.peek-toolbar {
   }
 
   &.status-pending {
-    background: rgba($accent-orange, 0.1);
-    color: $accent-orange;
+    background: rgba($amber, 0.1);
+    color: $amber;
   }
 
   &.clickable {
@@ -805,8 +802,8 @@ ion-toolbar.peek-toolbar {
   ion-icon { font-size: 0.95rem; }
 
   &:hover {
-    background: rgba($accent-red, 0.1);
-    color: $accent-red;
+    background: rgba($red, 0.1);
+    color: $red;
   }
 
   &:active {
@@ -860,7 +857,7 @@ ion-toolbar.peek-toolbar {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid $white;
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   flex-shrink: 0;
 }
@@ -897,8 +894,8 @@ ion-toolbar.peek-toolbar {
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: rgba(58, 171, 219, 0.1);
-  color: $accent-blue;
+  background: rgba($blue, 0.1);
+  color: $blue;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -909,8 +906,8 @@ ion-toolbar.peek-toolbar {
   ion-icon { font-size: 1.1rem; }
 
   &:hover {
-    background: $accent-blue;
-    color: #fff;
+    background: $blue;
+    color: $white;
   }
 }
 
@@ -921,19 +918,19 @@ ion-toolbar.peek-toolbar {
   padding: 16px;
   margin-bottom: 14px;
   box-shadow: $shadow-card;
-  border: 1px solid rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba($red, 0.1);
   position: relative;
   transition: transform 0.2s, box-shadow 0.2s;
   overflow: hidden;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
+    box-shadow: 0 8px 24px rgba($red, 0.08);
   }
 
   &--unread {
-    border-left: 4px solid $accent-red;
-    background: rgba(239, 68, 68, 0.02);
+    border-left: 4px solid $red;
+    background: rgba($red, 0.02);
   }
 
   .alert-unread-dot {
@@ -942,9 +939,9 @@ ion-toolbar.peek-toolbar {
     right: 14px;
     width: 8px;
     height: 8px;
-    background-color: $accent-red;
+    background-color: $red;
     border-radius: 50%;
-    box-shadow: 0 0 8px $accent-red;
+    box-shadow: 0 0 8px $red;
     animation: pulse 1.5s infinite ease-in-out;
   }
 
@@ -958,8 +955,8 @@ ion-toolbar.peek-toolbar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: rgba(239, 68, 68, 0.1);
-    color: $accent-red;
+    background: rgba($red, 0.1);
+    color: $red;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1022,7 +1019,7 @@ ion-toolbar.peek-toolbar {
 
     ion-icon {
       font-size: 0.8rem;
-      color: $accent-blue;
+      color: $blue;
     }
   }
 
@@ -1052,22 +1049,22 @@ ion-toolbar.peek-toolbar {
       ion-icon { font-size: 0.95rem; }
 
       &--map {
-        background: rgba(58, 171, 219, 0.1);
-        color: $accent-blue;
+        background: rgba($blue, 0.1);
+        color: $blue;
 
         &:hover {
-          background: $accent-blue;
-          color: #ffffff;
+          background: $blue;
+          color: $white;
         }
       }
 
       &--delete {
-        background: rgba(239, 68, 68, 0.1);
-        color: $accent-red;
+        background: rgba($red, 0.1);
+        color: $red;
 
         &:hover {
-          background: $accent-red;
-          color: #ffffff;
+          background: $red;
+          color: $white;
         }
       }
 
@@ -1110,13 +1107,13 @@ ion-toolbar.peek-toolbar {
 // ── Mobile piccolo (< 400px) ──────────────────────────────────
 @media (max-width: 399px) {
   .header-inner {
-    padding: 12px 2cm 8px;
+    padding: 12px clamp(20px, 3.5vw, 56px) 8px;
   }
   .header-greeting {
     font-size: 1rem;
   }
   .content-inner {
-    padding: 12px 2cm 20px;
+    padding: 12px clamp(20px, 3.5vw, 56px) 20px;
   }
   .tab-btn {
     font-size: 0.7rem;
@@ -1152,26 +1149,23 @@ ion-toolbar.peek-toolbar {
 // ── Tablet (≥ 768px) ──────────────────────────────────────────
 @media (min-width: 768px) {
   .header-inner {
-    padding: 20px 2cm 14px;
+    padding: 20px clamp(20px, 3.5vw, 56px) 14px;
   }
   .content-inner {
-    padding: 18px 2cm 32px;
+    padding: 18px clamp(20px, 3.5vw, 56px) 32px;
   }
   .header-greeting {
     font-size: 1.3rem;
-  }
-  .tabs-segment-container {
-    max-width: 600px;
   }
 }
 
 // ── Desktop (≥ 1024px) ────────────────────────────────────────
 @media (min-width: 1024px) {
   .header-inner {
-    padding: 24px 2cm 16px;
+    padding: 24px clamp(20px, 3.5vw, 56px) 16px;
   }
   .content-inner {
-    padding: 20px 2cm 40px;
+    padding: 20px clamp(20px, 3.5vw, 56px) 40px;
   }
   .header-greeting {
     font-size: 1.4rem;

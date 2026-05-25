@@ -9,8 +9,8 @@ import { addIcons } from 'ionicons';
 import {
   home, add, qrCodeOutline,
   trashOutline, trashBinOutline, timeOutline,
-  shareSocialOutline, refreshOutline, chatbubblesOutline,
-  person, search, cubeOutline, documentTextOutline
+  refreshOutline, chatbubblesOutline,
+  cubeOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
 import { NavigationHistoryService } from '../services/navigation-history';
@@ -49,13 +49,9 @@ export class CestinoPage implements OnInit {
       'trash-outline': trashOutline,
       'trash-bin-outline': trashBinOutline,
       'time-outline': timeOutline,
-      'share-social-outline': shareSocialOutline,
       'chatbubbles-outline': chatbubblesOutline,
       'refresh-outline': refreshOutline,
-      'person': person,
-      'search': search,
-      'cube-outline': cubeOutline,
-      'document-text-outline': documentTextOutline
+      'cube-outline': cubeOutline
     });
   }
 
@@ -97,16 +93,12 @@ export class CestinoPage implements OnInit {
 
     this.dbService.getOggettiEliminati(this.utenteId).subscribe({
       next: (res: any) => {
-        console.log('[Cestino] Oggetti eliminati ricevuti:', res);
         this.oggettiEliminati = (res.oggetti_eliminati || []).filter((o: any) => {
           const diff = ora - new Date(o.data_eliminazione).getTime();
           return diff <= trentaMs;
         });
-        console.log('[Cestino] Dopo filtro:', this.oggettiEliminati.length, 'oggetti');
       },
-      error: (err: any) => {
-        console.error('[Cestino] Errore caricamento oggetti eliminati:', err);
-      }
+      error: () => {}
     });
   }
 

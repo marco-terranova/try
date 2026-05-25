@@ -1,12 +1,66 @@
 @import '../../theme/variables';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&display=swap');
 
-$blue:   $blue;
-$green:  $green;
-$red:    #EF4444;
-$dark:   $dark;
 $muted:  $mid;
 $light:  $page;
 $border: $brd-light;
+
+// ─── Header uguale a box-ricevute ───────────────────────────
+ion-header {
+  --background: #{$page};
+}
+
+ion-toolbar.peek-toolbar {
+  --background: #{$page};
+  --border-width: 0;
+  padding: 0;
+}
+
+.header-inner {
+  padding: 16px clamp(20px, 3.5vw, 56px) 10px;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .header-logo {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    &:hover { opacity: 0.75; }
+    &:active { opacity: 0.55; }
+  }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 900 !important;
+  text-shadow: 0px 4px 10px rgba($green, 0.3);
+}
 
 // ─── Content ──────────────────────────────────────────────────
 ion-content.bg-soft {
@@ -20,44 +74,44 @@ ion-content.bg-soft {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 15px 2cm 105px;
+  padding: 16px clamp(20px, 3.5vw, 56px) 105px;
   box-sizing: border-box;
+  max-width: min(92vw, 1400px);
+  margin: 0 auto;
 }
 
-// ─── Header bar super elegante e sfinita ─────────────────────
-.top-compact-bar {
+// ─── Bottone "Stampa" in alto a destra ─────────────────
+.btn-print-box {
+  background: $white;
+  color: $blue-dk;
+  border: 2px solid rgba($blue-dk, 0.2);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  margin-bottom: 12px;
-  position: relative;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  ion-icon { font-size: 1rem; }
+  &:hover { background: rgba($blue-dk, 0.06); border-color: rgba($blue-dk, 0.4); }
+  &:active { transform: scale(0.95); }
 }
 
-.logo-group {
+.header-actions {
   display: flex;
   align-items: center;
-  .logo-peek {
-    height: 32px; /* Uguale a informazioni-account (.logo-top-left) */
-    width: auto;
-    object-fit: contain;
-  }
-}
-
-.title-group {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  pointer-events: none;
-  h2 { font-size: 1.35rem; font-weight: 900; margin: 0; color: #0F172A; }
-  p  { font-size: 0.8rem; color: #64748B; margin: 1px 0 0 0; }
+  gap: 10px;
 }
 
 // ─── Bottone "Genera Report" in alto a destra ─────────────────
 .btn-export-top-right {
   background: linear-gradient(135deg, $green, $green-d);
-  color: #ffffff !important;
+  color: $white !important;
   border: none;
   padding: 10px 24px;
   border-radius: 30px;
@@ -73,7 +127,7 @@ ion-content.bg-soft {
   white-space: nowrap;
 
   ion-icon    { font-size: 1rem; }
-  ion-spinner { --color: #ffffff; width: 16px; height: 16px; }
+  ion-spinner { --color: $white; width: 16px; height: 16px; }
 
   &:active { transform: scale(0.95); }
 
@@ -91,7 +145,7 @@ ion-content.bg-soft {
   grid-template-columns: 1fr 1fr;
   gap: 24px; /* Più spazio tra i due blocchi */
   width: 100%;
-  max-width: 1150px; /* Allargata per dare un look premium desktop/tablet */
+  max-width: min(92vw, 1400px); /* Allargata per dare un look premium desktop/tablet */
   margin: 0 auto;
   flex-grow: 1; /* Spinge la griglia a espandersi al massimo */
   max-height: calc(100vh - 210px); /* Riempie lo schermo senza mai toccare la barra in basso */
@@ -102,7 +156,7 @@ ion-content.bg-soft {
   background: $white;
   border-radius: 24px; /* Angoli più morbidi e moderni */
   padding: 28px; /* Più respiro interno */
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+  box-shadow: 0 10px 30px rgba($dark, 0.02);
   border: 1px solid $border;
   display: flex;
   flex-direction: column;
@@ -192,6 +246,45 @@ ion-content.bg-soft {
   }
 }
 
+// ─── Selector Box (singola box) ──────────────────────────
+.box-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: $light;
+  border-radius: 14px;
+  border: 1px solid $border;
+
+  .box-selector-icon {
+    font-size: 1.3rem;
+    color: $muted;
+    flex-shrink: 0;
+  }
+
+  .box-selector {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: $dark;
+    padding: 4px 0;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 24px;
+
+    option { font-weight: 500; color: $dark; }
+  }
+}
+
 .option-text {
   display: flex;
   flex-direction: column;
@@ -260,7 +353,7 @@ ion-content.bg-soft {
 
     .format-icon.pdf-color  { color: $red; }
     .format-icon.csv-color  { color: #10B981; }
-    .format-icon.json-color { color: #F59E0B; }
+    .format-icon.json-color { color: $amber; }
   }
 }
 
@@ -340,7 +433,7 @@ ion-content.bg-soft {
       border-radius: 50%;
       border: none !important;
       background: linear-gradient(135deg, $green, $green-d) !important;
-      color: #fff;
+      color: $white;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -348,7 +441,7 @@ ion-content.bg-soft {
       box-shadow: 0 10px 25px rgba($green, 0.4) !important;
       transition: transform 0.2s, box-shadow 0.2s;
 
-      ion-icon { font-size: 1.7rem; color: #ffffff !important; }
+      ion-icon { font-size: 1.7rem; color: $white !important; }
       &:hover  { transform: scale(1.1) translateY(-3px); }
       &:active { transform: scale(0.95); }
     }
@@ -378,23 +471,7 @@ ion-content.bg-soft {
 // ── Mobile piccolo (< 400px) ──────────────────────────────────
 @media (max-width: 399px) {
   .page-wrapper {
-    padding: 10px 2cm 90px;
-  }
-  .top-compact-bar {
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px 0;
-    margin-bottom: 8px;
-  }
-  .title-group {
-    position: static;
-    transform: none;
-    text-align: left;
-    order: 3;
-    width: 100%;
-    pointer-events: auto;
-    h2 { font-size: 1.1rem; }
-    p  { font-size: 0.75rem; }
+    padding: 10px clamp(20px, 3.5vw, 56px) 90px;
   }
   .btn-export-top-right {
     padding: 8px 16px;
@@ -423,21 +500,17 @@ ion-content.bg-soft {
 // ── Tablet (≥ 768px) ──────────────────────────────────────────
 @media (min-width: 768px) {
   .page-wrapper {
-    padding: 18px 2cm 100px;
+    padding: 18px clamp(20px, 3.5vw, 56px) 100px;
   }
   .export-plancia-grid {
     gap: 20px;
-  }
-  .top-compact-bar {
-    padding: 12px 0;
-    margin-bottom: 16px;
   }
 }
 
 // ── Desktop (≥ 1024px) ────────────────────────────────────────
 @media (min-width: 1024px) {
   .page-wrapper {
-    padding: 24px 2cm 100px;
+    padding: 24px clamp(20px, 3.5vw, 56px) 100px;
   }
   .export-plancia-grid {
     gap: 28px;

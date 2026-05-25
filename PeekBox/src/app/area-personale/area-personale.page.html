@@ -1,13 +1,12 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar>
-    <div class="profile-header">
-      <img
-        src="assets/icon/logoTitolo1.png"
-        class="header-logo"
-        alt="PeekBox"
-        (click)="navBack()"
-        style="cursor: pointer;"
-      />
+  <ion-toolbar class="peek-toolbar">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="navBack()" style="cursor: pointer;" />
+          <h1 class="header-greeting">AREA <span class="nome-verde">PERSONALE</span></h1>
+        </div>
+      </div>
     </div>
   </ion-toolbar>
 </ion-header>
@@ -124,16 +123,6 @@
               <span class="option-sub">Accedi al pannello di controllo amministrativo</span>
             </div>
             <ion-icon name="chevron-forward-outline" class="option-arrow"></ion-icon>
-          </div>
-
-          <div class="action-card action-card--placeholder" *ngIf="!isAdmin">
-            <div class="option-icon-wrap" style="background: rgba(100,116,139,0.08);">
-              <ion-icon name="person-circle-outline" style="color: #94A3B8;"></ion-icon>
-            </div>
-            <div class="option-text">
-              <span class="option-title" style="color: #94A3B8;">Area Riservata</span>
-              <span class="option-sub">Accesso disponibile solo per amministratori</span>
-            </div>
           </div>
 
         </div>

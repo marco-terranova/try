@@ -3,8 +3,62 @@
 $bg-saas:    $page;
 $dark-text:  $dark;
 $slate-gray: $mid;
-$brand-blue: $blue;
-$brand-green:$green;
+
+// ═══ Header ═══════════════════════════════════════════════
+ion-header { background: $white; }
+
+ion-toolbar.peek-toolbar {
+  --background: #{$page};
+  --border-width: 0;
+}
+
+.header-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px clamp(20px, 3.5vw, 56px) 6px;
+}
+
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  &:hover  { opacity: 0.75; }
+  &:active { opacity: 0.55; }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba($green, 0.25);
+}
 
 ion-content.bg-light-saas {
   --background: #{$bg-saas} !important;
@@ -16,35 +70,8 @@ ion-content.bg-light-saas {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 15px 2cm 110px 2cm;
+  padding: 15px clamp(20px, 3.5vw, 56px) 110px clamp(20px, 3.5vw, 56px);
   box-sizing: border-box;
-}
-
-.top-compact-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  margin-bottom: 25px;
-}
-
-.logo-group {
-  cursor: pointer;
-}
-
-.logo-peek-clickable {
-  height: 32px;
-  width: auto;
-  object-fit: contain;
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: scale(1.04);
-  }
-}
-
-.title-space-filler {
-  flex: 1;
 }
 
 .create-plancia-grid {
@@ -52,7 +79,7 @@ ion-content.bg-light-saas {
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   width: 100%;
-  max-width: 1150px;
+  max-width: min(92vw, 1400px);
   margin: 0 auto;
   flex-grow: 1;
   max-height: calc(100vh - 185px);
@@ -62,7 +89,7 @@ ion-content.bg-light-saas {
   background: $white;
   border-radius: 24px;
   padding: 28px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+  box-shadow: 0 10px 30px rgba($dark, 0.02);
   border: 1px solid $brd-light;
   display: flex;
   flex-direction: column;
@@ -94,13 +121,13 @@ ion-content.bg-light-saas {
   font-size: 1.25rem;
 
   &.azzurro {
-    background: rgba(58, 171, 219, 0.1);
-    color: #{$brand-blue};
+    background: rgba($blue, 0.1);
+    color: #{$blue};
   }
 
   &.verde {
-    background: rgba(125, 199, 64, 0.1);
-    color: #{$brand-green};
+    background: rgba($green, 0.1);
+    color: #{$green};
   }
 }
 
@@ -136,7 +163,7 @@ ion-content.bg-light-saas {
   label {
     font-size: 0.85rem;
     font-weight: 800;
-    color: #475569;
+    color: $slate-600;
     margin-left: 4px;
   }
 }
@@ -150,8 +177,8 @@ ion-content.bg-light-saas {
 
 .new-space-link {
   border: 0;
-  background: rgba(125, 199, 64, 0.12);
-  color: #5A9E2A;
+  background: rgba($green, 0.12);
+  color: $green-d;
   border-radius: 999px;
   padding: 5px 12px;
   font-size: 0.72rem;
@@ -170,8 +197,8 @@ ion-content.bg-light-saas {
   transition: 0.3s ease;
 
   &:focus-within {
-    border-color: #{$brand-blue};
-    box-shadow: 0 0 0 4px rgba(58, 171, 219, 0.1);
+    border-color: #{$blue};
+    box-shadow: 0 0 0 4px rgba($blue, 0.1);
     background: white;
   }
 
@@ -255,7 +282,7 @@ ion-content.bg-light-saas {
     width: 220px;
     height: 120px;
     border-radius: 50%;
-    background: rgba(58, 171, 219, 0.13);
+    background: rgba($blue, 0.13);
     filter: blur(26px);
   }
 
@@ -263,7 +290,7 @@ ion-content.bg-light-saas {
     height: 145px;
     width: auto;
     object-fit: contain;
-    filter: drop-shadow(0 12px 24px rgba(15, 23, 42, 0.08));
+    filter: drop-shadow(0 12px 24px rgba($dark, 0.08));
     z-index: 2;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
@@ -280,7 +307,7 @@ ion-content.bg-light-saas {
 
 .btn-submit-premium-green {
   width: 100%;
-  background: #{$brand-green};
+  background: #{$green};
   color: white;
   border: none;
   padding: 18px;
@@ -291,7 +318,7 @@ ion-content.bg-light-saas {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 8px 22px rgba(125, 199, 64, 0.3);
+  box-shadow: 0 8px 22px rgba($green, 0.3);
   cursor: pointer;
   transition: 0.2s;
 
@@ -313,7 +340,7 @@ ion-content.bg-light-saas {
 }
 
 .add-btn-circle {
-  background: #{$brand-blue};
+  background: #{$blue};
   width: 45px;
   height: 45px;
   border-radius: 50%;
@@ -322,21 +349,17 @@ ion-content.bg-light-saas {
   color: white;
   font-size: 1.8rem;
   transform: translateY(-10px);
-  box-shadow: 0 4px 10px rgba(58, 171, 219, 0.3);
+  box-shadow: 0 4px 10px rgba($blue, 0.3);
 }
 
 .active-btn {
-  background: #{$brand-green} !important;
-  box-shadow: 0 4px 12px rgba(125, 199, 64, 0.3) !important;
+  background: #{$green} !important;
+  box-shadow: 0 4px 12px rgba($green, 0.3) !important;
 }
 
 @media (max-width: 760px) {
   .page-wrapper {
-    padding: 10px 2cm 96px;
-  }
-
-  .top-compact-bar {
-    margin-bottom: 12px;
+    padding: 10px clamp(20px, 3.5vw, 56px) 96px;
   }
 
   .create-plancia-grid {

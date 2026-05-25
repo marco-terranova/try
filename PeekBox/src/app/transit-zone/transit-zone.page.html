@@ -1,14 +1,19 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar>
-    <div class="transit-header">
-      <img src="assets/icon/logoTitolo1.png" class="top-left-logo" alt="PeekBox" />
-      <button class="btn-conferma-transfer-header"
-              [disabled]="oggettiDestinazione.length === 0 || isTransferring"
-              (click)="confermaTrasferimento()">
-        <ion-spinner name="crescent" *ngIf="isTransferring"></ion-spinner>
-        <ion-icon name="checkmark-done-outline" *ngIf="!isTransferring"></ion-icon>
-        <span>{{ isTransferring ? 'Trasferimento...' : 'Conferma' }}</span>
-      </button>
+  <ion-toolbar class="peek-toolbar">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" />
+          <h1 class="header-greeting">TRANSIT <span class="nome-verde">ZONE</span></h1>
+        </div>
+        <button class="btn-conferma-transfer-header"
+                [disabled]="oggettiDestinazione.length === 0 || isTransferring"
+                (click)="confermaTrasferimento()">
+          <ion-spinner name="crescent" *ngIf="isTransferring"></ion-spinner>
+          <ion-icon name="checkmark-done-outline" *ngIf="!isTransferring"></ion-icon>
+          <span>{{ isTransferring ? 'Trasferimento...' : 'Conferma' }}</span>
+        </button>
+      </div>
     </div>
   </ion-toolbar>
 </ion-header>

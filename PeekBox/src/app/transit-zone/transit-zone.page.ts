@@ -8,12 +8,11 @@ import {
 import { ToastController, ActionSheetController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
-  home, add, qrCodeOutline, shareSocialOutline, chatbubblesOutline,
+  home, add, qrCodeOutline, chatbubblesOutline,
   swapHorizontalOutline, archiveOutline, checkmarkCircleOutline,
-  arrowForwardOutline, downloadOutline, documentTextOutline,
+  arrowForwardOutline,
   cubeOutline, chevronDownOutline, arrowDownCircleOutline,
-  checkmarkDoneOutline, informationCircleOutline,
-  person, search,
+  checkmarkDoneOutline,
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
@@ -71,21 +70,15 @@ export class TransitZonePage implements OnInit, OnDestroy {
       'home': home,
       'add': add,
       'qr-code-outline': qrCodeOutline,
-      'share-social-outline': shareSocialOutline,
       'chatbubbles-outline': chatbubblesOutline,
       'swap-horizontal-outline': swapHorizontalOutline,
       'archive-outline': archiveOutline,
       'checkmark-circle-outline': checkmarkCircleOutline,
       'arrow-forward-outline': arrowForwardOutline,
-      'download-outline': downloadOutline,
-      'document-text-outline': documentTextOutline,
       'cube-outline': cubeOutline,
       'chevron-down-outline': chevronDownOutline,
       'arrow-down-circle-outline': arrowDownCircleOutline,
-      'checkmark-done-outline': checkmarkDoneOutline,
-      'information-circle-outline': informationCircleOutline,
-      'person': person,
-      'search': search
+      'checkmark-done-outline': checkmarkDoneOutline
     });
   }
 

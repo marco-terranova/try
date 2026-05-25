@@ -19,10 +19,6 @@ export const routes: Routes = [
     loadComponent: () => import('./login/login.page').then(m => m.LoginPage)
   },
   {
-    path: 'registrazione',
-    loadComponent: () => import('./registrazione/registrazione.page').then(m => m.RegistrazionePage)
-  },
-  {
     path: 'not-found',
     loadComponent: () => import('./not-found/not-found.page').then(m => m.NotFoundPage)
   },

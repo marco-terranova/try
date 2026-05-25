@@ -44,6 +44,7 @@ export class BoxRicevutePage implements OnInit {
   isLoading = true;
   utenteId: string | null = null;
   nomeUtente: string = '';
+  tipoProfilo: string = 'personal';
 
   get contatoreNonLette(): number {
     return this.notificheGeofence.filter(n => !n.letto).length;
@@ -108,6 +109,7 @@ export class BoxRicevutePage implements OnInit {
   ngOnInit() {
     this.utenteId = localStorage.getItem('utente_id');
     this.nomeUtente = localStorage.getItem('utente_nome') || 'Utente';
+    this.tipoProfilo = localStorage.getItem('tipo_profilo') || 'personal';
     this.caricaTutto();
   }
 
@@ -116,6 +118,7 @@ export class BoxRicevutePage implements OnInit {
   }
 
   cambiaTab(tab: 'richieste' | 'spazi' | 'geofence') {
+    if (tab === 'geofence' && this.tipoProfilo !== 'business') return;
     this.activeTab = tab;
     if (tab === 'geofence') {
       setTimeout(() => {
@@ -153,16 +156,20 @@ export class BoxRicevutePage implements OnInit {
       error: (err) => console.error('Errore caricamento armadi propri:', err)
     });
 
-    this.dbService.getNotificheGeofence().subscribe({
-      next: (res: any) => {
-        this.notificheGeofence = res.notifiche || [];
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Errore caricamento notifiche geofence:', err);
-        this.isLoading = false;
-      }
-    });
+    if (this.tipoProfilo === 'business') {
+      this.dbService.getNotificheGeofence().subscribe({
+        next: (res: any) => {
+          this.notificheGeofence = res.notifiche || [];
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Errore caricamento notifiche geofence:', err);
+          this.isLoading = false;
+        }
+      });
+    } else {
+      this.isLoading = false;
+    }
   }
 
   private inizializzaMappa() {

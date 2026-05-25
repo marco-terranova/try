@@ -7,22 +7,60 @@
   -webkit-font-smoothing: antialiased;
 }
 
-ion-header ion-toolbar {
+ion-header { background: $white; }
+
+ion-toolbar.peek-toolbar {
   --background: #{$page};
-  --color: #{$dark};
-  --border-color: #{$brd-light};
-  --border-width: 0 0 1px 0;
-  --border-style: solid;
+  --border-width: 0;
 }
 
-.search-content {
-  --background: #{$page};
-  --color: #{$dark};
-  --overflow: auto;
+.header-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
 }
 
-.brand-title .pk { color: #{$blue-dk}; }
-.brand-title .bx { color: #{$green}; }
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px clamp(20px, 3.5vw, 56px) 6px;
+}
+
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  &:hover  { opacity: 0.75; }
+  &:active { opacity: 0.55; }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba($green, 0.25);
+}
 
 .search-page-title {
   color: #{$dark};
@@ -35,11 +73,11 @@ ion-header ion-toolbar {
 ion-searchbar {
   --background: #{$white};
   --color: #{$dark};
-  --placeholder-color: rgba(74,122,148,.6);
+  --placeholder-color: rgba($mid, .6);
   --icon-color: #{$blue};
-  --clear-button-color: rgba(74,122,148,.5);
+  --clear-button-color: rgba($mid, .5);
   --border-radius: 50px;
-  --box-shadow: 0 4px 16px rgba(58,171,219,.08);
+  --box-shadow: 0 4px 16px rgba($blue, .08);
   border: 1px solid #{$brd-light};
   border-radius: 50px;
   padding: 0 0 16px 0 !important;
@@ -51,7 +89,7 @@ ion-searchbar {
   text-align: center;
 
   ion-icon {
-    color: rgba(58,171,219,.35) !important;
+    color: rgba($blue, .35) !important;
   }
   p {
     color: #{$mid} !important;
@@ -85,7 +123,7 @@ ion-searchbar {
   border-radius: 14px;
   border: 1px solid #{$brd-light};
   border-left: 3px solid #{$green};
-  box-shadow: 0 4px 16px rgba(58,171,219,.04);
+  box-shadow: 0 4px 16px rgba($blue, .04);
   backdrop-filter: blur(10px);
 
   ion-label h2 {
@@ -196,7 +234,5 @@ ion-searchbar {
   .search-page-title {
     font-size: 1.8rem;
   }
-  ion-searchbar {
-    max-width: 700px;
-  }
+
 }

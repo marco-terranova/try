@@ -8,10 +8,9 @@ import {
 import { AlertController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
-  arrowBackOutline, archiveOutline, addCircleOutline,
+  archiveOutline, addCircleOutline,
   pencilOutline, trashOutline, checkmarkOutline, closeOutline,
-  home, shareSocialOutline, qrCodeOutline, add, chatbubblesOutline,
-  person,
+  home, qrCodeOutline, add, chatbubblesOutline,
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
@@ -45,7 +44,6 @@ export class GestioneSpaziPage implements OnInit {
     private navHistory: NavigationHistoryService,
   ) {
     addIcons({
-      'arrow-back-outline': arrowBackOutline,
       'archive-outline': archiveOutline,
       'add-circle-outline': addCircleOutline,
       'pencil-outline': pencilOutline,
@@ -53,11 +51,9 @@ export class GestioneSpaziPage implements OnInit {
       'checkmark-outline': checkmarkOutline,
       'close-outline': closeOutline,
       'home': home,
-      'share-social-outline': shareSocialOutline,
       'chatbubbles-outline': chatbubblesOutline,
       'qr-code-outline': qrCodeOutline,
-      'add': add,
-      'person': person
+      'add': add
     });
   }
 

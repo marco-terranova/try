@@ -13,8 +13,8 @@ import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import {
   trashOutline, star, starOutline, home, search,
-  person, add, filter, cubeOutline, archiveOutline, closeOutline,
-  flashOutline, shareSocialOutline, qrCodeOutline, chatbubblesOutline,
+  add, cubeOutline, archiveOutline, closeOutline,
+  qrCodeOutline, chatbubblesOutline,
   addCircleOutline, closeCircleOutline
 } from 'ionicons/icons';
 
@@ -61,18 +61,14 @@ export class HomePage {
   ) {
     addIcons({
       'add': add,
-      'filter': filter,
       'home': home,
       'search': search,
-      'person': person,
       'star': star,
       'star-outline': starOutline,
       'trash-outline': trashOutline,
       'cube-outline': cubeOutline,
       'archive-outline': archiveOutline,
       'close-outline': closeOutline,
-      'flash-outline': flashOutline,
-      'share-social-outline': shareSocialOutline,
       'chatbubbles-outline': chatbubblesOutline,
       'qr-code-outline': qrCodeOutline,
       'add-circle-outline': addCircleOutline,

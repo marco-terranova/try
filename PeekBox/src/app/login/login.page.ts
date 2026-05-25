@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonContent, IonInput, IonButton, IonInputPasswordToggle,
+  IonContent, IonInput, IonInputPasswordToggle,
   AlertController
 } from '@ionic/angular/standalone';
 import { RouterModule, Router } from '@angular/router';
@@ -16,25 +16,81 @@ import { LoginResponse, PendingResponse } from '../../types/models';
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [
-    IonContent, IonInput, IonButton, CommonModule, FormsModule,
+    IonContent, IonInput, CommonModule, FormsModule,
     RouterModule, IonInputPasswordToggle
   ]
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
   email: string = '';
   password: string = '';
 
-  bgImage: string = 'https://plus.unsplash.com/premium_photo-1661913412680-c274b6fea096?q=80&w=1331&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+  isRegister: boolean = false;
+  nomeProfilo: string = '';
+  emailReg: string = '';
+  passwordReg: string = '';
+  tipoProfilo: 'personal' | 'business' = 'personal';
+
+  @ViewChild('tiltCard', { static: false }) cardRef!: ElementRef<HTMLElement>;
+  @ViewChild('stageRef', { static: false }) stageRef!: ElementRef<HTMLElement>;
+
+  private cardRect: DOMRect | null = null;
 
   constructor(
     private alertController: AlertController,
     private dbService: DatabaseService,
     private router: Router
-  ) { }
+  ) {}
 
-  ngOnInit() { }
+  ngOnInit() {}
+  ngAfterViewInit() {}
+  ngOnDestroy() {}
 
+  // ── Card Tilt + Scene Parallax ───────────────────────
+  @HostListener('mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    const card = this.cardRef?.nativeElement;
+    if (card) {
+      this.cardRect = card.getBoundingClientRect();
+      const x = (event.clientX - this.cardRect.left) / this.cardRect.width;
+      const y = (event.clientY - this.cardRect.top) / this.cardRect.height;
+      card.style.setProperty('--tilt-x', `${(y - 0.5) * -5}deg`);
+      card.style.setProperty('--tilt-y', `${(x - 0.5) * 5}deg`);
+      card.style.setProperty('--glare-x', `${x * 100}%`);
+      card.style.setProperty('--glare-y', `${y * 100}%`);
+    }
+    const stage = this.stageRef?.nativeElement;
+    if (stage) {
+      const px = ((event.clientX / window.innerWidth) - 0.5) * 2;
+      const py = ((event.clientY / window.innerHeight) - 0.5) * 2;
+      stage.style.setProperty('--px', px.toFixed(3));
+      stage.style.setProperty('--py', py.toFixed(3));
+    }
+  }
+
+  @HostListener('mouseleave')
+  onMouseLeave() {
+    const card = this.cardRef?.nativeElement;
+    if (card) {
+      card.style.setProperty('--tilt-x', '0deg');
+      card.style.setProperty('--tilt-y', '0deg');
+      card.style.setProperty('--glare-x', '50%');
+      card.style.setProperty('--glare-y', '50%');
+      this.cardRect = null;
+    }
+    const stage = this.stageRef?.nativeElement;
+    if (stage) {
+      stage.style.setProperty('--px', '0');
+      stage.style.setProperty('--py', '0');
+    }
+  }
+
+  // ── Mode Toggle ──────────────────────────────────────
+  toggleMode() {
+    this.isRegister = !this.isRegister;
+  }
+
+  // ── Login Logic ──────────────────────────────────────
   accedi() {
     this.dbService.loginUtente(this.email, this.password).pipe(
       switchMap((res: LoginResponse) => {
@@ -44,41 +100,82 @@ export class LoginPage implements OnInit {
         localStorage.setItem('utente_email', res.user.email || '');
         localStorage.setItem('tipo_profilo', res.user.tipo_profilo || 'personal');
         localStorage.setItem('is_admin',     res.user.is_admin ? '1' : '0');
-
         return this.dbService.getCondivisioniPending(String(res.user.id)).pipe(
-          catchError(() => {
-            this.router.navigateByUrl('/home', { replaceUrl: true });
-            return EMPTY;
-          })
+          catchError(() => { this.router.navigateByUrl('/home', { replaceUrl: true }); return EMPTY; })
         );
       }),
       catchError(() => {
-        // Mostra l'alert di errore login in modo asincrono senza rompere il flusso
         this.alertController.create({
           cssClass: 'peekbox-alert',
           header: 'Accesso Negato',
           message: 'Email o password errati. Riprova.',
           buttons: ['OK']
-        }).then(alert => alert.present());
+        }).then(a => a.present());
         return EMPTY;
       })
     ).subscribe((res: PendingResponse) => {
-      if (res.pending > 0) {
-        this.router.navigateByUrl('/box-ricevute', { replaceUrl: true });
-      } else {
-        this.router.navigateByUrl('/home', { replaceUrl: true });
-      }
+      if (res.pending > 0) this.router.navigateByUrl('/box-ricevute', { replaceUrl: true });
+      else this.router.navigateByUrl('/home', { replaceUrl: true });
     });
   }
 
   async recuperaPassword(event: Event) {
     event.preventDefault();
-    const alert = await this.alertController.create({
+    (await this.alertController.create({
       cssClass: 'peekbox-alert',
       header: 'Recupero Password',
       message: 'Funzionalità non ancora disponibile sul database fisico.',
       buttons: ['OK']
+    })).present();
+  }
+
+  tornaBenvenuto() {
+    this.router.navigateByUrl('/benvenuto', { replaceUrl: true });
+  }
+
+  // ── Registration Logic ───────────────────────────────
+  selezionaProfilo(tipo: 'personal' | 'business') {
+    this.tipoProfilo = tipo;
+  }
+
+  async registrati() {
+    if (!this.nomeProfilo || !this.emailReg || !this.passwordReg) {
+      (await this.alertController.create({
+        cssClass: 'peekbox-alert',
+        header: 'Errore',
+        message: 'Tutti i campi sono obbligatori!',
+        buttons: ['OK']
+      })).present();
+      return;
+    }
+    this.dbService.registraUtente(this.nomeProfilo, this.emailReg, this.passwordReg, this.tipoProfilo).subscribe({
+      next: async () => {
+        const label = this.tipoProfilo === 'personal' ? 'Personale' : 'Business';
+        const alert = await this.alertController.create({
+          cssClass: 'peekbox-alert',
+          header: 'Registrazione completata',
+          message: `Account ${label} creato con successo.`,
+          buttons: [
+            {
+              text: 'Accedi',
+              handler: () => {
+                this.email = this.emailReg;
+                this.password = this.passwordReg;
+                this.isRegister = false;
+              }
+            }
+          ]
+        });
+        alert.present();
+      },
+      error: async () => {
+        (await this.alertController.create({
+          cssClass: 'peekbox-alert',
+          header: 'Errore',
+          message: 'Impossibile registrarsi. Email già presente o server offline.',
+          buttons: ['OK']
+        })).present();
+      }
     });
-    await alert.present();
   }
 }

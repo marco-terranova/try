@@ -5,7 +5,9 @@ import { Router, RouterModule } from '@angular/router';
 import { NavigationHistoryService } from '../services/navigation-history';
 import {
   IonContent,
+  IonHeader,
   IonIcon,
+  IonToolbar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -16,14 +18,10 @@ import {
   cameraReverseOutline,
   chatbubblesOutline,
   home,
-  homeOutline,
   imageOutline,
   keypadOutline,
   optionsOutline,
-  personOutline,
   qrCodeOutline,
-  scan,
-  searchOutline,
   shieldCheckmarkOutline,
   stopCircleOutline,
   videocamOutline,
@@ -41,7 +39,9 @@ declare const jsQR: any;
     FormsModule,
     RouterModule,
     IonContent,
+    IonHeader,
     IonIcon,
+    IonToolbar,
   ],
 })
 export class ScanQrPage implements OnInit, OnDestroy {
@@ -66,14 +66,10 @@ export class ScanQrPage implements OnInit, OnDestroy {
       cameraReverseOutline,
       chatbubblesOutline,
       home,
-      homeOutline,
       imageOutline,
       keypadOutline,
       optionsOutline,
-      personOutline,
       qrCodeOutline,
-      scan,
-      searchOutline,
       shieldCheckmarkOutline,
       stopCircleOutline,
       videocamOutline,

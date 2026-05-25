@@ -61,6 +61,9 @@ declare module 'ionicons/icons' {
   export const optionsOutline: string;
   export const paperPlaneOutline: string;
   export const pencilOutline: string;
+  export const print: string;
+  export const printOutline: string;
+  export const printSharp: string;
   export const people: string;
   export const peopleOutline: string;
   export const person: string;

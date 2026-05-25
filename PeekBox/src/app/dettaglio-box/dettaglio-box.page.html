@@ -1,17 +1,22 @@
 <ion-header class="ion-no-border">
-  <div class="header-container">
-    <div class="logo-side" (click)="goBack()">
-      <img src="assets/icon/logoTitolo1.png" class="logo-small" alt="PeekBox" />
+  <ion-toolbar class="peek-toolbar">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="goBack()" style="cursor: pointer;" />
+          <h1 class="header-greeting">DETTAGLIO <span class="nome-verde">BOX</span></h1>
+        </div>
+        <div class="header-actions">
+          <button class="hdr-action-btn" (click)="apriModale('history')" title="Cronologia Box">
+            <ion-icon name="time-outline"></ion-icon>
+          </button>
+          <button *ngIf="!isViewer" class="hdr-action-btn" [class.hdr-action-btn--active-star]="box?.is_preferito" (click)="togglePreferito()">
+            <ion-icon [name]="box?.is_preferito ? 'star' : 'star-outline'"></ion-icon>
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="header-actions">
-      <button class="hdr-action-btn" (click)="apriModale('history')" title="Cronologia Box">
-        <ion-icon name="time-outline"></ion-icon>
-      </button>
-      <button *ngIf="!isViewer" class="hdr-action-btn" [class.hdr-action-btn--active-star]="box?.is_preferito" (click)="togglePreferito()">
-        <ion-icon [name]="box?.is_preferito ? 'star' : 'star-outline'"></ion-icon>
-      </button>
-    </div>
-  </div>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
@@ -83,10 +88,12 @@
             <span class="action-label">QR Code</span>
           </div>
 
-          <div class="action-btn-card" (click)="apriGeofence()">
-            <div class="action-icon" style="background: rgba(139,92,246,0.1); color: #8B5CF6;">📍</div>
-            <span class="action-label">Geofence</span>
-          </div>
+          <ng-container *ngIf="tipoProfilo === 'business'">
+            <div class="action-btn-card" (click)="apriGeofence()">
+              <div class="action-icon" style="background: rgba(139,92,246,0.1); color: #8B5CF6;">📍</div>
+              <span class="action-label">Geofence</span>
+            </div>
+          </ng-container>
 
           <div class="action-btn-card action-btn-card--danger" *ngIf="!isViewer" (click)="svuotaBox()">
             <div class="action-icon" style="background: rgba(239,68,68,0.08); color: #dc3545;">🗑️</div>

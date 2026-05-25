@@ -37,6 +37,7 @@
         </button>
 
         <button
+          *ngIf="tipoProfilo === 'business'"
           class="tab-btn"
           [class.active]="activeTab === 'geofence'"
           (click)="cambiaTab('geofence')"
@@ -207,7 +208,7 @@
                 <h3 class="space-name">{{ armadio.nome }}</h3>
               </div>
               <div class="space-actions">
-                <button class="btn-space-setting btn-space-setting--geo" (click)="apriConfigGeofence(armadio)" title="Configura Geofence">
+                <button *ngIf="tipoProfilo === 'business'" class="btn-space-setting btn-space-setting--geo" (click)="apriConfigGeofence(armadio)" title="Configura Geofence">
                   <ion-icon name="location-outline"></ion-icon>
                   <span>Geofence</span>
                 </button>
@@ -263,6 +264,7 @@
       <!-- ===================================================== -->
       <!-- TAB 3: NOTIFICHE GEOFENCING                           -->
       <!-- ===================================================== -->
+      <ng-container *ngIf="tipoProfilo === 'business'">
       <!-- MAPPA CHECKPOINT (sempre nel DOM) -->
       <div class="geo-map-section" [hidden]="activeTab !== 'geofence'">
         <div #geoMapContainer class="geo-leaflet-map"></div>
@@ -329,6 +331,7 @@
         </div>
 
       </div>
+      </ng-container>
 
     </ng-container>
 

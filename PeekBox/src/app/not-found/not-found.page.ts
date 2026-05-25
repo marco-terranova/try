@@ -1,20 +1,20 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonIcon, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { homeOutline, arrowBackOutline } from 'ionicons/icons';
+import { homeOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-not-found',
   templateUrl: './not-found.page.html',
   styleUrls: ['./not-found.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonContent, IonIcon],
+  imports: [CommonModule, IonContent, IonHeader, IonIcon, IonToolbar],
 })
 export class NotFoundPage {
   constructor(private router: Router) {
-    addIcons({ homeOutline, arrowBackOutline });
+    addIcons({ homeOutline });
   }
 
   vaiHome() {

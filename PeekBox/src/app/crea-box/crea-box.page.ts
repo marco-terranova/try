@@ -5,11 +5,13 @@ import {
   AlertController,
   IonContent,
   IonFooter,
+  IonHeader,
   IonIcon,
   IonSelect,
   IonSelectOption,
   IonTabBar,
   IonTabButton,
+  IonToolbar,
 } from '@ionic/angular/standalone';
 import { RouterModule, Router } from '@angular/router';
 import { addIcons } from 'ionicons';
@@ -40,11 +42,13 @@ import { NavigationHistoryService } from '../services/navigation-history';
     RouterModule,
     IonContent,
     IonFooter,
+    IonHeader,
     IonIcon,
     IonSelect,
     IonSelectOption,
     IonTabBar,
     IonTabButton,
+    IonToolbar,
   ]
 })
 export class CreaBoxPage implements OnInit {

@@ -117,6 +117,15 @@ function verificaAccessoBoxScrittura(boxId, userId, res, cb) {
     });
 }
 
+// ─── Helper: inserisci log cronologia box ─────────────────────
+function inserisciLogBox(boxId, tipo, descrizione, dettagli, cb) {
+    const sql = `INSERT INTO box_log (rif_box, tipo, descrizione, dettagli) VALUES (?, ?, ?, ?)`;
+    db.run(sql, [boxId, tipo, descrizione, dettagli ? JSON.stringify(dettagli) : null], function(err) {
+        if (err) console.error('[box_log] Errore:', err.message);
+        if (cb) cb(err);
+    });
+}
+
 // ─────────────────────────────────────────────
 // UTENTI
 // ─────────────────────────────────────────────
@@ -341,6 +350,20 @@ app.put('/api/box/moving-mode/:id', verificaToken, (req, res) => {
             if (runErr) return res.status(500).json({ error: runErr.message });
             res.json({ message: `Moving Mode ${moving_mode ? 'attivato' : 'disattivato'}!`, moving_mode: moving_mode ? 1 : 0 });
         });
+    });
+});
+
+// ─── GET cronologia box ──────────────────────────────────────
+app.get('/api/box/:id/log', verificaToken, (req, res) => {
+    verificaAccessoBoxLettura(req.params.id, req.user.id, res, () => {
+        db.all(
+            `SELECT * FROM box_log WHERE rif_box = ? ORDER BY creato_il DESC LIMIT 50`,
+            [req.params.id],
+            (err, rows) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({ log: rows || [] });
+            }
+        );
     });
 });
 
@@ -911,6 +934,7 @@ app.post('/api/oggetti', verificaToken, (req, res) => {
             db.run(`INSERT INTO oggetti (nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                 [nome, descrizione, tipo, fragile ? 1 : 0, quantita || 1, foto, rif_box, rif_catalogo], function(err) {
                 if (err) return res.status(500).json({ error: err.message });
+                inserisciLogBox(rif_box, 'oggetto_aggiunto', `Aggiunto "${nome}" (q.tà: ${quantita || 1})`, { oggetto_id: this.lastID, nome, quantita: quantita || 1 });
                 res.status(201).json({ id: this.lastID });
             });
         });
@@ -930,19 +954,34 @@ app.put('/api/oggetti/sposta', verificaToken, (req, res) => {
 
     verificaAccessoBoxScrittura(box_destinazione_id, req.user.id, res, () => {
         const placeholders = oggetti_ids.map(() => '?').join(', ');
-        db.run(
-            `UPDATE oggetti SET rif_box = ? WHERE id IN (${placeholders})`,
-            [box_destinazione_id, ...oggetti_ids],
-            function(err) {
-                if (err) return res.status(500).json({ error: err.message });
-                res.json({ message: `${this.changes} oggetti spostati.`, changes: this.changes });
+        db.all(
+            `SELECT id, nome, rif_box FROM oggetti WHERE id IN (${placeholders})`,
+            [...oggetti_ids],
+            (selErr, oggetti) => {
+                if (selErr) return res.status(500).json({ error: selErr.message });
+                db.run(
+                    `UPDATE oggetti SET rif_box = ? WHERE id IN (${placeholders})`,
+                    [box_destinazione_id, ...oggetti_ids],
+                    function(err) {
+                        if (err) return res.status(500).json({ error: err.message });
+                        const names = (oggetti || []).map(o => o.nome).join(', ');
+                        const sorgenteIds = [...new Set((oggetti || []).map(o => o.rif_box).filter(Boolean))];
+                        inserisciLogBox(box_destinazione_id, 'oggetto_spostato', `Arrivati: ${names}`, { oggetti_ids, provenienti: sorgenteIds });
+                        sorgenteIds.forEach(srcId => {
+                            if (srcId && Number(srcId) !== Number(box_destinazione_id)) {
+                                inserisciLogBox(srcId, 'oggetto_spostato_via', `Partiti: ${names}`, { oggetti_ids, destinazione: box_destinazione_id });
+                            }
+                        });
+                        res.json({ message: `${this.changes} oggetti spostati.`, changes: this.changes });
+                    }
+                );
             }
         );
     });
 });
 
 app.put('/api/oggetti/:id', verificaToken, (req, res) => {
-    db.get('SELECT rif_box FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
+    db.get('SELECT rif_box, nome FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
         if (err) return res.status(500).json({ error: err.message });
         if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
 
@@ -959,6 +998,7 @@ app.put('/api/oggetti/:id', verificaToken, (req, res) => {
                  quantita || null, foto || null, req.params.id],
                 function(err) {
                     if (err) return res.status(500).json({ error: err.message });
+                    inserisciLogBox(oggetto.rif_box, 'oggetto_modificato', `Modificato "${nome || oggetto.nome}"`, { oggetto_id: Number(req.params.id) });
                     res.json({ message: "Oggetto aggiornato!" });
                 }
             );
@@ -968,13 +1008,14 @@ app.put('/api/oggetti/:id', verificaToken, (req, res) => {
 
 // ─── Soft-delete: sposta l'oggetto nel cestino ────────────────
 app.delete('/api/oggetti/:id', verificaToken, (req, res) => {
-    db.get('SELECT rif_box FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
+    db.get('SELECT rif_box, nome FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
         if (err) return res.status(500).json({ error: err.message });
         if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
 
         verificaAccessoBoxScrittura(oggetto.rif_box, req.user.id, res, () => {
             db.run("UPDATE oggetti SET data_eliminazione = datetime('now') WHERE id = ?", [req.params.id], function(err) {
                 if (err) return res.status(500).json({ error: err.message });
+                inserisciLogBox(oggetto.rif_box, 'oggetto_eliminato', `Eliminato "${oggetto.nome}"`, { oggetto_id: Number(req.params.id) });
                 console.log(`[DELETE /api/oggetti/${req.params.id}] Soft-delete eseguito.`);
                 res.json({ message: "Oggetto spostato nel cestino!" });
             });

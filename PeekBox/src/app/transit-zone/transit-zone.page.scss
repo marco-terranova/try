@@ -1,9 +1,6 @@
 @import '../../theme/variables';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&display=swap');
 
-$blue:      $blue;
-$blue-dark: $blue-d;
-$green:     $green;
-$dark:      $dark;
 $muted:     $mid;
 $bg:        $page;
 $card:      $white;
@@ -20,8 +17,10 @@ ion-content.transit-saas {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 15px 2cm 20px;
+  padding: 15px clamp(20px, 3.5vw, 56px) 20px;
   box-sizing: border-box;
+  max-width: min(92vw, 1400px);
+  margin: 0 auto;
 }
 
 // ─── GRIGLIA COLONNE ─────────────────────────────────────────
@@ -282,22 +281,61 @@ ion-content.transit-saas {
   50%       { border-color: rgba($blue, 0.4); background: rgba($blue, 0.05); }
 }
 
-// ─── ION-HEADER ──────────────────────────────────────────────
+// ─── Header uguale a box-ricevute ───────────────────────────
 ion-header {
-  ion-toolbar {
-    --background: transparent;
-    --border-width: 0;
-    --padding-start: 0;
-    --padding-end: 0;
-  }
+  --background: #{$bg};
 }
 
-.transit-header {
-  padding: 10px 20px 6px;
+ion-toolbar.peek-toolbar {
+  --background: #{$bg};
+  --border-width: 0;
+  padding: 0;
+}
+
+.header-inner {
+  padding: 16px clamp(20px, 3.5vw, 56px) 10px;
+}
+
+.header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  .top-left-logo { height: 34px; object-fit: contain; }
+  margin-bottom: 0;
+}
+
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .header-logo {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    &:hover { opacity: 0.75; }
+    &:active { opacity: 0.55; }
+  }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 900 !important;
+  text-shadow: 0px 4px 10px rgba($green, 0.3);
 }
 
 .btn-conferma-transfer-header {
@@ -342,7 +380,7 @@ ion-header {
   backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border-radius: 40px;
   border: 1px solid rgba($card, 0.95);
-  box-shadow: 0 8px 32px rgba(58,171,219,0.13), 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 32px rgba($blue, 0.13), 0 2px 8px rgba(0,0,0,0.06);
   display: flex; align-items: center; justify-content: space-around;
   padding: 0 8px; z-index: 1000;
 
@@ -350,7 +388,7 @@ ion-header {
     position: absolute; bottom: -12px; left: 50%;
     transform: translateX(-50%);
     width: 55%; height: 22px;
-    background: radial-gradient(ellipse, rgba(58,171,219,0.22), transparent 70%);
+    background: radial-gradient(ellipse, rgba($blue, 0.22), transparent 70%);
     pointer-events: none; z-index: -1;
   }
 
@@ -374,8 +412,8 @@ ion-header {
     }
 
     &.active {
-      ion-icon { color: $blue-dark; }
-      span { color: $blue-dark; }
+      ion-icon { color: $blue-d; }
+      span { color: $blue-d; }
     }
     &:not(.active):hover { background: rgba(0,0,0,0.04); }
   }
@@ -388,12 +426,12 @@ ion-header {
       width: 58px; height: 58px;
       border-radius: 50%; border: none !important;
       background: linear-gradient(135deg, $green, $green-d) !important;
-      color: #fff; cursor: pointer;
+      color: $white; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 10px 25px rgba($green-d,0.4) !important;
       transition: transform 0.2s, box-shadow 0.2s;
 
-      ion-icon { font-size: 1.7rem; color: #ffffff !important; }
+      ion-icon { font-size: 1.7rem; color: $white !important; }
 
       &:hover {
         transform: scale(1.1) translateY(-3px);
@@ -414,8 +452,8 @@ ion-header {
 
     &.active {
       background: rgba($blue,0.18);
-      color: $blue-dark;
-      border-color: $blue-dark;
+      color: $blue-d;
+      border-color: $blue-d;
       box-shadow: 0 2px 8px rgba($blue,0.3);
     }
   }

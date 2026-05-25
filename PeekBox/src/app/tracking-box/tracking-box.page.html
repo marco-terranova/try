@@ -1,18 +1,22 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="transparent">
-    <ion-buttons slot="start">
-      <app-back-button fallbackRoute="/home"></app-back-button>
-    </ion-buttons>
-    <ion-title>Tracking Box</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="caricaCheckpoints()" fill="clear">
-        <ion-icon name="refresh-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+  <ion-toolbar class="peek-toolbar">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="tornaIndietro()" style="cursor: pointer;" />
+          <h1 class="header-greeting">TRACKING <span class="nome-verde">BOX</span></h1>
+        </div>
+        <button class="hdr-action-btn" (click)="caricaCheckpoints()" title="Aggiorna">
+          <ion-icon name="refresh-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="tracking-content">
+
+  <ng-container *ngIf="tipoProfilo === 'business'; else personalMsg">
 
   <!-- INFO BOX -->
   <ion-card class="box-info-card" *ngIf="boxInfo">
@@ -116,5 +120,15 @@
       <ion-icon name="trash-outline"></ion-icon> Elimina storico
     </button>
   </div>
+
+  </ng-container>
+
+  <ng-template #personalMsg>
+    <div class="personal-blocked-msg" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; text-align: center; padding: 40px;">
+      <div style="font-size: 4rem; margin-bottom: 20px;">🔒</div>
+      <h3 style="color: #1E293B; margin-bottom: 10px;">Funzione non disponibile</h3>
+      <p style="color: #64748B; font-size: 0.95rem; max-width: 300px;">Il tracking box è disponibile solo per account Business. Aggiorna il tuo piano per sbloccare questa funzionalità.</p>
+    </div>
+  </ng-template>
 
 </ion-content>

@@ -12,15 +12,78 @@
 .tracking-content {
   --background: var(--bg);
   --overflow: auto;
-  padding: 0 2cm 40px;
+  padding: 0 clamp(20px, 3.5vw, 56px) 40px;
 }
 
-ion-header ion-toolbar {
+ion-header { background: $white; }
+
+ion-toolbar.peek-toolbar {
   --background: #{$page};
-  --color: #{$dark};
-  --border-color: #{$brd-light};
-  --border-width: 0 0 1px 0;
-  --border-style: solid;
+  --border-width: 0;
+}
+
+.header-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px clamp(20px, 3.5vw, 56px) 6px;
+}
+
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  &:hover  { opacity: 0.75; }
+  &:active { opacity: 0.55; }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba($green, 0.25);
+}
+
+.hdr-action-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: $mid;
+  &:hover { background: rgba($mid, 0.1); color: $dark; }
+  &:active { transform: scale(0.92); }
+  ion-icon { font-size: 1.3rem; }
 }
 
 /* BOX INFO CARD */
@@ -29,7 +92,7 @@ ion-header ion-toolbar {
   border-radius: 18px;
   border: 1px solid #{$brd-light};
   margin: 16px 0;
-  box-shadow: 0 8px 24px rgba(58, 171, 219, 0.04);
+  box-shadow: 0 8px 24px rgba($blue, 0.04);
 
   ion-card-content { padding: 18px; }
 }
@@ -79,7 +142,7 @@ ion-header ion-toolbar {
   border-radius: 12px;
   border: 1px solid #{$brd-light};
   gap: 2px;
-  box-shadow: 0 4px 12px rgba(58, 171, 219, 0.02);
+  box-shadow: 0 4px 12px rgba($blue, 0.02);
 }
 
 .stat-num { font-size: 13px; font-weight: 700; color: var(--accent); }
@@ -113,13 +176,13 @@ ion-header ion-toolbar {
   &.primary {
     background: linear-gradient(135deg, #{$blue} 0%, #{$blue-d} 100%);
     color: white;
-    box-shadow: 0 4px 14px rgba(58,171,219,.2);
+    box-shadow: 0 4px 14px rgba($blue, .2);
   }
   &.secondary {
     background: var(--card-bg);
     border: 1px solid #{$brd-light};
     color: var(--text);
-    box-shadow: 0 4px 12px rgba(58, 171, 219, 0.02);
+    box-shadow: 0 4px 12px rgba($blue, 0.02);
   }
 }
 
@@ -153,8 +216,8 @@ ion-header ion-toolbar {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: rgba(15,23,42,0.1);
-  border: 2px solid rgba(15,23,42,0.2);
+  background: rgba($dark, 0.1);
+  border: 2px solid rgba($dark, 0.2);
   flex-shrink: 0;
 
   &.first { background: var(--accent); border-color: var(--accent); }
@@ -175,7 +238,7 @@ ion-header ion-toolbar {
   border-radius: 12px;
   padding: 12px 14px;
   border: 1px solid #{$brd-light};
-  box-shadow: 0 4px 12px rgba(58, 171, 219, 0.02);
+  box-shadow: 0 4px 12px rgba($blue, 0.02);
 }
 
 .cp-header {
@@ -195,7 +258,7 @@ ion-header ion-toolbar {
   gap: 5px;
   font-size: 11px;
   color: var(--accent);
-  background: rgba(58,171,219,0.08);
+  background: rgba($blue, 0.08);
   border: none;
   border-radius: 8px;
   padding: 4px 10px;
@@ -221,9 +284,9 @@ ion-header ion-toolbar {
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: #ef4444;
-  background: rgba(239,68,68,0.05);
-  border: 1px solid rgba(239,68,68,0.15);
+  color: $red;
+  background: rgba($red, 0.05);
+  border: 1px solid rgba($red, 0.15);
   border-radius: 10px;
   padding: 10px 20px;
   cursor: pointer;
@@ -283,7 +346,7 @@ ion-header ion-toolbar {
 @media (min-width: 1024px) {
   .tracking-content {
     padding: 0 40px 56px;
-    max-width: 900px;
+    max-width: min(92vw, 1200px);
     margin: 0 auto;
   }
   .box-nome {

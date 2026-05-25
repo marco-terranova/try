@@ -1,25 +1,18 @@
-<ion-content class="bg-light-saas">
-  <div class="page-wrapper">
-
-    <div class="top-compact-bar">
-      <div class="logo-group">
-        <img
-          src="assets/icon/logoTitolo1.png"
-          alt="PeekBox"
-          class="header-logo"
-          (click)="navTo('/home')"
-          style="cursor: pointer;"
-        />
-      </div>
-      <div class="title-group">
-        <h1 class="header-greeting">SCANSIONE <span class="nome-verde">RAPIDA</span></h1>
-      </div>
-      <div class="profile-compact">
-        <div class="avatar-compact">
-          <ion-icon name="qr-code-outline"></ion-icon>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="peek-toolbar">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="navTo('/home')" style="cursor: pointer;" />
+          <h1 class="header-greeting">SCANSIONE <span class="nome-verde">RAPIDA</span></h1>
         </div>
       </div>
     </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-light-saas">
+  <div class="page-wrapper">
 
     <div class="scan-plancia-grid">
 

@@ -31,7 +31,7 @@ $font: 'Poppins', sans-serif;
   transform: translate(-50%, -50%);
   
   z-index: 2;
-  background: #ffffff !important; // FORZATURA BIANCO SOLIDO
+  background: $white !important; // FORZATURA BIANCO SOLIDO
   width: 90%;
   max-width: 460px;
   border-radius: 24px;
@@ -60,15 +60,15 @@ $font: 'Poppins', sans-serif;
   grid-template-columns: 40px 1fr 80px;
   align-items: center;
   padding: 18px 20px;
-  background: #FFFFFF;
-  border-bottom: 1px solid rgba(58, 171, 219, 0.1);
+  background: $white;
+  border-bottom: 1px solid rgba($blue, 0.1);
 
   h2 {
     margin: 0;
     text-align: center;
     font-size: 0.85rem;
     font-weight: 900;
-    color: #15425C;
+    color: $blue-dk;
     letter-spacing: 0.5px;
   }
 
@@ -76,13 +76,13 @@ $font: 'Poppins', sans-serif;
     width: 32px; height: 32px;
     border-radius: 50%;
     border: none;
-    background: #F4F7F9;
-    color: #4A7A94;
+    background: $page;
+    color: $mid;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     font-size: 1.1rem;
     transition: all 0.2s;
-    &:hover { background: #EBF5FB; color: #0F172A; }
+    &:hover { background: $surf; color: $dark; }
   }
 
   .geo-status-badge {
@@ -90,16 +90,16 @@ $font: 'Poppins', sans-serif;
     font-weight: 800;
     padding: 4px 10px;
     border-radius: 50px;
-    background: rgba(220, 53, 69, 0.08);
-    color: #dc3545;
+    background: rgba($red, 0.08);
+    color: $red;
     display: flex; // Allineamento icona e testo
     align-items: center;
     justify-content: center;
     gap: 4px;
     height: fit-content;
     &.active {
-      background: rgba(125, 199, 64, 0.1);
-      color: #5A9E2A;
+      background: rgba($green, 0.1);
+      color: $green-d;
     }
   }
 }
@@ -118,11 +118,11 @@ $font: 'Poppins', sans-serif;
 
   &--map {
     height: 220px;
-    background: #EBF5FB;
+    background: $surf;
     border-radius: 16px;
     overflow: hidden;
     position: relative;
-    border: 1px solid rgba(58, 171, 219, 0.15);
+    border: 1px solid rgba($blue, 0.15);
   }
 }
 
@@ -143,11 +143,11 @@ $font: 'Poppins', sans-serif;
 }
 
 .btn-gps-main {
-  background: #FFFFFF;
-  border: 1px solid rgba(58, 171, 219, 0.2);
+  background: $white;
+  border: 1px solid rgba($blue, 0.2);
   padding: 8px 14px;
   border-radius: 10px;
-  color: #1A7FA8;
+  color: $blue-d;
   font-family: $font;
   font-size: 0.65rem;
   font-weight: 800;
@@ -160,11 +160,11 @@ $font: 'Poppins', sans-serif;
   &:hover:not([disabled]) {
     transform: translateY(-1px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    border-color: #3AABDB;
+    border-color: $blue;
   }
 
   &[disabled] { opacity: 0.6; cursor: not-allowed; }
-  ion-spinner { --color: #3AABDB; width: 14px; height: 14px; }
+  ion-spinner { --color: $blue; width: 14px; height: 14px; }
 }
 
 .coords-row {
@@ -175,15 +175,15 @@ $font: 'Poppins', sans-serif;
 
 .coord-field {
   display: flex; flex-direction: column; gap: 4px;
-  label { font-size: 0.6rem; font-weight: 800; color: #4A7A94; letter-spacing: 0.5px; }
+  label { font-size: 0.6rem; font-weight: 800; color: $mid; letter-spacing: 0.5px; }
   input {
     padding: 10px 12px;
-    border: 1px solid rgba(58, 171, 219, 0.12);
+    border: 1px solid rgba($blue, 0.12);
     border-radius: 10px;
-    background: #F4F7F9;
+    background: $page;
     font-family: $font; font-size: 0.8rem; font-weight: 700;
-    color: #0F172A;
-    &:focus { outline: none; border-color: #3AABDB; background: #FFF; }
+    color: $dark;
+    &:focus { outline: none; border-color: $blue; background: $white; }
   }
 }
 
@@ -191,36 +191,36 @@ $font: 'Poppins', sans-serif;
   display: flex; flex-direction: column; gap: 6px;
   .range-header {
     display: flex; align-items: center; justify-content: space-between;
-    label { font-size: 0.6rem; font-weight: 800; color: #4A7A94; letter-spacing: 0.5px; }
-    .range-val { font-size: 0.8rem; font-weight: 800; color: #3AABDB; }
+    label { font-size: 0.6rem; font-weight: 800; color: $mid; letter-spacing: 0.5px; }
+    .range-val { font-size: 0.8rem; font-weight: 800; color: $blue; }
   }
 }
 
 .geo-range {
   padding-top: 0; padding-bottom: 0;
-  --bar-background: #EBF5FB;
-  --bar-background-active: #3AABDB;
-  --knob-background: #3AABDB;
+  --bar-background: $surf;
+  --bar-background-active: $blue;
+  --knob-background: $blue;
   --knob-size: 18px;
 }
 
 .toggle-field {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 14px;
-  background: #F4F7F9;
+  background: $page;
   border-radius: 14px;
-  border: 1px solid rgba(58, 171, 219, 0.08);
+  border: 1px solid rgba($blue, 0.08);
 
   .toggle-info {
     display: flex; flex-direction: column; gap: 1px;
-    .toggle-title { font-size: 0.8rem; font-weight: 700; color: #0F172A; }
-    .toggle-desc { font-size: 0.6rem; color: #4A7A94; }
+    .toggle-title { font-size: 0.8rem; font-weight: 700; color: $dark; }
+    .toggle-desc { font-size: 0.6rem; color: $mid; }
   }
 }
 
 .toggle-brand {
-  --handle-background-checked: #ffffff;
-  --background-checked: #3AABDB !important; // AZZURRO PEEKBOX ESPLICITO
+  --handle-background-checked: $white;
+  --background-checked: $blue !important; // AZZURRO PEEKBOX ESPLICITO
 }
 
 .btns-row {
@@ -231,39 +231,39 @@ $font: 'Poppins', sans-serif;
     padding: 14px;
     border-radius: 14px;
     border: none;
-    background: linear-gradient(135deg, $green, #5A9E2A);
-    color: #FFF;
+    background: linear-gradient(135deg, $green, $green-d);
+    color: $white;
     font-family: $font; font-size: 0.85rem; font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(125, 199, 64, 0.25);
+    box-shadow: 0 4px 12px rgba($green, 0.25);
     transition: all 0.2s;
-    &:hover:not([disabled]) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(125, 199, 64, 0.35); }
+    &:hover:not([disabled]) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba($green, 0.35); }
     &[disabled] { opacity: 0.6; cursor: not-allowed; }
     ion-icon { font-size: 1.1rem; }
-    ion-spinner { --color: #FFF; width: 20px; height: 20px; }
+    ion-spinner { --color: $white; width: 20px; height: 20px; }
   }
   .btn-del {
     width: 50px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 14px;
-    border: 1px solid rgba(220, 53, 69, 0.2);
-    background: rgba(220, 53, 69, 0.05);
-    color: #dc3545;
+    border: 1px solid rgba($red, 0.2);
+    background: rgba($red, 0.05);
+    color: $red;
     cursor: pointer;
     transition: all 0.2s;
-    &:hover { background: rgba(220, 53, 69, 0.1); border-color: #dc3545; }
+    &:hover { background: rgba($red, 0.1); border-color: $red; }
     ion-icon { font-size: 1.2rem; }
   }
 }
 
 .geo-footer {
   padding: 14px 20px;
-  background: #F4F7F9;
+  background: $page;
   display: flex; align-items: flex-start; gap: 10px;
-  border-top: 1px solid rgba(58, 171, 219, 0.05);
+  border-top: 1px solid rgba($blue, 0.05);
 
-  ion-icon { color: #3AABDB; font-size: 1rem; margin-top: 2px; }
-  p { margin: 0; font-size: 0.65rem; color: #4A7A94; line-height: 1.4; }
+  ion-icon { color: $blue; font-size: 1rem; margin-top: 2px; }
+  p { margin: 0; font-size: 0.65rem; color: $mid; line-height: 1.4; }
 }
 
 // ═══════════════════════════════════════════════════════════════

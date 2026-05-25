@@ -5,7 +5,7 @@
       <div class="header-top">
         <div class="header-greet">
           <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="navBack()" style="cursor: pointer;" />
-          <h1 class="header-greeting">BENTORNATO <span class="nome-verde">{{ (nomeUtente || 'Utente') | uppercase }}</span></h1>
+          <h1 class="header-greeting">HOME <span class="nome-verde">PEEKBOX</span></h1>
         </div>
       </div>
 
@@ -146,7 +146,7 @@
   <ion-modal [isOpen]="isFilterModalOpen" (didDismiss)="isFilterModalOpen = false">
     <ng-template>
       <ion-header class="ion-no-border">
-        <ion-toolbar>
+  <ion-toolbar class="peek-toolbar">
           <ion-title style="color: #15425C; font-weight: bold;">Filtri avanzati</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="isFilterModalOpen = false">

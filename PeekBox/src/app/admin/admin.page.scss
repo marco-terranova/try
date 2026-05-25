@@ -1,5 +1,69 @@
 @import '../../theme/variables';
 
+// ═══ Header ═══════════════════════════════════════════════
+ion-header { background: $white; }
+
+ion-toolbar.peek-toolbar {
+  --background: #{$page};
+  --border-width: 0;
+}
+
+.header-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px clamp(20px, 3.5vw, 56px) 6px;
+}
+
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  &:hover  { opacity: 0.75; }
+  &:active { opacity: 0.55; }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba($green, 0.25);
+}
+
+.users-counter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: $mid;
+}
+
 ion-content {
   --background: #{$page} !important;
   --overflow: auto;
@@ -7,86 +71,8 @@ ion-content {
 
 // ── WRAPPER ──────────────────────────────────────
 .admin-dashboard-wrapper {
-  padding: 40px 2cm;
+  padding: 40px clamp(20px, 3.5vw, 56px);
   box-sizing: border-box;
-}
-
-// ── HEADER ───────────────────────────────────────
-.admin-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 40px;
-  gap: 24px;
-}
-
-.back-btn-light {
-  background: $white;
-  color: $dark;
-  border: none;
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.06);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  ion-icon {
-    font-size: 1.4rem;
-    color: $dark;
-    --color: #{$dark};
-  }
-
-  &:hover {
-    transform: scale(1.06);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.10);
-  }
-}
-
-.header-text {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.subtitle-admin {
-  color: $mid;
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.main-title {
-  color: $dark;
-  font-size: 2.4rem;
-  font-weight: 900;
-  margin: 4px 0 0;
-  line-height: 1.1;
-}
-
-.text-azzurro { color: $blue; }
-
-.users-counter {
-  background: $white;
-  color: $blue;
-  padding: 12px 24px;
-  border-radius: 50px;
-  font-weight: 800;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 8px 20px rgba(58,171,219,0.10);
-  white-space: nowrap;
-
-  ion-icon {
-    font-size: 1.2rem;
-    color: $blue;
-    --color: #{$blue};
-  }
 }
 
 // ── LISTA ────────────────────────────────────────
@@ -111,8 +97,8 @@ ion-content {
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 20px 40px rgba(58,171,219,0.08);
-    border-color: rgba(58,171,219,0.12);
+    box-shadow: 0 20px 40px rgba($blue, 0.08);
+    border-color: rgba($blue, 0.12);
   }
 }
 
@@ -136,7 +122,7 @@ ion-content {
   font-size: 1.4rem;
   font-weight: 800;
   flex-shrink: 0;
-  box-shadow: 0 8px 16px rgba(2,132,199,0.20);
+  box-shadow: 0 8px 16px rgba($sky, 0.20);
 }
 
 .user-details {
@@ -174,17 +160,17 @@ ion-content {
   letter-spacing: 0.4px;
 
   &.admin {
-    background: rgba(58,171,219,0.12);
+    background: rgba($blue, 0.12);
     color: $blue-d;
   }
 
   &.personal {
-    background: rgba(125,199,64,0.12);
+    background: rgba($green, 0.12);
     color: $green-d;
   }
 
   &.business {
-    background: rgba(21,66,92,0.12);
+    background: rgba($blue-dk, 0.12);
     color: $blue-dk;
   }
 }
@@ -207,7 +193,7 @@ ion-content {
   min-width: 110px;
   transition: background 0.2s ease;
 
-  &:hover { background: rgba(58,171,219,0.12); }
+  &:hover { background: rgba($blue, 0.12); }
 
   ion-icon {
     font-size: 1.3rem;
@@ -247,8 +233,8 @@ ion-content {
 }
 
 .btn-delete-ghost {
-  background: rgba(239,68,68,0.06);
-  color: #EF4444;
+  background: rgba($red, 0.06);
+  color: $red;
   border: none;
   width: 48px; height: 48px;
   border-radius: 50%;
@@ -260,14 +246,14 @@ ion-content {
 
   ion-icon {
     font-size: 1.3rem;
-    color: #EF4444;
-    --color: #EF4444;
+    color: $red;
+    --color: $red;
   }
 
   &:hover {
-    background: #EF4444;
+    background: $red;
     transform: scale(1.10);
-    box-shadow: 0 8px 20px rgba(239,68,68,0.25);
+    box-shadow: 0 8px 20px rgba($red, 0.25);
 
     ion-icon {
       color: $white;
@@ -314,6 +300,5 @@ ion-content {
 }
 
 @media (max-width: 480px) {
-  .main-title { font-size: 1.8rem; }
   .stat-pill { min-width: calc(50% - 6px); }
 }

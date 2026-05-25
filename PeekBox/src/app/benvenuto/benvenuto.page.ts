@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonContent } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './benvenuto.page.html',
   styleUrls: ['./benvenuto.page.scss'],
   standalone: true,
-  imports: [IonicModule, RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, IonContent],
 })
 export class BenvenutoPage implements OnInit, OnDestroy {
   slides = [0, 1, 2, 3, 4];

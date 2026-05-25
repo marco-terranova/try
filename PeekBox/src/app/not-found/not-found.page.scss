@@ -1,8 +1,62 @@
 @import '../../theme/variables';
 
+// ═══ Header ═══════════════════════════════════════════════
+ion-header { background: $white; }
+
+ion-toolbar.peek-toolbar {
+  --background: #{$page};
+  --border-width: 0;
+}
+
+.header-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px clamp(20px, 3.5vw, 56px) 6px;
+}
+
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  &:hover  { opacity: 0.75; }
+  &:active { opacity: 0.55; }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba($green, 0.25);
+}
+
 $font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-$accent: $blue;
-$brand:  $blue-dk;
 $muted:  $mid;
 $bg:     $page;
 
@@ -17,7 +71,7 @@ ion-content { --background: #{$bg}; --overflow: auto; }
   justify-content: center;
   min-height: 85vh;
   gap: 16px;
-  padding: 32px 2cm;
+  padding: 32px clamp(20px, 3.5vw, 56px);
   text-align: center;
   font-family: $font;
 }
@@ -25,7 +79,7 @@ ion-content { --background: #{$bg}; --overflow: auto; }
 .nf-code {
   font-size: clamp(4rem, 20vw, 7rem);
   font-weight: 900;
-  color: $accent;
+  color: $blue;
   line-height: 1;
   letter-spacing: -4px;
   opacity: 0.85;
@@ -35,7 +89,7 @@ ion-content { --background: #{$bg}; --overflow: auto; }
   margin: 0;
   font-size: 1.35rem;
   font-weight: 700;
-  color: $brand;
+  color: $blue-dk;
 }
 
 .nf-sub {
@@ -54,17 +108,17 @@ ion-content { --background: #{$bg}; --overflow: auto; }
   padding: 13px 28px;
   border: none;
   border-radius: 50px;
-  background: $accent;
-  color: #fff;
+  background: $blue;
+  color: $white;
   font-family: $font;
   font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(58, 171, 219, 0.3);
+  box-shadow: 0 6px 18px rgba($blue, 0.3);
   transition: transform 0.2s, box-shadow 0.2s;
   margin-top: 8px;
   ion-icon { font-size: 1.05rem; }
-  &:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(58,171,219,0.42); }
+  &:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba($blue, 0.42); }
 }
 
 // ═══════════════════════════════════════════════════════════════

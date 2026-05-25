@@ -9,36 +9,16 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { addIcons } from 'ionicons';
 import {
-  arrowBackOutline,
   starOutline,
   star,
-  layersOutline,
-  paperPlaneOutline,
-  warningOutline,
-  cubeOutline,
   addCircleOutline,
-  qrCodeOutline,
-  locationOutline,
   trashOutline,
-  trashBinOutline,
-  createOutline,
   checkmarkCircleOutline,
-  camera,
-  imageOutline,
   closeOutline,
-  barChartOutline,
   informationCircleOutline,
   cloudDownloadOutline,
   shareOutline,
-  home,
-  shareSocialOutline,
-  add,
-  chevronForwardOutline,
-  pricetagOutline,
-  flashOutline,
   pencilOutline,
-  person,
-  search,
   timeOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
@@ -59,6 +39,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
 
   readonly MAX_OGGETTI = 20;
 
+  tipoProfilo: string = 'personal';
   boxId!: number;
   box: any = null;
   oggetti: any[] = [];
@@ -92,36 +73,16 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     private navHistory: NavigationHistoryService
   ) {
     addIcons({
-      'arrow-back-outline': arrowBackOutline,
       'star-outline': starOutline,
       'star': star,
-      'layers-outline': layersOutline,
-      'paper-plane-outline': paperPlaneOutline,
-      'warning-outline': warningOutline,
-      'cube-outline': cubeOutline,
       'add-circle-outline': addCircleOutline,
-      'qr-code-outline': qrCodeOutline,
-      'location-outline': locationOutline,
       'trash-outline': trashOutline,
-      'trash-bin-outline': trashBinOutline,
-      'create-outline': createOutline,
       'checkmark-circle-outline': checkmarkCircleOutline,
-      'camera': camera,
-      'image-outline': imageOutline,
       'close-outline': closeOutline,
-      'bar-chart-outline': barChartOutline,
       'information-circle-outline': informationCircleOutline,
       'cloud-download-outline': cloudDownloadOutline,
       'share-outline': shareOutline,
-      'home': home,
-      'share-social-outline': shareSocialOutline,
-      'add': add,
-      'chevron-forward-outline': chevronForwardOutline,
-      'pricetag-outline': pricetagOutline,
-      'flash-outline': flashOutline,
       'pencil-outline': pencilOutline,
-      'person': person,
-      'search': search,
       'time-outline': timeOutline
     });
   }
@@ -294,6 +255,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
   }
 
   ionViewWillEnter() {
+    this.tipoProfilo = localStorage.getItem('tipo_profilo') || 'personal';
     this.utenteId = localStorage.getItem('utente_id');
     this.nomeUtente = (localStorage.getItem('utente_nome') || '').toUpperCase();
   }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import {
   LoginResponse, PendingResponse,
   BoxListResponse, BoxEliminateResponse,
@@ -11,9 +12,8 @@ import {
   providedIn: 'root'
 })
 export class DatabaseService {
-  private backendPort = 3000;
   private get apiUrl(): string {
-    return `${window.location.protocol}//${window.location.hostname}:${this.backendPort}/api`;
+    return `${window.location.protocol}//${window.location.hostname}:${environment.backendPort}/api`;
   }
 
   constructor(private http: HttpClient) { }
@@ -137,7 +137,7 @@ export class DatabaseService {
   }
 
   buildQrUrl(boxId: number, token: string): string {
-    const base = `${window.location.protocol}//${window.location.hostname}:${this.backendPort}`;
+    const base = `${window.location.protocol}//${window.location.hostname}:${environment.backendPort}`;
     return `${base}/scan?box=${boxId}&t=${token}`;
   }
 

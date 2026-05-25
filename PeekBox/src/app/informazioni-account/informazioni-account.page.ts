@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { IonContent, IonHeader, IonIcon, IonInput, IonInputPasswordToggle, IonToolbar, IonFooter, IonTabBar, IonTabButton } from '@ionic/angular/standalone';
 import { DatabaseService } from '../services/database';
 import { NavigationHistoryService } from '../services/navigation-history';
 import { addIcons } from 'ionicons';
@@ -19,7 +19,7 @@ import {
   templateUrl: './informazioni-account.page.html',
   styleUrls: ['./informazioni-account.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, CommonModule, RouterModule]
+  imports: [IonContent, IonHeader, IonIcon, IonInput, IonInputPasswordToggle, IonToolbar, IonFooter, IonTabBar, IonTabButton, FormsModule, CommonModule, RouterModule]
 })
 export class InformazioniAccountPage implements OnInit {
 
@@ -123,7 +123,6 @@ export class InformazioniAccountPage implements OnInit {
 
   async inviaFeedback() {
     if (!this.feedbackText.trim()) return;
-    console.log('Feedback inviato:', this.feedbackText);
     this.feedbackText = '';
     await this.mostraToast('Grazie per il tuo feedback! 🙏', 'success');
   }

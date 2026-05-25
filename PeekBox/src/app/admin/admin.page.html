@@ -1,20 +1,22 @@
-<ion-content [fullscreen]="true">
-  <div class="admin-dashboard-wrapper">
-
-    <!-- HEADER -->
-    <div class="admin-header">
-      <button class="back-btn-light" (click)="goBack()">
-        <ion-icon name="arrow-back-outline"></ion-icon>
-      </button>
-      <div class="header-text">
-        <span class="subtitle-admin">Pannello di Controllo</span>
-        <h1 class="main-title">Gestione <span class="text-azzurro">Utenti</span></h1>
-      </div>
-      <div class="users-counter">
-        <ion-icon name="people"></ion-icon>
-        <span>{{ utenti.length }} Utenti registrati</span>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="peek-toolbar">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="goBack()" style="cursor: pointer;" />
+          <h1 class="header-greeting">GESTIONE <span class="nome-verde">UTENTI</span></h1>
+        </div>
+        <div class="users-counter">
+          <ion-icon name="people"></ion-icon>
+          <span>{{ utenti.length }} Utenti</span>
+        </div>
       </div>
     </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="admin-dashboard-wrapper">
 
     <!-- LISTA UTENTI -->
     <div class="users-list-container">

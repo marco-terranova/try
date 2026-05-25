@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { IonContent, IonIcon, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
-  cloudDownloadOutline, filterCircleOutline, documentTextOutline,
+  filterCircleOutline, documentTextOutline,
   documentOutline, gridOutline, codeSlashOutline, sparkles,
-  homeOutline, shareSocialOutline, addOutline, qrCodeOutline, chatbubblesOutline,
-  home, add, search, person
+  qrCodeOutline, chatbubblesOutline, printOutline, cubeOutline,
+  home, add
 } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
 
@@ -28,7 +28,7 @@ import { NavigationHistoryService } from '../services/navigation-history';
     CommonModule,
     FormsModule,
     RouterModule,
-    IonContent, IonIcon, IonSpinner,
+    IonContent, IonHeader, IonToolbar, IonIcon, IonSpinner,
   ],
 })
 export class EsportaArchivioPage implements OnInit {
@@ -38,6 +38,8 @@ export class EsportaArchivioPage implements OnInit {
   exportFormat: string = '';
   isExporting: boolean = false;
   logoBase64: string = '';
+  elencoBox: any[] = [];
+  selectedBoxId: string = '';
 
   constructor(
     private router: Router,
@@ -46,26 +48,34 @@ export class EsportaArchivioPage implements OnInit {
     private navHistory: NavigationHistoryService,
   ) {
     addIcons({
-      'cloud-download-outline': cloudDownloadOutline,
       'filter-circle-outline': filterCircleOutline,
       'document-text-outline': documentTextOutline,
       'document-outline': documentOutline,
       'grid-outline': gridOutline,
       'code-slash-outline': codeSlashOutline,
       'sparkles': sparkles,
-      'home-outline': homeOutline,
-      'share-social-outline': shareSocialOutline,
+      'print-outline': printOutline,
+      'cube-outline': cubeOutline,
       'chatbubbles-outline': chatbubblesOutline,
-      'add-outline': addOutline,
       'qr-code-outline': qrCodeOutline,
       'home': home,
-      'add': add,
-      'search': search,
-      'person': person
+      'add': add
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.caricaBox();
+  }
+
+  private async caricaBox() {
+    const utenteId = localStorage.getItem('utente_id') || '';
+    try {
+      const res: any = await firstValueFrom(this.dbService.getBox(utenteId) as any);
+      this.elencoBox = res?.box ?? res ?? [];
+    } catch {
+      this.elencoBox = [];
+    }
+  }
 
   ionViewWillEnter() {
     this.nomeUtente = (localStorage.getItem('utente_nome') || '').toUpperCase();
@@ -88,10 +98,38 @@ export class EsportaArchivioPage implements OnInit {
   }
 
   setFormat(formato: string) { this.exportFormat = formato; }
-  isFormValid(): boolean { return this.exportScope !== '' && this.exportFormat !== ''; }
+  isFormValid(): boolean {
+    if (!this.exportScope) return false;
+    if (this.exportScope === 'singola') return this.selectedBoxId !== '' && this.exportFormat !== '';
+    return this.exportFormat !== '';
+  }
 
   private async getDatiReali(): Promise<any[]> {
     const utenteId = localStorage.getItem('utente_id') || '';
+
+    if (this.exportScope === 'singola') {
+      if (!this.selectedBoxId) return [];
+      try {
+        const resOgg: any = await firstValueFrom(
+          this.dbService.getOggettiPerBox(Number(this.selectedBoxId)) as any
+        );
+        const box = this.elencoBox.find(b => b.id == this.selectedBoxId);
+        const oggetti: any[] = resOgg?.oggetti ?? resOgg ?? [];
+        return [{
+          box: (box?.nome || '').toUpperCase(),
+          contenuto: oggetti.length > 0
+            ? oggetti.map((o: any) => o.nome || o.descrizione || '?').join(', ')
+            : '— Nessun oggetto —',
+          nOggetti: oggetti.length,
+          data: box?.data_creazione
+            ? new Date(box.data_creazione).toLocaleDateString('it-IT')
+            : '—',
+          spazio: box?.rif_armadio || '—',
+        }];
+      } catch {
+        return [];
+      }
+    }
 
     // Carica le box della home (attive + in transito, escluse quelle nel cestino)
     const resBox: any = await firstValueFrom(
@@ -147,6 +185,152 @@ export class EsportaArchivioPage implements OnInit {
     }
 
     return righe;
+  }
+
+  async stampaBox() {
+    if (!this.selectedBoxId) return;
+
+    try {
+      const resOgg: any = await firstValueFrom(
+        this.dbService.getOggettiPerBox(Number(this.selectedBoxId)) as any
+      );
+      const box = this.elencoBox.find(b => b.id == this.selectedBoxId);
+      const oggetti: any[] = resOgg?.oggetti ?? resOgg ?? [];
+
+      const win = window.open('', '_blank');
+      if (!win) {
+        const toast = await this.toastCtrl.create({
+          message: '❌ Pop-up bloccato. Consenti i pop-up per stampare.',
+          duration: 3000,
+          color: 'danger',
+          position: 'bottom',
+        });
+        await toast.present();
+        return;
+      }
+
+      const boxName = (box?.nome || 'BOX').toUpperCase();
+      const spazio = box?.rif_armadio || '—';
+      const data = box?.data_creazione
+        ? new Date(box.data_creazione).toLocaleDateString('it-IT')
+        : '—';
+
+      const itemsHtml = oggetti.map((o, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${o.nome || '—'}</td>
+          <td>${o.descrizione || '—'}</td>
+          <td>${o.categoria || '—'}</td>
+        </tr>
+      `).join('');
+
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${boxName} — PeekBox</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              font-family: 'Segoe UI', -apple-system, sans-serif;
+              padding: 32px 40px;
+              color: #1E293B;
+              background: #fff;
+            }
+            .header {
+              display: flex; align-items: center; gap: 16px;
+              margin-bottom: 28px; padding-bottom: 16px;
+              border-bottom: 3px solid #3AABDB;
+            }
+            .header h1 {
+              font-size: 1.6rem; font-weight: 900;
+              text-transform: uppercase; letter-spacing: 0.5px;
+            }
+            .header h1 span { color: #7DC740; }
+            .meta {
+              display: flex; gap: 32px; margin-bottom: 24px;
+              font-size: 0.85rem; color: #64748B;
+            }
+            .meta strong { color: #1E293B; }
+            table {
+              width: 100%; border-collapse: collapse;
+              font-size: 0.85rem;
+            }
+            th {
+              background: #3AABDB; color: #fff;
+              text-align: left; padding: 10px 14px;
+              font-weight: 700; text-transform: uppercase;
+              font-size: 0.75rem; letter-spacing: 0.3px;
+            }
+            td {
+              padding: 10px 14px; border-bottom: 1px solid #E2E8F0;
+            }
+            tr:nth-child(even) td { background: #F8FAFC; }
+            .footer {
+              margin-top: 32px; padding-top: 12px;
+              border-top: 1px solid #E2E8F0;
+              font-size: 0.75rem; color: #94A3B8; text-align: center;
+            }
+            .no-items {
+              text-align: center; padding: 48px 0;
+              color: #94A3B8; font-size: 0.95rem;
+            }
+            @media print {
+              body { padding: 20px; }
+              .header { border-bottom-color: #3AABDB; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>${boxName} <span>— ${spazio}</span></h1>
+          </div>
+          <div class="meta">
+            <span><strong>Data creazione:</strong> ${data}</span>
+            <span><strong>Oggetti:</strong> ${oggetti.length}</span>
+            <span><strong>Spazio:</strong> ${spazio}</span>
+          </div>
+          ${oggetti.length > 0 ? `
+          <table>
+            <thead>
+              <tr>
+                <th style="width:40px">#</th>
+                <th>Nome</th>
+                <th>Descrizione</th>
+                <th>Categoria</th>
+              </tr>
+            </thead>
+            <tbody>${itemsHtml}</tbody>
+          </table>` : `
+          <div class="no-items">— Nessun oggetto in questa box —</div>`}
+          <div class="footer">
+            Generato da PeekBox — ${new Date().toLocaleDateString('it-IT')}
+          </div>
+          <script>window.print();<${''}/script>
+        </body>
+        </html>
+      `);
+      win.document.close();
+
+      const toast = await this.toastCtrl.create({
+        message: '🖨️ Anteprima di stampa aperta.',
+        duration: 2000,
+        color: 'success',
+        position: 'bottom',
+      });
+      await toast.present();
+
+    } catch (error) {
+      console.error('[StampaBox] Errore:', error);
+      const toast = await this.toastCtrl.create({
+        message: '❌ Errore durante la preparazione della stampa.',
+        duration: 2500,
+        color: 'danger',
+        position: 'bottom',
+      });
+      await toast.present();
+    }
   }
 
   async generaReport() {

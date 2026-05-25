@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonButton, IonIcon, IonCard, IonCardHeader,
+  IonHeader, IonToolbar, IonContent, IonCard, IonCardHeader,
   IonCardTitle, IonCardContent, IonList, IonItem, IonLabel,
-  IonBadge, IonToggle, AlertController, ToastController
+  IonBadge, IonToggle, IonIcon, AlertController, ToastController
 } from '@ionic/angular/standalone';
 import { ActivatedRoute } from '@angular/router';
-import { BackButtonComponent } from '../components/back-button/back-button.component';
 import { addIcons } from 'ionicons';
 import { locationOutline, mapOutline, trashOutline, refreshOutline, navigateOutline } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
@@ -20,11 +18,10 @@ import { GpsService } from '../services/gps';
   styleUrls: ['./tracking-box.page.scss'],
   standalone: true,
   imports: [
-BackButtonComponent,     CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-    IonButton, IonIcon, IonCard, IonCardHeader,
+    CommonModule, FormsModule,
+    IonHeader, IonToolbar, IonContent, IonCard, IonCardHeader,
     IonCardTitle, IonCardContent, IonList, IonItem, IonLabel,
-    IonBadge, IonToggle
+    IonBadge, IonToggle, IonIcon
   ]
 })
 export class TrackingBoxPage implements OnInit {
@@ -43,9 +40,14 @@ export class TrackingBoxPage implements OnInit {
     private dbService: DatabaseService,
     private gpsService: GpsService,
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private location: Location
   ) {
     addIcons({ locationOutline, mapOutline, trashOutline, refreshOutline, navigateOutline });
+  }
+
+  tornaIndietro() {
+    this.location.back();
   }
 
   ngOnInit() {
@@ -53,7 +55,7 @@ export class TrackingBoxPage implements OnInit {
     this.utenteId = localStorage.getItem('utente_id');
     this.tipoProfilo = localStorage.getItem('tipo_profilo') || 'personal';
 
-    if (this.boxId) {
+    if (this.boxId && this.tipoProfilo === 'business') {
       this.caricaBoxInfo();
       this.caricaCheckpoints();
     }

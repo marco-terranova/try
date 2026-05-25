@@ -2,16 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonButton, IonIcon, IonToggle,
+  IonHeader, IonToolbar, IonContent, IonIcon,
 } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
-  peopleOutline, trashOutline, archiveOutline, cubeOutline,
-  shieldCheckmarkOutline, arrowBackOutline, home, search,
-  personCircleOutline, alertCircleOutline, checkmarkCircleOutline,
-  people, layersOutline, pricetagOutline, barChartOutline,
+  trashOutline, cubeOutline,
+  people, layersOutline, pricetagOutline,
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
@@ -24,8 +21,7 @@ import { NavigationHistoryService } from '../services/navigation-history';
   standalone: true,
   imports: [
     CommonModule, RouterModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-    IonButton, IonIcon, IonToggle,
+    IonHeader, IonToolbar, IonContent, IonIcon,
   ],
 })
 export class AdminPage implements OnInit {
@@ -44,10 +40,8 @@ export class AdminPage implements OnInit {
     private navHistory: NavigationHistoryService,
   ) {
     addIcons({
-      peopleOutline, trashOutline, archiveOutline, cubeOutline,
-      shieldCheckmarkOutline, arrowBackOutline, home, search,
-      personCircleOutline, alertCircleOutline, checkmarkCircleOutline,
-      people, layersOutline, pricetagOutline, barChartOutline,
+      trashOutline, cubeOutline,
+      people, layersOutline, pricetagOutline,
     });
   }
 

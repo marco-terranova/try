@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { NavController, IonicModule } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import { IonHeader, IonToolbar, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { DatabaseService } from '../services/database';
 import { addIcons } from 'ionicons';
 import {
@@ -17,7 +18,7 @@ import {
   templateUrl: './area-personale.page.html',
   styleUrls: ['./area-personale.page.scss'],
   standalone: true,
-  imports: [CommonModule, RouterModule, IonicModule],
+  imports: [CommonModule, RouterModule, IonHeader, IonToolbar, IonContent, IonIcon],
 })
 export class AreaPersonalePage implements OnInit {
 

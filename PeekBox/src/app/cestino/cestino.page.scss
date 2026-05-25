@@ -1,23 +1,62 @@
 @import '../../theme/variables';
 
-$accent-blue:  $blue;
-$accent-green: $green;
 $text-primary: $dark;
 $text-muted:   $mid;
 
-// ─── Header ───────────────────────────────────────────────────
-ion-header {
-  ion-toolbar {
-    --background: transparent;
-    --border-width: 0;
-    --padding-start: 0;
-    --padding-end: 0;
-  }
+// ─── Header ─────────────────────────────────────────────
+ion-header { background: $white; }
+
+ion-toolbar.peek-toolbar {
+  --background: #{$page};
+  --border-width: 0;
 }
 
-.cestino-header {
-  padding: 10px 2cm 6px;
-  .top-left-logo { height: 34px; object-fit: contain; }
+.header-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px clamp(20px, 3.5vw, 56px) 6px;
+}
+
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  &:hover  { opacity: 0.75; }
+  &:active { opacity: 0.55; }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba($green, 0.25);
 }
 
 // ─── Content ──────────────────────────────────────────────────
@@ -28,10 +67,12 @@ ion-content {
 }
 
 .page-wrapper {
-  padding: 12px 2cm 100px;
+  padding: 12px clamp(20px, 3.5vw, 56px) 100px;
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  max-width: min(92vw, 1400px);
+  margin: 0 auto;
 }
 
 // ─── Floating card principale ─────────────────────────────────
@@ -57,7 +98,7 @@ ion-content {
   font-family: 'Poppins', sans-serif;
   line-height: 1.4;
 
-  .info-icon { font-size: 1.2rem; color: $accent-blue; flex-shrink: 0; }
+  .info-icon { font-size: 1.2rem; color: $blue; flex-shrink: 0; }
 }
 
 // ─── Loading ──────────────────────────────────────────────────
@@ -72,7 +113,7 @@ ion-content {
   .spinner {
     width: 34px; height: 34px;
     border: 3px solid $surf;
-    border-top-color: $accent-blue;
+    border-top-color: $blue;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -91,14 +132,14 @@ ion-content {
   .empty-icon-glow {
     width: 80px; height: 80px;
     border-radius: 50%;
-    background: rgba(58, 171, 219, 0.05);
-    color: $accent-blue;
+    background: rgba($blue, 0.05);
+    color: $blue;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 2.5rem;
     margin-bottom: 20px;
-    box-shadow: 0 0 30px rgba(58, 171, 219, 0.1);
+    box-shadow: 0 0 30px rgba($blue, 0.1);
 
     ion-icon { font-size: 2.5rem; }
   }
@@ -156,7 +197,7 @@ ion-content {
   &::-webkit-scrollbar { width: 4px; }
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb {
-    background: rgba(125, 199, 64, 0.35);
+    background: rgba($green, 0.35);
     border-radius: 4px;
   }
 }
@@ -231,7 +272,7 @@ ion-content {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #A8FF78, #EF4444);
+  background: linear-gradient(90deg, $green-l, $red);
   border-radius: 10px;
   transition: width 0.5s ease-in-out;
   min-width: 3%;
@@ -250,8 +291,8 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(58, 171, 219, 0.10);
-  color: $accent-blue;
+  background: rgba($blue, 0.10);
+  color: $blue;
   border: none;
   padding: 8px 12px;
   border-radius: 20px;
@@ -264,15 +305,15 @@ ion-content {
 
   ion-icon { font-size: 0.95rem; }
   &:active { transform: scale(0.95); }
-  &:hover  { background: rgba(58, 171, 219, 0.18); }
+  &:hover  { background: rgba($blue, 0.18); }
 }
 
 .btn-delete-mini {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(239, 68, 68, 0.10);
-  color: #EF4444;
+  background: rgba($red, 0.10);
+  color: $red;
   border: none;
   width: 34px; height: 34px;
   border-radius: 50%;
@@ -283,7 +324,7 @@ ion-content {
 
   ion-icon { font-size: 1rem; }
   &:active { transform: scale(0.95); }
-  &:hover  { background: rgba(239, 68, 68, 0.20); }
+  &:hover  { background: rgba($red, 0.20); }
 }
 
 // === FLOATING BOTTOM NAV ===
@@ -296,7 +337,7 @@ ion-content {
   backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border-radius: 40px;
   border: 1px solid rgba($white, 0.95);
-  box-shadow: 0 8px 32px rgba(58,171,219,0.13), 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 32px rgba($blue, 0.13), 0 2px 8px rgba(0,0,0,0.06);
   display: flex; align-items: center; justify-content: space-around;
   padding: 0 8px; z-index: 1000;
 
@@ -304,7 +345,7 @@ ion-content {
     position: absolute; bottom: -12px; left: 50%;
     transform: translateX(-50%);
     width: 55%; height: 22px;
-    background: radial-gradient(ellipse, rgba(58,171,219,0.22), transparent 70%);
+    background: radial-gradient(ellipse, rgba($blue, 0.22), transparent 70%);
     pointer-events: none; z-index: -1;
   }
 
@@ -317,14 +358,14 @@ ion-content {
 
     ion-icon {
       font-size: 1.35rem;
-      color: $accent-blue;
+      color: $blue;
       transition: color 0.2s;
     }
     span {
       font-family: 'Poppins', sans-serif;
       font-size: 0.65rem;
       font-weight: 700;
-      color: $accent-blue;
+      color: $blue;
     }
 
     &.active {
@@ -342,12 +383,12 @@ ion-content {
       width: 58px; height: 58px;
       border-radius: 50%; border: none !important;
       background: linear-gradient(135deg, $green, $green-d) !important;
-      color: #fff; cursor: pointer;
+      color: $white; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 10px 25px rgba($green-d, 0.4) !important;
       transition: transform 0.2s, box-shadow 0.2s;
 
-      ion-icon { font-size: 1.7rem; color: #ffffff !important; }
+      ion-icon { font-size: 1.7rem; color: $white !important; }
 
       &:hover {
         transform: scale(1.1) translateY(-3px);
@@ -359,18 +400,18 @@ ion-content {
 
   .avatar-circle-nav {
     width: 28px; height: 28px; border-radius: 50%;
-    background: rgba(58,171,219,0.12);
-    color: $accent-blue;
+    background: rgba($blue, 0.12);
+    color: $blue;
     font-size: 0.8rem; font-weight: 900;
     display: flex; align-items: center; justify-content: center;
-    border: 1.5px solid rgba(58,171,219,0.4);
+    border: 1.5px solid rgba($blue, 0.4);
     transition: all 0.2s;
 
     &.active {
-      background: rgba(58,171,219,0.18);
+      background: rgba($blue, 0.18);
       color: $blue-d;
       border-color: $blue-d;
-      box-shadow: 0 2px 8px rgba(58,171,219,0.3);
+      box-shadow: 0 2px 8px rgba($blue, 0.3);
     }
   }
 }
@@ -382,7 +423,7 @@ ion-content {
 // ── Mobile piccolo (< 400px) ──────────────────────────────────
 @media (max-width: 399px) {
   .page-wrapper {
-    padding: 10px 2cm 90px;
+    padding: 10px clamp(20px, 3.5vw, 56px) 90px;
   }
   .floating-box-card {
     padding: 16px;
@@ -411,7 +452,7 @@ ion-content {
 // ── Tablet (≥ 768px) ──────────────────────────────────────────
 @media (min-width: 768px) {
   .page-wrapper {
-    padding: 16px 2cm 110px;
+    padding: 16px clamp(20px, 3.5vw, 56px) 110px;
   }
   .floating-box-card {
     padding: 30px;
@@ -424,7 +465,7 @@ ion-content {
 // ── Desktop (≥ 1024px) ────────────────────────────────────────
 @media (min-width: 1024px) {
   .page-wrapper {
-    padding: 20px 2cm 110px;
+    padding: 20px clamp(20px, 3.5vw, 56px) 110px;
   }
   .floating-box-card {
     padding: 36px;
