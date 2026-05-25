@@ -85,6 +85,12 @@ db.serialize(() => {
     }
   });
 
+  db.run(`ALTER TABLE oggetti ADD COLUMN data_eliminazione TEXT DEFAULT NULL`, (err) => {
+    if (err && !err.message.includes('duplicate column')) {
+      console.error("Migrazione data_eliminazione oggetti:", err.message);
+    }
+  });
+
   // 5. Tabella TIPOLOGIE
   db.run(`CREATE TABLE IF NOT EXISTS tipologie (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

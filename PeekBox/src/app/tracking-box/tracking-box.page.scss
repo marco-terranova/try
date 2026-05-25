@@ -11,7 +11,8 @@
 
 .tracking-content {
   --background: var(--bg);
-  padding: 0 16px 40px;
+  --overflow: auto;
+  padding: 0 2cm 40px;
 }
 
 ion-header ion-toolbar {

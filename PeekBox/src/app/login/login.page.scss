@@ -18,7 +18,7 @@ $transition:  0.24s ease;
 
 :host { display: block; font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; }
 
-.login-content { --background: #{$page-bg}; --overflow: hidden; }
+.login-content { --background: #{$page-bg}; --overflow: auto; }
 
 // ── WRAPPER SPLIT ──────────────────────────────────────────
 .login-wrapper {

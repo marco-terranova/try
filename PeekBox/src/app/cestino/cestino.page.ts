@@ -10,7 +10,7 @@ import {
   home, add, qrCodeOutline,
   trashOutline, trashBinOutline, timeOutline,
   shareSocialOutline, refreshOutline, chatbubblesOutline,
-  person, search
+  person, search, cubeOutline, documentTextOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
 import { NavigationHistoryService } from '../services/navigation-history';
@@ -32,6 +32,7 @@ export class CestinoPage implements OnInit {
   nomeUtente: string = '';
   utenteId: string | null = null;
   boxEliminate: any[] = [];
+  oggettiEliminati: any[] = [];
   isLoading = true;
 
   constructor(
@@ -52,18 +53,21 @@ export class CestinoPage implements OnInit {
       'chatbubbles-outline': chatbubblesOutline,
       'refresh-outline': refreshOutline,
       'person': person,
-      'search': search
+      'search': search,
+      'cube-outline': cubeOutline,
+      'document-text-outline': documentTextOutline
     });
   }
 
   ngOnInit() {
     this.aggiornaUtente();
-    this.caricaBoxEliminate();
+    this.caricaEliminati();
   }
 
-  /** Aggiorna dati utente ad ogni visita della pagina */
+  /** Ricarica dati ad ogni visita della pagina */
   ionViewWillEnter() {
     this.aggiornaUtente();
+    if (this.utenteId) this.caricaEliminati();
   }
 
   private aggiornaUtente() {
@@ -71,15 +75,17 @@ export class CestinoPage implements OnInit {
     this.utenteId   = localStorage.getItem('utente_id');
   }
 
-  caricaBoxEliminate() {
+  caricaEliminati() {
     this.isLoading = true;
     this.boxEliminate = [];
+    this.oggettiEliminati = [];
     if (!this.utenteId) { this.isLoading = false; return; }
+
+    const trentaMs = 30 * 24 * 60 * 60 * 1000;
+    const ora = Date.now();
 
     this.dbService.getBoxEliminate(this.utenteId).subscribe({
       next: (res: any) => {
-        const trentaMs = 30 * 24 * 60 * 60 * 1000;
-        const ora = Date.now();
         this.boxEliminate = (res.box_eliminate || []).filter((b: any) => {
           const diff = ora - new Date(b.data_eliminazione).getTime();
           return diff <= trentaMs;
@@ -87,6 +93,20 @@ export class CestinoPage implements OnInit {
         this.isLoading = false;
       },
       error: () => { this.isLoading = false; }
+    });
+
+    this.dbService.getOggettiEliminati(this.utenteId).subscribe({
+      next: (res: any) => {
+        console.log('[Cestino] Oggetti eliminati ricevuti:', res);
+        this.oggettiEliminati = (res.oggetti_eliminati || []).filter((o: any) => {
+          const diff = ora - new Date(o.data_eliminazione).getTime();
+          return diff <= trentaMs;
+        });
+        console.log('[Cestino] Dopo filtro:', this.oggettiEliminati.length, 'oggetti');
+      },
+      error: (err: any) => {
+        console.error('[Cestino] Errore caricamento oggetti eliminati:', err);
+      }
     });
   }
 
@@ -102,6 +122,22 @@ export class CestinoPage implements OnInit {
         console.error('[Cestino] Errore ripristino, rollback UI:', err);
         this.boxEliminate = [box, ...this.boxEliminate];
         this.mostraToast('Errore durante il recupero. La box è stata rimessa nel cestino.', 'danger');
+      }
+    });
+  }
+
+  recuperaOggetto(ogg: any) {
+    this.oggettiEliminati = this.oggettiEliminati.filter(o => o.id !== ogg.id);
+    this.mostraToast('Oggetto recuperato e tornato nella box originale! ✅', 'success');
+
+    this.dbService.ripristinaOggetto(ogg.id).subscribe({
+      next: () => {
+        console.log(`[Cestino] Oggetto ${ogg.id} ripristinato nel DB.`);
+      },
+      error: (err: any) => {
+        console.error('[Cestino] Errore ripristino oggetto, rollback UI:', err);
+        this.oggettiEliminati = [ogg, ...this.oggettiEliminati];
+        this.mostraToast("Errore durante il recupero dell'oggetto.", 'danger');
       }
     });
   }
@@ -128,6 +164,37 @@ export class CestinoPage implements OnInit {
                 console.error('[Cestino] Errore eliminazione definitiva, rollback UI:', err);
                 this.boxEliminate = [box, ...this.boxEliminate];
                 this.mostraToast("Errore durante l'eliminazione. La box è stata ripristinata nel cestino.", 'danger');
+              }
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async eliminaOggettoDefinitivamente(ogg: any) {
+    const alert = await this.alertCtrl.create({
+      cssClass: 'peekbox-alert',
+      header: 'Conferma Eliminazione',
+      message: "Sei sicuro di voler eliminare definitivamente questo oggetto? L'azione non è reversibile.",
+      buttons: [
+        { text: 'Annulla', role: 'cancel' },
+        {
+          text: 'Elimina',
+          role: 'destructive',
+          handler: () => {
+            this.oggettiEliminati = this.oggettiEliminati.filter(o => o.id !== ogg.id);
+            this.mostraToast('Oggetto eliminato definitivamente.', 'danger');
+
+            this.dbService.eliminaOggettoDefinitivo(ogg.id).subscribe({
+              next: () => {
+                console.log(`[Cestino] Oggetto ${ogg.id} eliminato fisicamente dal DB.`);
+              },
+              error: (err: any) => {
+                console.error('[Cestino] Errore eliminazione definitiva oggetto, rollback UI:', err);
+                this.oggettiEliminati = [ogg, ...this.oggettiEliminati];
+                this.mostraToast("Errore durante l'eliminazione dell'oggetto.", 'danger');
               }
             });
           }

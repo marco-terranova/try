@@ -16,23 +16,22 @@ ion-header {
 }
 
 .cestino-header {
-  padding: 10px 20px 6px;
+  padding: 10px 2cm 6px;
   .top-left-logo { height: 34px; object-fit: contain; }
 }
 
 // ─── Content ──────────────────────────────────────────────────
 ion-content {
   --background: #{$page};
+  --overflow: auto;
   --padding-bottom: 110px;
 }
 
 .page-wrapper {
-  padding: 12px 16px 100px;
+  padding: 12px 2cm 100px;
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 // ─── Floating card principale ─────────────────────────────────
@@ -119,6 +118,33 @@ ion-content {
     max-width: 300px;
     margin: 0;
   }
+}
+
+// ─── Section label (Box / Oggetti) ────────────────────────────
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $text-muted;
+  margin: 16px 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+
+  ion-icon { font-size: 1rem; }
+}
+
+.box-origin {
+  font-size: 0.75rem;
+  color: $text-muted;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: 'Poppins', sans-serif;
+
+  ion-icon { font-size: 0.8rem; }
 }
 
 // ─── Lista con scroll interno ─────────────────────────────────
@@ -356,7 +382,7 @@ ion-content {
 // ── Mobile piccolo (< 400px) ──────────────────────────────────
 @media (max-width: 399px) {
   .page-wrapper {
-    padding: 10px 12px 90px;
+    padding: 10px 2cm 90px;
   }
   .floating-box-card {
     padding: 16px;
@@ -385,7 +411,7 @@ ion-content {
 // ── Tablet (≥ 768px) ──────────────────────────────────────────
 @media (min-width: 768px) {
   .page-wrapper {
-    padding: 16px 24px 110px;
+    padding: 16px 2cm 110px;
   }
   .floating-box-card {
     padding: 30px;
@@ -398,7 +424,7 @@ ion-content {
 // ── Desktop (≥ 1024px) ────────────────────────────────────────
 @media (min-width: 1024px) {
   .page-wrapper {
-    padding: 20px 40px 110px;
+    padding: 20px 2cm 110px;
   }
   .floating-box-card {
     padding: 36px;

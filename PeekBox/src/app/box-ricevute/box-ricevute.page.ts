@@ -1,7 +1,3 @@
-// ============================================================
-// FILE: PeekBox/src/app/box-ricevute/box-ricevute.page.ts
-// ============================================================
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,6 +22,7 @@ import {
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
 import { NavigationHistoryService } from '../services/navigation-history';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-box-ricevute',
@@ -43,7 +40,6 @@ import { NavigationHistoryService } from '../services/navigation-history';
 })
 export class BoxRicevutePage implements OnInit {
 
-  // Stato UI
   activeTab: 'richieste' | 'spazi' | 'geofence' = 'richieste';
   isLoading = true;
   utenteId: string | null = null;
@@ -53,22 +49,22 @@ export class BoxRicevutePage implements OnInit {
     return this.notificheGeofence.filter(n => !n.letto).length;
   }
 
-  // Dati Richieste
   richiestePending: any[] = [];
   archiviAccettati: any[] = [];
 
-  // Dati I Miei Spazi (Armadi propri)
   mieiArmadi: any[] = [];
   activeGuestsMap: { [key: number]: any[] } = {};
 
-  // Dati Notifiche Geofencing
   notificheGeofence: any[] = [];
 
-  // Nuovo Invito
   emailOspite: string = '';
   ruoloSelezionato: 'viewer' | 'editor' = 'viewer';
   armadioSelezionato: number | null = null;
   isInviting = false;
+
+  private map: L.Map | null = null;
+  private checkpointMarkers: L.Marker[] = [];
+  checkpointsMappa: any[] = [];
 
   constructor(
     private dbService: DatabaseService,
@@ -119,44 +115,44 @@ export class BoxRicevutePage implements OnInit {
     this.caricaTutto();
   }
 
+  cambiaTab(tab: 'richieste' | 'spazi' | 'geofence') {
+    this.activeTab = tab;
+    if (tab === 'geofence') {
+      setTimeout(() => {
+        if (!this.map) {
+          this.inizializzaMappa();
+        }
+        this.caricaCheckpointMappa();
+        if (this.map) this.map.invalidateSize();
+      }, 200);
+    }
+  }
+
   caricaTutto() {
     if (!this.utenteId) return;
     this.isLoading = true;
 
-    // 1. Carica le richieste IN ATTESA
     this.dbService.getCondivisioniInAttesa(this.utenteId).subscribe({
-      next: (res: any) => {
-        this.richiestePending = res.condivisioni || [];
-      },
+      next: (res: any) => { this.richiestePending = res.condivisioni || []; },
       error: (err) => console.error('Errore richieste pending:', err)
     });
 
-    // 2. Carica gli archivi CONDIVISI CON ME (già accettati)
     this.dbService.getArchividCondivisiConMe(this.utenteId).subscribe({
       next: (res: any) => {
-        this.archiviAccettati = (res.condivisioni || [])
-          .filter((c: any) => c.stato === 'accettata');
+        this.archiviAccettati = (res.condivisioni || []).filter((c: any) => c.stato === 'accettata');
       },
       error: (err) => console.error('Errore archivi condivisi:', err)
     });
 
-    // 3. Carica gli armadi PROPRI per la gestione
     this.dbService.getArmadi(this.utenteId).subscribe({
       next: (res: any) => {
-        // Filtriamo per mostrare solo gli armadi di proprietà dell'utente
-        // (l'endpoint /api/armadi/:id restituisce sia propri che condivisi)
         const armadiRows = res.armadi || [];
         this.mieiArmadi = armadiRows.filter((a: any) => a.ruolo_condivisione === null);
-
-        // Carica gli ospiti attivi per ogni armadio
-        this.mieiArmadi.forEach(armadio => {
-          this.caricaOspitiArmadio(armadio.id);
-        });
+        this.mieiArmadi.forEach(armadio => { this.caricaOspitiArmadio(armadio.id); });
       },
       error: (err) => console.error('Errore caricamento armadi propri:', err)
     });
 
-    // 4. Carica le notifiche di Geofencing
     this.dbService.getNotificheGeofence().subscribe({
       next: (res: any) => {
         this.notificheGeofence = res.notifiche || [];
@@ -169,14 +165,98 @@ export class BoxRicevutePage implements OnInit {
     });
   }
 
+  private inizializzaMappa() {
+    const el = document.querySelector<HTMLDivElement>('.geo-leaflet-map');
+    if (!el || this.map) return;
+
+    this.map = L.map(el, {
+      center: [41.9028, 12.4964],
+      zoom: 6,
+      zoomControl: true,
+      attributionControl: false
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(this.map);
+  }
+
+  caricaCheckpointMappa() {
+    if (!this.utenteId) return;
+    this.dbService.getTuttiCheckpoint(this.utenteId).subscribe({
+      next: (res: any) => {
+        this.checkpointsMappa = (res.checkpoints || []).map((cp: any) => {
+          const display_lat = cp.latitudine ?? cp.geofence_lat;
+          const display_lng = cp.longitudine ?? cp.geofence_lng;
+          return {
+            ...cp,
+            display_lat,
+            display_lng,
+            haCheckpoint: cp.latitudine != null && cp.longitudine != null,
+            haCoordinate: display_lat != null && display_lng != null
+          };
+        });
+        this.aggiornaMarkerMappa();
+      },
+      error: (err) => console.error('Errore caricamento checkpoint mappa:', err)
+    });
+  }
+
+  private aggiornaMarkerMappa() {
+    if (!this.map) return;
+
+    this.checkpointMarkers.forEach(m => m.remove());
+    this.checkpointMarkers = [];
+
+    const conCoordinate = this.checkpointsMappa.filter(cp => cp.display_lat != null && cp.display_lng != null);
+    if (conCoordinate.length === 0) return;
+
+    const group = L.featureGroup();
+
+    conCoordinate.forEach((cp: any) => {
+      const color = cp.haCheckpoint ? '#7DC840' : '#3AABDB';
+      const icon = L.divIcon({
+        html: `<div style="width:16px;height:16px;background:${color};border:3px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>`,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
+        className: ''
+      });
+
+      const badge = cp.haCheckpoint
+        ? '<br/><span style="display:inline-block;background:#7DC840;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-top:4px;">🛡️ Geofence attivo</span>'
+        : '<br/><span style="display:inline-block;background:#3AABDB;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-top:4px;">📍 Centro geofence</span>';
+
+      const data = cp.timestamp ? `<br/><small>${new Date(cp.timestamp).toLocaleString('it-IT')}</small>` : '<br/><small>Nessun checkpoint GPS</small>';
+
+      const marker = L.marker([cp.display_lat, cp.display_lng], { icon })
+        .bindPopup(`
+          <b>${cp.box_nome || 'Box #' + cp.box_id}</b>
+          <br/>${cp.armadio_nome || ''}${data}
+          ${badge}
+          <br/><a href="https://www.google.com/maps/search/?api=1&query=${cp.display_lat},${cp.display_lng}" target="_blank" style="color:#3AABDB;font-weight:700;text-decoration:none;">Apri in Google Maps →</a>
+        `);
+
+      this.checkpointMarkers.push(marker);
+      group.addLayer(marker);
+    });
+
+    group.addTo(this.map);
+
+    if (conCoordinate.length === 1) {
+      this.map.setView([conCoordinate[0].display_lat, conCoordinate[0].display_lng], 13);
+    } else {
+      this.map.fitBounds(group.getBounds().pad(0.3));
+    }
+  }
+
+  apriGoogleMaps(lat: number, lng: number) {
+    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+  }
+
   caricaOspitiArmadio(armadioId: number) {
     this.dbService.getCondivisioniArchivio(armadioId).subscribe({
-      next: (res: any) => {
-        this.activeGuestsMap[armadioId] = res.condivisioni || [];
-      },
-      error: () => {
-        this.activeGuestsMap[armadioId] = [];
-      }
+      next: (res: any) => { this.activeGuestsMap[armadioId] = res.condivisioni || []; },
+      error: () => { this.activeGuestsMap[armadioId] = []; }
     });
   }
 
@@ -189,10 +269,7 @@ export class BoxRicevutePage implements OnInit {
       message: `Vuoi accettare l'accesso all'archivio <strong>"${condivisione.armadio_nome || condivisione.nome_archivio}"</strong> condiviso da <strong>${condivisione.proprietario_username}</strong>?`,
       buttons: [
         { text: 'Annulla', role: 'cancel' },
-        {
-          text: 'Accetta',
-          handler: () => this.eseguiAccetta(condivisione)
-        }
+        { text: 'Accetta', handler: () => this.eseguiAccetta(condivisione) }
       ]
     });
     await alert.present();
@@ -204,22 +281,11 @@ export class BoxRicevutePage implements OnInit {
       next: async () => {
         this.richiestePending = this.richiestePending.filter(r => (r.condivisione_id || r.id) !== id);
         this.caricaTutto();
-
-        const toast = await this.toastCtrl.create({
-          message: `✅ Condivisione accettata con successo!`,
-          duration: 3000,
-          color: 'success',
-          position: 'bottom'
-        });
+        const toast = await this.toastCtrl.create({ message: 'Condivisione accettata!', duration: 3000, color: 'success', position: 'bottom' });
         await toast.present();
       },
       error: async (err) => {
-        const toast = await this.toastCtrl.create({
-          message: `❌ Errore nell'accettare la condivisione: ${err?.error?.error || 'riprova.'}`,
-          duration: 3000,
-          color: 'danger',
-          position: 'bottom'
-        });
+        const toast = await this.toastCtrl.create({ message: 'Errore nell\'accettare la condivisione.', duration: 3000, color: 'danger', position: 'bottom' });
         await toast.present();
       }
     });
@@ -229,14 +295,10 @@ export class BoxRicevutePage implements OnInit {
     const alert = await this.alertCtrl.create({
       cssClass: 'peekbox-alert',
       header: 'Rifiuta Condivisione',
-      message: `Sei sicuro di voler rifiutare l'accesso all'archivio <strong>"${condivisione.armadio_nome || condivisione.nome_archivio}"</strong>? L'invito verrà eliminato.`,
+      message: `Sei sicuro di voler rifiutare l'accesso all'archivio <strong>"${condivisione.armadio_nome || condivisione.nome_archivio}"</strong>?`,
       buttons: [
         { text: 'Annulla', role: 'cancel' },
-        {
-          text: 'Rifiuta',
-          role: 'destructive',
-          handler: () => this.eseguiRifiuta(condivisione)
-        }
+        { text: 'Rifiuta', role: 'destructive', handler: () => this.eseguiRifiuta(condivisione) }
       ]
     });
     await alert.present();
@@ -248,22 +310,11 @@ export class BoxRicevutePage implements OnInit {
       next: async () => {
         this.richiestePending = this.richiestePending.filter(r => (r.condivisione_id || r.id) !== id);
         this.caricaTutto();
-
-        const toast = await this.toastCtrl.create({
-          message: `🗑️ Invito rifiutato ed eliminato.`,
-          duration: 2500,
-          color: 'medium',
-          position: 'bottom'
-        });
+        const toast = await this.toastCtrl.create({ message: 'Invito rifiutato.', duration: 2500, color: 'medium', position: 'bottom' });
         await toast.present();
       },
-      error: async (err) => {
-        const toast = await this.toastCtrl.create({
-          message: `❌ Errore nel rifiutare la condivisione.`,
-          duration: 3000,
-          color: 'danger',
-          position: 'bottom'
-        });
+      error: async () => {
+        const toast = await this.toastCtrl.create({ message: 'Errore nel rifiutare la condivisione.', duration: 3000, color: 'danger', position: 'bottom' });
         await toast.present();
       }
     });
@@ -272,44 +323,32 @@ export class BoxRicevutePage implements OnInit {
   // ─── INVITO RAPIDO GUEST ──────────────────────────────────────────────────
 
   async invitaNuovoOspite() {
-    if (!this.armadioSelezionato) {
-      this.mostraToast('Seleziona un archivio da condividere.', 'warning');
-      return;
-    }
-    if (!this.emailOspite.trim()) {
-      this.mostraToast('Inserisci un indirizzo email valido.', 'warning');
-      return;
-    }
-
+    if (!this.armadioSelezionato) { this.mostraToast('Seleziona un archivio da condividere.', 'warning'); return; }
+    if (!this.emailOspite.trim()) { this.mostraToast('Inserisci un indirizzo email valido.', 'warning'); return; }
     this.isInviting = true;
     this.dbService.condividiArchivio(this.armadioSelezionato, this.emailOspite.trim(), this.ruoloSelezionato).subscribe({
-      next: async (res: any) => {
+      next: async () => {
         this.isInviting = false;
         this.emailOspite = '';
         this.armadioSelezionato = null;
         this.caricaTutto();
-        this.mostraToast(res.message || 'Invito inviato con successo! 🎉', 'success');
+        this.mostraToast('Invito inviato con successo!', 'success');
       },
       error: async (err) => {
         this.isInviting = false;
-        const msg = err.error?.error || 'Impossibile inviare l\'invito.';
-        this.mostraToast(msg, 'danger');
+        this.mostraToast(err.error?.error || 'Impossibile inviare l\'invito.', 'danger');
       }
     });
   }
 
   async cambiaRuoloOspite(guest: any) {
     const nuovoRuolo: 'viewer' | 'editor' = guest.ruolo === 'editor' ? 'viewer' : 'editor';
-    
     this.dbService.aggiornaRuoloCondivisione(guest.id, nuovoRuolo).subscribe({
       next: () => {
         guest.ruolo = nuovoRuolo;
         this.mostraToast(`Ruolo aggiornato a ${nuovoRuolo === 'editor' ? 'Editor' : 'Viewer'}`, 'success');
       },
-      error: (err) => {
-        console.error('Errore aggiornamento ruolo:', err);
-        this.mostraToast('Impossibile aggiornare il ruolo sul server.', 'danger');
-      }
+      error: () => this.mostraToast('Impossibile aggiornare il ruolo.', 'danger')
     });
   }
 
@@ -317,22 +356,15 @@ export class BoxRicevutePage implements OnInit {
     const alert = await this.alertCtrl.create({
       cssClass: 'peekbox-alert',
       header: 'Revoca Accesso',
-      message: 'Sei sicuro di voler revocare l\'accesso a questo ospite? Non potrà più visualizzare o modificare le box.',
+      message: 'Sei sicuro di voler revocare l\'accesso a questo ospite?',
       buttons: [
         { text: 'Annulla', role: 'cancel' },
-        {
-          text: 'Revoca',
-          role: 'destructive',
-          handler: () => {
-            this.dbService.revocaCondivisione(condivisioneId).subscribe({
-              next: () => {
-                this.caricaTutto();
-                this.mostraToast('Accesso revocato.', 'success');
-              },
-              error: () => this.mostraToast('Errore durante la revoca dell\'accesso.', 'danger')
-            });
-          }
-        }
+        { text: 'Revoca', role: 'destructive', handler: () => {
+          this.dbService.revocaCondivisione(condivisioneId).subscribe({
+            next: () => { this.caricaTutto(); this.mostraToast('Accesso revocato.', 'success'); },
+            error: () => this.mostraToast('Errore durante la revoca.', 'danger')
+          });
+        }}
       ]
     });
     await alert.present();
@@ -342,9 +374,7 @@ export class BoxRicevutePage implements OnInit {
 
   segnaComeLetta(notifica: any) {
     this.dbService.segnaNotificaComeLetta(notifica.id).subscribe({
-      next: () => {
-        notifica.letto = 1;
-      },
+      next: () => { notifica.letto = 1; },
       error: (err) => console.error('Errore lettura notifica:', err)
     });
   }
@@ -363,40 +393,25 @@ export class BoxRicevutePage implements OnInit {
   mostraInMappa(notifica: any, event: Event) {
     event.stopPropagation();
     if (notifica.latitudine == null || notifica.longitudine == null) return;
-    const url = `https://www.google.com/maps/search/?api=1&query=${notifica.latitudine},${notifica.longitudine}`;
-    window.open(url, '_blank');
+    window.open(`https://www.google.com/maps/search/?api=1&query=${notifica.latitudine},${notifica.longitudine}`, '_blank');
     this.segnaComeLetta(notifica);
   }
 
   // ─── NAVIGAZIONE & HELPERS ────────────────────────────────────────────────
 
-  apriArchivioCondiviso(archivio: any) {
-    this.router.navigate(['/home']);
-  }
+  apriArchivioCondiviso(archivio: any) { this.router.navigate(['/home']); }
 
   apriConfigGeofence(armadio: any) {
-    this.router.navigate(['/geofence-armadio', armadio.id], {
-      queryParams: { nome: armadio.nome }
-    });
+    this.router.navigate(['/geofence-armadio', armadio.id], { queryParams: { nome: armadio.nome } });
   }
 
   apriDettagliSpazio(armadio: any) {
-    this.router.navigate(['/gestione-spazi'], {
-      queryParams: { armadio: armadio.id, nome: armadio.nome }
-    });
+    this.router.navigate(['/gestione-spazi'], { queryParams: { armadio: armadio.id, nome: armadio.nome } });
   }
 
-  tornaHome() {
-    this.router.navigate(['/home']);
-  }
-
-  apriScanner() {
-    this.router.navigate(['/scan-qr']);
-  }
-
-  navTo(route: string) {
-    this.router.navigate([route]);
-  }
+  tornaHome() { this.router.navigate(['/home']); }
+  apriScanner() { this.router.navigate(['/scan-qr']); }
+  navTo(route: string) { this.router.navigate([route]); }
 
   formattaData(data: string): string {
     if (!data) return '';
@@ -406,12 +421,7 @@ export class BoxRicevutePage implements OnInit {
   }
 
   private async mostraToast(message: string, color: string = 'primary') {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 2500,
-      color,
-      position: 'bottom'
-    });
+    const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'bottom' });
     await toast.present();
   }
 }

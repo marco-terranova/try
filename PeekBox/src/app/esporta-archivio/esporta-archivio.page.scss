@@ -11,7 +11,7 @@ $border: $brd-light;
 // ─── Content ──────────────────────────────────────────────────
 ion-content.bg-soft {
   --background: #{$light};
-  --overflow: hidden !important; /* Divieto assoluto di scroll nella pagina principale */
+  --overflow: auto;
 }
 
 // ─── Page wrapper ─────────────────────────────────────────────
@@ -20,17 +20,8 @@ ion-content.bg-soft {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 15px 16px 105px;
+  padding: 15px 2cm 105px;
   box-sizing: border-box;
-  max-width: 1200px;
-  margin: 0 auto;
-
-  @media (min-width: 768px) {
-    padding: 15px 24px 105px;
-  }
-  @media (min-width: 1024px) {
-    padding: 15px 40px 105px;
-  }
 }
 
 // ─── Header bar super elegante e sfinita ─────────────────────
@@ -387,7 +378,7 @@ ion-content.bg-soft {
 // ── Mobile piccolo (< 400px) ──────────────────────────────────
 @media (max-width: 399px) {
   .page-wrapper {
-    padding: 10px 14px 90px;
+    padding: 10px 2cm 90px;
   }
   .top-compact-bar {
     flex-wrap: wrap;
@@ -432,7 +423,7 @@ ion-content.bg-soft {
 // ── Tablet (≥ 768px) ──────────────────────────────────────────
 @media (min-width: 768px) {
   .page-wrapper {
-    padding: 18px 24px 100px;
+    padding: 18px 2cm 100px;
   }
   .export-plancia-grid {
     gap: 20px;
@@ -446,7 +437,7 @@ ion-content.bg-soft {
 // ── Desktop (≥ 1024px) ────────────────────────────────────────
 @media (min-width: 1024px) {
   .page-wrapper {
-    padding: 24px 40px 100px;
+    padding: 24px 2cm 100px;
   }
   .export-plancia-grid {
     gap: 28px;

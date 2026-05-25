@@ -13,7 +13,7 @@
 
       <p class="info-text">
         <ion-icon name="trash-outline" class="info-icon"></ion-icon>
-        Le box vengono rimosse definitivamente dopo 30 giorni dall'eliminazione.
+        Box e oggetti vengono rimossi definitivamente dopo 30 giorni dall'eliminazione.
       </p>
 
       <!-- LOADING -->
@@ -23,20 +23,22 @@
       </div>
 
       <!-- PREMIUM EMPTY STATE -->
-      <div class="premium-empty-state" *ngIf="!isLoading && boxEliminate.length === 0">
+      <div class="premium-empty-state" *ngIf="!isLoading && boxEliminate.length === 0 && oggettiEliminati.length === 0">
         <div class="empty-icon-glow">
           <ion-icon name="trash-bin-outline"></ion-icon>
         </div>
         <h2>Cestino Vuoto</h2>
-        <p>Non ci sono box eliminate al momento. Il tuo spazio è perfettamente in ordine.</p>
+        <p>Non ci sono elementi eliminati. Il tuo spazio è perfettamente in ordine.</p>
       </div>
 
-      <!-- LISTA BOX -->
-      <div class="box-list-container" *ngIf="!isLoading && boxEliminate.length > 0">
+      <!-- LISTA BOX ELIMINATE -->
+      <div class="section-label" *ngIf="boxEliminate.length > 0">
+        <ion-icon name="cube-outline"></ion-icon> Box
+      </div>
+      <div class="box-list-container" *ngIf="boxEliminate.length > 0">
 
         <div class="box-card-compact" *ngFor="let box of boxEliminate">
 
-          <!-- 1° COLONNA: Info box -->
           <div class="box-info">
             <h3>{{ box.nome }}</h3>
             <span class="box-date">
@@ -45,7 +47,6 @@
             </span>
           </div>
 
-          <!-- 2° COLONNA: Barra centrata -->
           <div class="box-progress-center">
             <div class="progress-container"
                  [title]="giorniRimasti(box.data_eliminazione) + ' giorni rimasti'">
@@ -55,12 +56,53 @@
             </div>
           </div>
 
-          <!-- 3° COLONNA: Bottoni a destra -->
           <div class="box-actions-inline">
             <button class="btn-restore-mini" (click)="recuperaBox(box)">
               <ion-icon name="refresh-outline"></ion-icon> Recupera
             </button>
             <button class="btn-delete-mini" (click)="eliminaDefinitivamente(box)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- LISTA OGGETTI ELIMINATI -->
+      <div class="section-label" *ngIf="oggettiEliminati.length > 0">
+        <ion-icon name="document-text-outline"></ion-icon> Oggetti
+      </div>
+      <div class="box-list-container" *ngIf="oggettiEliminati.length > 0">
+
+        <div class="box-card-compact" *ngFor="let ogg of oggettiEliminati">
+
+          <div class="box-info">
+            <h3>{{ ogg.nome }}</h3>
+            <span class="box-date">
+              <ion-icon name="time-outline"></ion-icon>
+              Eliminato il {{ ogg.data_eliminazione | date:'dd/MM/yyyy' }}
+            </span>
+            <span class="box-origin">
+              <ion-icon name="cube-outline"></ion-icon>
+              da {{ ogg.box_nome }}
+            </span>
+          </div>
+
+          <div class="box-progress-center">
+            <div class="progress-container"
+                 [title]="giorniRimasti(ogg.data_eliminazione) + ' giorni rimasti'">
+              <div class="progress-fill"
+                   [style.width.%]="calcolaPercentualeScadenza(ogg.data_eliminazione)">
+              </div>
+            </div>
+          </div>
+
+          <div class="box-actions-inline">
+            <button class="btn-restore-mini" (click)="recuperaOggetto(ogg)">
+              <ion-icon name="refresh-outline"></ion-icon> Recupera
+            </button>
+            <button class="btn-delete-mini" (click)="eliminaOggettoDefinitivamente(ogg)">
               <ion-icon name="trash-outline"></ion-icon>
             </button>
           </div>

@@ -32,7 +32,7 @@ $left-text-span:   rgba(255,255,255,0.72);
 
 .reg-content {
   --background: #{$page-bg};
-  --overflow: hidden;
+  --overflow: auto;
 }
 
 // ===================== WRAPPER SPLIT =====================

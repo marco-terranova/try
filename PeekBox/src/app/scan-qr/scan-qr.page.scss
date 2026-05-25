@@ -17,6 +17,7 @@ $shadow-card:  0 4px 20px rgba(15,23,42,0.06);
 
 ion-content {
   --background: #{$bg-page};
+  --overflow: hidden;
   --padding-bottom: 110px;
 }
 
@@ -25,16 +26,7 @@ ion-content {
 }
 
 .page-wrapper {
-  padding: 0 16px 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-
-  @media (min-width: 768px) {
-    padding: 0 24px 24px;
-  }
-  @media (min-width: 1024px) {
-    padding: 0 40px 24px;
-  }
+  padding: 0 2cm 0;
 }
 
 // ── Top Bar ─────────────────────────────────────────────────
@@ -42,14 +34,14 @@ ion-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0 10px;
-  gap: 10px;
+  padding: 8px 0 6px;
+  gap: 8px;
 }
 
 .logo-group {
   // Logo unificato: stessa altezza e comportamento di home/area-personale
   .header-logo {
-    height: 32px;
+    height: 28px;
     width: auto;
     object-fit: contain;
     cursor: pointer;
@@ -68,7 +60,7 @@ ion-content {
 .header-greeting {
   font-family: 'Poppins', 'Montserrat', sans-serif !important;
   font-weight: 800 !important;
-  font-size: 1.15rem !important;
+  font-size: 1.05rem !important;
   color: $text-primary !important;
   letter-spacing: 0.5px !important;
   margin: 0 !important;
@@ -86,8 +78,8 @@ ion-content {
 
 .profile-compact {
   .avatar-compact {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: rgba($accent-blue, 0.12);
     color: $accent-blue;
@@ -104,7 +96,7 @@ ion-content {
 .scan-plancia-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 10px;
   padding: 0;
 
   @media (min-width: 700px) {
@@ -116,22 +108,22 @@ ion-content {
 .quadrante-card {
   background: $bg-card;
   border-radius: 24px;
-  padding: 20px;
+  padding: 14px;
   box-shadow: $shadow-card;
   border: 1px solid $border-light;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .quadrante-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
   h3 {
     font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 800;
     color: $text-primary;
     margin: 0;
@@ -139,15 +131,15 @@ ion-content {
 }
 
 .icon-cerchio {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 
-  ion-icon { font-size: 1.15rem; }
+  ion-icon { font-size: 1rem; }
 
   &.verde {
     background: rgba($accent-green, 0.12);
@@ -165,7 +157,8 @@ ion-content {
   position: relative;
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 18px;
+  max-height: 170px;
+  border-radius: 14px;
   overflow: hidden;
   background: #0F172A;
   border: 1px solid $border-light;
@@ -214,10 +207,10 @@ ion-content {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   color: rgba(255,255,255,0.5);
 
-  ion-icon { font-size: 2.5rem; }
+  ion-icon { font-size: 2.2rem; }
 
   p {
     font-family: 'Poppins', sans-serif;
@@ -239,8 +232,8 @@ ion-content {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 12px;
-  border-radius: 14px;
+  padding: 10px;
+  border-radius: 12px;
   border: none;
   font-family: 'Poppins', sans-serif;
   font-size: 0.88rem;
@@ -265,7 +258,7 @@ ion-content {
 .utility-actions-layout {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .quick-tools-row {
@@ -277,7 +270,7 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 18px;
+  padding: 10px 16px;
   border-radius: 12px;
   border: none;
   background: rgba($accent-blue, 0.08);
@@ -376,7 +369,7 @@ ion-content {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  padding: 12px 14px;
+  padding: 10px 14px;
   background: rgba($accent-green, 0.06);
   border-radius: 12px;
   border: 1px solid rgba($accent-green, 0.12);

@@ -20,7 +20,7 @@
         <button
           class="tab-btn"
           [class.active]="activeTab === 'richieste'"
-          (click)="activeTab = 'richieste'"
+          (click)="cambiaTab('richieste')"
         >
           <span>Richieste</span>
           <span *ngIf="richiestePending.length > 0" class="badge-count badge-warning">
@@ -31,7 +31,7 @@
         <button
           class="tab-btn"
           [class.active]="activeTab === 'spazi'"
-          (click)="activeTab = 'spazi'"
+          (click)="cambiaTab('spazi')"
         >
           <span>I Miei Spazi</span>
         </button>
@@ -39,7 +39,7 @@
         <button
           class="tab-btn"
           [class.active]="activeTab === 'geofence'"
-          (click)="activeTab = 'geofence'"
+          (click)="cambiaTab('geofence')"
         >
           <span>Geofencing</span>
           <span *ngIf="contatoreNonLette > 0" class="badge-count badge-danger animate-pulse">
@@ -263,8 +263,30 @@
       <!-- ===================================================== -->
       <!-- TAB 3: NOTIFICHE GEOFENCING                           -->
       <!-- ===================================================== -->
+      <!-- MAPPA CHECKPOINT (sempre nel DOM) -->
+      <div class="geo-map-section" [hidden]="activeTab !== 'geofence'">
+        <div #geoMapContainer class="geo-leaflet-map"></div>
+      </div>
+
       <div *ngIf="activeTab === 'geofence'" class="tab-content animate-fade-in">
-        
+
+        <!-- ELENCO BOX CON GEOFENCE ATTIVO -->
+        <div class="sub-section" *ngIf="checkpointsMappa.length > 0">
+          <h2 class="sub-section-title">BOX CON GEOFENCE ATTIVO</h2>
+          <div class="geo-box-list">
+            <div *ngFor="let cp of checkpointsMappa" class="geo-box-row" (click)="cp.haCoordinate && apriGoogleMaps(cp.display_lat, cp.display_lng)">
+              <div class="geo-box-dot" [style.background]="cp.haCheckpoint ? '#7DC840' : '#3AABDB'"></div>
+              <div class="geo-box-info">
+                <span class="geo-box-name">{{ cp.box_nome || 'Box #' + cp.box_id }}</span>
+                <span class="geo-box-meta">{{ cp.armadio_nome }}{{ cp.haCheckpoint ? ' · ' + formattaData(cp.timestamp) : ' · Centro geofence' }}</span>
+              </div>
+              <button class="geo-box-map-btn" *ngIf="cp.haCoordinate" (click)="apriGoogleMaps(cp.display_lat, cp.display_lng); $event.stopPropagation()">
+                <ion-icon name="location-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <h2 class="sub-section-title">ALLERTE DI SICUREZZA</h2>
 
         <div *ngIf="notificheGeofence.length === 0" class="empty-card empty-card--secure">

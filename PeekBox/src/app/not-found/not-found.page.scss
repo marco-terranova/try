@@ -8,7 +8,7 @@ $bg:     $page;
 
 :host { display: block; }
 
-ion-content { --background: #{$bg}; }
+ion-content { --background: #{$bg}; --overflow: auto; }
 
 .nf-root {
   display: flex;
@@ -17,7 +17,7 @@ ion-content { --background: #{$bg}; }
   justify-content: center;
   min-height: 85vh;
   gap: 16px;
-  padding: 32px 24px;
+  padding: 32px 2cm;
   text-align: center;
   font-family: $font;
 }

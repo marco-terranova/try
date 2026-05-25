@@ -9,7 +9,7 @@ $brand-green: $green;
 // ── FIX TAB BAR: padding-bottom per non nascondere contenuto ──
 ion-content {
   --background: #{$bg-saas} !important;
-  --overflow: hidden !important;
+  --overflow: auto;
   --padding-bottom: 100px;
 }
 
@@ -17,7 +17,7 @@ ion-content {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 10px 24px 20px 24px;
+  padding: 10px 2cm 20px 2cm;
   box-sizing: border-box;
 }
 
@@ -351,7 +351,7 @@ ion-content {
 // ── Mobile piccolo (< 400px) ──────────────────────────────────
 @media (max-width: 399px) {
   .page-wrapper {
-    padding: 10px 14px 20px;
+    padding: 10px 2cm 20px;
   }
   .account-plancia-grid {
     grid-template-columns: 1fr;
@@ -387,7 +387,7 @@ ion-content {
 // ── Tablet (≥ 768px) ──────────────────────────────────────────
 @media (min-width: 768px) {
   .page-wrapper {
-    padding: 16px 28px 24px;
+    padding: 16px 2cm 24px;
   }
   .account-plancia-grid {
     gap: 20px;
@@ -401,7 +401,7 @@ ion-content {
 // ── Desktop (≥ 1024px) ────────────────────────────────────────
 @media (min-width: 1024px) {
   .page-wrapper {
-    padding: 20px 40px 28px;
+    padding: 20px 2cm 28px;
   }
   .account-plancia-grid {
     gap: 28px;

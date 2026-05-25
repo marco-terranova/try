@@ -260,7 +260,7 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
     const alert = await this.alertCtrl.create({
       cssClass: 'peekbox-alert',
       header: 'Elimina oggetto',
-      message: `Eliminare "${o.nome}"? Operazione irreversibile.`,
+      message: `Eliminare "${o.nome}"? Verrà spostato nel cestino.`,
       buttons: [
         { text: 'Annulla', role: 'cancel' },
         { text: 'Elimina', role: 'destructive', handler: () => {

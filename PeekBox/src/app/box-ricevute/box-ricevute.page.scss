@@ -30,7 +30,7 @@ ion-toolbar.peek-toolbar {
 }
 
 .header-inner {
-  padding: 16px 16px 10px;
+  padding: 16px 2cm 10px;
 }
 
 .header-top {
@@ -166,13 +166,12 @@ ion-toolbar.peek-toolbar {
 // ─── Content ──────────────────────────────────────────────
 .peek-content {
   --background: #{$page};
+  --overflow: auto;
   --padding-bottom: 110px;
 }
 
 .content-inner {
-  padding: 16px 16px 24px;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 16px 2cm 24px;
 }
 
 // ─── Loading spinner ──────────────────────────────────────
@@ -815,6 +814,106 @@ ion-toolbar.peek-toolbar {
   }
 }
 
+// ─── Mappa (Tab 3: Geofencing) ─────────────────────────────
+.geo-map-section {
+  height: 400px;
+  background: $surf;
+  border-radius: $radius-card;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid $brd-light;
+  box-shadow: $shadow-card;
+}
+
+.geo-leaflet-map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+// ─── Box Geolocalizzati List (Tab 3: Geofencing) ────────────
+.geo-box-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.geo-box-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: $white;
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: $shadow-card;
+  border: 1px solid $brd-light;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  }
+}
+
+.geo-box-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+}
+
+.geo-box-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.geo-box-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $text-primary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.geo-box-meta {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.7rem;
+  color: $text-muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.geo-box-map-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(58, 171, 219, 0.1);
+  color: $accent-blue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+
+  ion-icon { font-size: 1.1rem; }
+
+  &:hover {
+    background: $accent-blue;
+    color: #fff;
+  }
+}
+
 // ─── Alert Cards (Tab 3: Geofencing) ──────────────────────
 .alert-card {
   background: $white;
@@ -1011,13 +1110,13 @@ ion-toolbar.peek-toolbar {
 // ── Mobile piccolo (< 400px) ──────────────────────────────────
 @media (max-width: 399px) {
   .header-inner {
-    padding: 12px 12px 8px;
+    padding: 12px 2cm 8px;
   }
   .header-greeting {
     font-size: 1rem;
   }
   .content-inner {
-    padding: 12px 12px 20px;
+    padding: 12px 2cm 20px;
   }
   .tab-btn {
     font-size: 0.7rem;
@@ -1053,10 +1152,10 @@ ion-toolbar.peek-toolbar {
 // ── Tablet (≥ 768px) ──────────────────────────────────────────
 @media (min-width: 768px) {
   .header-inner {
-    padding: 20px 24px 14px;
+    padding: 20px 2cm 14px;
   }
   .content-inner {
-    padding: 18px 24px 32px;
+    padding: 18px 2cm 32px;
   }
   .header-greeting {
     font-size: 1.3rem;
@@ -1069,10 +1168,10 @@ ion-toolbar.peek-toolbar {
 // ── Desktop (≥ 1024px) ────────────────────────────────────────
 @media (min-width: 1024px) {
   .header-inner {
-    padding: 24px 40px 16px;
+    padding: 24px 2cm 16px;
   }
   .content-inner {
-    padding: 20px 40px 40px;
+    padding: 20px 2cm 40px;
   }
   .header-greeting {
     font-size: 1.4rem;

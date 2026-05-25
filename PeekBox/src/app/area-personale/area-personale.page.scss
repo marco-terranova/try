@@ -19,12 +19,13 @@ ion-toolbar {
 
 ion-content {
   --background: #{$page};
+  --overflow: auto;
   --padding-bottom: 110px;
 }
 
 // === HEADER: solo logo ===
 .profile-header {
-  padding: 14px 24px;
+  padding: 14px 2cm;
   display: flex;
   align-items: center;
 
@@ -43,16 +44,7 @@ ion-content {
 
 // === PAGE WRAPPER ===
 .page-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px 16px 40px;
-
-  @media (min-width: 768px) {
-    padding: 24px 24px 40px;
-  }
-  @media (min-width: 1024px) {
-    padding: 24px 40px 40px;
-  }
+  padding: 24px 2cm 40px;
 }
 
 // === PROFILE LAYOUT (2 colonne stretch) ===

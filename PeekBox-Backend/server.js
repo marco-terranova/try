@@ -418,6 +418,29 @@ app.delete('/api/box/cestino/pulisci', verificaToken, (req, res) => {
     });
 });
 
+// ── Pulizia automatica ogni ora ──────────────────────────────
+const PULIZIA_INTERVAL_MS = 60 * 60 * 1000; // 1 ora
+setInterval(() => {
+    const trentaGiorniFa = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    db.run('DELETE FROM box WHERE data_eliminazione IS NOT NULL AND data_eliminazione < ?',
+        [trentaGiorniFa], function(err) {
+        if (err) {
+            console.error('[Pulizia automatica box] Errore:', err.message);
+        } else if (this.changes > 0) {
+            console.log(`[Pulizia automatica] Rimosse ${this.changes} box scadute.`);
+        }
+    });
+    db.run('DELETE FROM oggetti WHERE data_eliminazione IS NOT NULL AND data_eliminazione < ?',
+        [trentaGiorniFa], function(err) {
+        if (err) {
+            console.error('[Pulizia automatica oggetti] Errore:', err.message);
+        } else if (this.changes > 0) {
+            console.log(`[Pulizia automatica] Rimossi ${this.changes} oggetti scaduti.`);
+        }
+    });
+}, PULIZIA_INTERVAL_MS);
+console.log(`[Pulizia automatica] Avviata ogni ${PULIZIA_INTERVAL_MS / 60000} minuti.`);
+
 // ─────────────────────────────────────────────
 // CHECKPOINT GPS
 // ─────────────────────────────────────────────
@@ -503,6 +526,38 @@ app.delete('/api/checkpoint/:boxId', verificaToken, (req, res) => {
             if (runErr) return res.status(500).json({ error: runErr.message });
             res.json({ message: `Rimossi ${this.changes} checkpoint.` });
         });
+    });
+});
+
+app.get('/api/checkpoint/tutti/:utenteId', verificaToken, (req, res) => {
+    if (String(req.user.id) !== String(req.params.utenteId))
+        return res.status(403).json({ error: "Non autorizzato." });
+
+    const sql = `
+        SELECT DISTINCT
+               box.id as box_id, box.nome as box_nome,
+               armadi.nome as armadio_nome,
+               cp.latitudine, cp.longitudine, cp.timestamp, cp.label,
+               g.latitudine as geofence_lat, g.longitudine as geofence_lng
+        FROM box
+        JOIN armadi ON box.rif_armadio = armadi.id
+        JOIN geofence g ON g.rif_armadio = armadi.id AND g.attivo = 1
+        LEFT JOIN condivisioni_armadio c ON c.rif_armadio = armadi.id AND c.rif_ospite = ? AND c.stato = 'accettata'
+        LEFT JOIN checkpoint_gps cp ON cp.id = (
+            SELECT id FROM checkpoint_gps WHERE rif_box = box.id ORDER BY timestamp DESC LIMIT 1
+        )
+        WHERE box.data_eliminazione IS NULL
+          AND (armadi.rif_utente = ? OR c.id IS NOT NULL)
+        ORDER BY cp.timestamp DESC
+    `;
+    db.all(sql, [req.params.utenteId, req.params.utenteId], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (rows && rows.length > 0) {
+            console.log('[DEBUG checkpoint/tutti] prima riga:', JSON.stringify(rows[0], null, 2));
+        } else {
+            console.log('[DEBUG checkpoint/tutti] nessuna riga trovata');
+        }
+        res.json({ checkpoints: rows });
     });
 });
 
@@ -836,7 +891,7 @@ app.post('/api/box/:boxId/catalogo/:catalogoId/aggiungi', verificaToken, (req, r
 
 app.get('/api/oggetti/:boxId', verificaToken, (req, res) => {
     verificaAccessoBoxLettura(req.params.boxId, req.user.id, res, () => {
-        db.all('SELECT * FROM oggetti WHERE rif_box = ?', [req.params.boxId], (err, rows) => {
+        db.all('SELECT * FROM oggetti WHERE rif_box = ? AND data_eliminazione IS NULL', [req.params.boxId], (err, rows) => {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ oggetti: rows });
         });
@@ -911,7 +966,39 @@ app.put('/api/oggetti/:id', verificaToken, (req, res) => {
     });
 });
 
+// ─── Soft-delete: sposta l'oggetto nel cestino ────────────────
 app.delete('/api/oggetti/:id', verificaToken, (req, res) => {
+    db.get('SELECT rif_box FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
+
+        verificaAccessoBoxScrittura(oggetto.rif_box, req.user.id, res, () => {
+            db.run("UPDATE oggetti SET data_eliminazione = datetime('now') WHERE id = ?", [req.params.id], function(err) {
+                if (err) return res.status(500).json({ error: err.message });
+                console.log(`[DELETE /api/oggetti/${req.params.id}] Soft-delete eseguito.`);
+                res.json({ message: "Oggetto spostato nel cestino!" });
+            });
+        });
+    });
+});
+
+// ─── Ripristina oggetto dal cestino ──────────────────────────
+app.put('/api/oggetti/:id/ripristina', verificaToken, (req, res) => {
+    db.get('SELECT rif_box FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
+
+        verificaAccessoBoxScrittura(oggetto.rif_box, req.user.id, res, () => {
+            db.run('UPDATE oggetti SET data_eliminazione = NULL WHERE id = ?', [req.params.id], function(err) {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({ message: "Oggetto ripristinato!" });
+            });
+        });
+    });
+});
+
+// ─── Eliminazione definitiva oggetto ─────────────────────────
+app.delete('/api/oggetti/:id/definitivo', verificaToken, (req, res) => {
     db.get('SELECT rif_box FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
         if (err) return res.status(500).json({ error: err.message });
         if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
@@ -919,9 +1006,36 @@ app.delete('/api/oggetti/:id', verificaToken, (req, res) => {
         verificaAccessoBoxScrittura(oggetto.rif_box, req.user.id, res, () => {
             db.run('DELETE FROM oggetti WHERE id = ?', [req.params.id], function(err) {
                 if (err) return res.status(500).json({ error: err.message });
-                res.json({ message: "Oggetto eliminato!" });
+                res.json({ message: "Oggetto eliminato definitivamente!" });
             });
         });
+    });
+});
+
+// ─── Elenco oggetti nel cestino per utente ───────────────────
+app.get('/api/oggetti/eliminate/:utenteId', verificaToken, (req, res) => {
+    if (String(req.user.id) !== String(req.params.utenteId))
+        return res.status(403).json({ error: "Non autorizzato." });
+    const trentaGiorniFa = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const utenteId = req.params.utenteId;
+    const sql = `
+        SELECT o.*, b.nome AS box_nome
+        FROM oggetti o
+        JOIN box b ON b.id = o.rif_box
+        JOIN armadi a ON a.id = b.rif_armadio
+        WHERE o.data_eliminazione IS NOT NULL
+          AND a.rif_utente = ?
+          AND o.data_eliminazione >= ?
+        ORDER BY o.data_eliminazione DESC
+    `;
+    console.log(`[GET oggetti/eliminate] utenteId=${utenteId}, trentaGiorniFa=${trentaGiorniFa}`);
+    db.all(sql, [utenteId, trentaGiorniFa], (err, rows) => {
+        if (err) {
+            console.error('[GET oggetti/eliminate] ERRORE:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        console.log(`[GET oggetti/eliminate] Trovati ${rows.length} oggetti.`);
+        res.json({ oggetti_eliminati: rows });
     });
 });
 

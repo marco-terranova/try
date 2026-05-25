@@ -32,6 +32,10 @@
             <ion-spinner *ngIf="isGettingGps" name="crescent"></ion-spinner>
             <span *ngIf="!isGettingGps">USA GPS</span>
           </button>
+          <button class="btn-gps-main" (click)="apriInMappa()" *ngIf="latitudine !== null">
+            <ion-icon name="location-outline"></ion-icon>
+            <span>MAPS</span>
+          </button>
         </div>
       </div>
 

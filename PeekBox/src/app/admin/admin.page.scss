@@ -2,13 +2,12 @@
 
 ion-content {
   --background: #{$page} !important;
+  --overflow: auto;
 }
 
 // ── WRAPPER ──────────────────────────────────────
 .admin-dashboard-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 5%;
+  padding: 40px 2cm;
   box-sizing: border-box;
 }
 

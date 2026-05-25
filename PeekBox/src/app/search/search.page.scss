@@ -18,6 +18,7 @@ ion-header ion-toolbar {
 .search-content {
   --background: #{$page};
   --color: #{$dark};
+  --overflow: auto;
 }
 
 .brand-title .pk { color: #{$blue-dk}; }

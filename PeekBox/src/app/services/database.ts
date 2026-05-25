@@ -118,6 +118,10 @@ export class DatabaseService {
     return this.http.get(`${this.apiUrl}/checkpoint/${boxId}/ultimo`, { headers: this.getAuthHeaders() });
   }
 
+  getTuttiCheckpoint(utenteId: string) {
+    return this.http.get(`${this.apiUrl}/checkpoint/tutti/${utenteId}`, { headers: this.getAuthHeaders() });
+  }
+
   eliminaCheckpoints(boxId: number) {
     return this.http.delete(`${this.apiUrl}/checkpoint/${boxId}`, { headers: this.getAuthHeaders() });
   }
@@ -159,6 +163,21 @@ export class DatabaseService {
 
   eliminaOggetto(id: number) {
     return this.http.delete(`${this.apiUrl}/oggetti/${id}`, { headers: this.getAuthHeaders() });
+  }
+
+  /** Recupera gli oggetti nel cestino per un utente */
+  getOggettiEliminati(utenteId: string) {
+    return this.http.get(`${this.apiUrl}/oggetti/eliminate/${utenteId}`, { headers: this.getAuthHeaders() });
+  }
+
+  /** Ripristina un oggetto dal cestino */
+  ripristinaOggetto(id: number) {
+    return this.http.put(`${this.apiUrl}/oggetti/${id}/ripristina`, {}, { headers: this.getAuthHeaders() });
+  }
+
+  /** Elimina definitivamente un oggetto dal cestino */
+  eliminaOggettoDefinitivo(id: number) {
+    return this.http.delete(`${this.apiUrl}/oggetti/${id}/definitivo`, { headers: this.getAuthHeaders() });
   }
 
   // ─── CATALOGO ELEMENTI ────────────────────────────────────
