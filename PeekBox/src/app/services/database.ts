@@ -416,8 +416,4 @@ export class DatabaseService {
   getMieSegnalazioni() {
     return this.http.get(`${this.apiUrl}/segnalazioni/mie`, { headers: this.getAuthHeaders() });
   }
-
-  adminEliminaUtente(id: number) {
-    return this.http.delete(`${this.apiUrl}/admin/utenti/${id}`, { headers: this.getAuthHeaders() });
-  }
 }

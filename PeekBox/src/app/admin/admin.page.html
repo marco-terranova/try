@@ -4,12 +4,30 @@
       <div class="header-top">
         <div class="header-greet">
           <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="goBack()" style="cursor: pointer;" />
-          <h1 class="header-greeting">GESTIONE <span class="nome-verde">UTENTI</span></h1>
+          <h1 class="header-greeting">GESTIONE <span class="nome-verde">ADEMPIMENTI</span></h1>
         </div>
-        <div class="users-counter">
-          <ion-icon name="people"></ion-icon>
-          <span>{{ utenti.length }} Utenti</span>
-        </div>
+      </div>
+      
+      <!-- Tabs per passare da Utenti a Segnalazioni -->
+      <div class="tabs-segment-container">
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'utenti'"
+          (click)="cambiaTab('utenti')"
+        >
+          <span>Utenti</span>
+        </button>
+        
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'segnalazioni'"
+          (click)="cambiaTab('segnalazioni')"
+        >
+          <span>Segnalazioni</span>
+          <span *ngIf="segnalazioniNonLette > 0" class="badge-count badge-warning">
+            {{ segnalazioniNonLette }}
+          </span>
+        </button>
       </div>
     </div>
   </ion-toolbar>
@@ -17,15 +35,9 @@
 
 <ion-content [fullscreen]="true">
   <div class="admin-dashboard-wrapper">
-
     <!-- LISTA UTENTI -->
-    <div class="users-list-container">
-
-      <div
-        class="user-premium-card"
-        *ngFor="let utente of utenti"
-      >
-
+    <div *ngIf="activeTab === 'utenti'" class="users-list-container animate-fade-in">
+      <div class="user-premium-card" *ngFor="let utente of utenti">
         <!-- IDENTITÀ -->
         <div class="user-identity">
           <div class="avatar-circle">
@@ -69,17 +81,126 @@
 
         <!-- AZIONI -->
         <div class="user-actions">
-          <button
-            class="btn-delete-ghost"
-            (click)="eliminaUtente(utente.id)"
-            title="Elimina utente"
-          >
+          <button class="btn-delete-ghost" (click)="eliminaUtente(utente.id)" title="Elimina utente">
             <ion-icon name="trash-outline"></ion-icon>
           </button>
         </div>
-
       </div>
+      
+      <!-- Messaggio quando non ci sono utenti -->
+      <div *ngIf="utenti.length === 0 && !isLoading" class="empty-state">
+        <ion-icon name="people-outline" class="empty-icon"></ion-icon>
+        <h3>Nessun utente trovato</h3>
+        <p>Non ci sono utenti registrati nel sistema.</p>
+      </div>
+    </div>
 
+    <!-- LISTA SEGNALAZIONI -->
+    <div *ngIf="activeTab === 'segnalazioni'" class="segnalazioni-list-container animate-fade-in">
+      <!-- Header sezione -->
+      <div class="section-header">
+        <h2>Segnalazioni e Feedback</h2>
+        <p class="section-description">Visualizza e gestisci tutte le segnalazioni inviate dagli utenti</p>
+      </div>
+      
+<!-- Messaggio di caricamento o errore -->
+<div *ngIf="isLoading" class="loading-state">
+  <ion-spinner name="crescent"></ion-spinner>
+  <p>Caricamento segnalazioni...</p>
+</div>
+
+<div *ngIf="!isLoading && errore" class="error-state">
+  <ion-icon name="alert-circle-outline"></ion-icon>
+  <p>{{ errore }}</p>
+</div>
+
+<!-- Lista segnalazioni -->
+<div *ngIf="!isLoading && !errore && segnalazioni.length > 0" class="segnalazioni-list">
+  <div class="segnalazione-card" *ngFor="let segnalazione of segnalazioni" [class.segnalazione-nuova]="segnalazione.stato === 'nuova'">
+    <!-- Header segnalazione -->
+    <div class="segnalazione-header">
+      <div class="segnalazione-info">
+        <h3>{{ segnalazione.titolo }}</h3>
+        <div class="segnalazione-meta">
+          <span class="segnalazione-tipo">
+            <!-- Badge tipo segnalazione -->
+            <span [ngSwitch]="segnalazione.tipo">
+              <span *ngSwitchCase="'feedback'" class="tipo-badge tipo-feedback">Feedback</span>
+              <span *ngSwitchCase="'report'" class="tipo-badge tipo-report">Report</span>
+              <span *ngSwitchCase="'suggerimento'" class="tipo-badge tipo-suggerimento">Suggerimento</span>
+              <span *ngSwitchDefault class="tipo-badge">{{ segnalazione.tipo }}</span>
+            </span>
+          </span>
+          <span class="segnalazione-data">
+            {{ segnalazione.timestamp | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+        </div>
+      </div>
+      
+      <!-- Badge priorità -->
+      <span class="priorita-badge" [class.priorita-alta]="segnalazione.priorita === 'alta'"
+                                [class.priorita-media]="segnalazione.priorita === 'media'"
+                                [class.priorita-bassa]="segnalazione.priorita === 'bassa'">
+        {{ segnalazione.priorita === 'alta' ? 'Alta' : segnalazione.priorita === 'media' ? 'Media' : 'Bassa' }}
+      </span>
+    </div>
+    
+    <!-- Descrizione -->
+    <div *ngIf="segnalazione.descrizione" class="segnalazione-descrizione">
+      <p>{{ segnalazione.descrizione }}</p>
+    </div>
+    
+    <!-- Informazioni utente -->
+    <div class="segnalazione-utente-info">
+      <div class="utente-avatar">
+        {{ segnalazione.email?.charAt(0)?.toUpperCase() }}
+      </div>
+      <div class="utente-dettagli">
+        <h4>{{ segnalazione.email }}</h4>
+        <p><small>Inviato il: {{ segnalazione.timestamp | date:'dd/MM/yyyy HH:mm' }}</small></p>
+      </div>
+    </div>
+    
+    <!-- Stato e azioni -->
+    <div class="segnalazione-actions">
+      <!-- Badge stato -->
+      <span class="stato-badge" 
+            [class.stato-nuova]="segnalazione.stato === 'nuova'"
+            [class.stato-in-lavorazione]="segnalazione.stato === 'in_lavorazione'"
+            [class.stato-risolta]="segnalazione.stato === 'risolta'"
+            [class.stato-chiusa]="segnalazione.stato === 'chiusa'">
+        {{ segnalazione.stato === 'nuova' ? 'Nuova' : 
+          segnalazione.stato === 'in_lavorazione' ? 'In Lavorazione' : 
+          segnalazione.stato === 'risolta' ? 'Risolta' : 'Chiusa' }}
+      </span>
+      
+      <!-- Menu a tendina per cambiare stato -->
+      <div class="stato-select">
+        <ion-icon name="chevron-down-outline"></ion-icon>
+        <select (change)="aggiornaStatoSegnalazione(segnalazione, $any($event).target.value)">
+          <option value="nuova" [selected]="segnalazione.stato === 'nuova'">Nuova</option>
+          <option value="in_lavorazione" [selected]="segnalazione.stato === 'in_lavorazione'">In Lavorazione</option>
+          <option value="risolta" [selected]="segnalazione.stato === 'risolta'">Risolta</option>
+          <option value="chiusa" [selected]="segnalazione.stato === 'chiusa'">Chiusa</option>
+        </select>
+      </div>
+      
+      <!-- Pulsante elimina -->
+      <button class="btn-elimina-segnalazione" (click)="eliminaSegnalazione(segnalazione)">
+        <ion-icon name="trash-outline"></ion-icon>
+        Elimina
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Messaggio quando non ci sono segnalazioni -->
+<div *ngIf="!isLoading && !errore && segnalazioni.length === 0" class="empty-state">
+  <ion-icon name="chatbubbles-outline" class="empty-icon"></ion-icon>
+  <h3>Nessuna segnalazione trovata</h3>
+  <p>Gli utenti non hanno ancora inviato segnalazioni o feedback.</p>
+  <p class="hint">Le segnalazioni appariranno qui quando gli utenti le invieranno dalla sezione Informazioni Account.</p>
+</div>
     </div>
   </div>
 </ion-content>
