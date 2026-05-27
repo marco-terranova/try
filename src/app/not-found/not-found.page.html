@@ -1,0 +1,24 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="peek-toolbar">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" (click)="vaiHome()" style="cursor: pointer;" />
+          <h1 class="header-greeting"><span class="nome-verde">404</span></h1>
+        </div>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="nf-root">
+    <div class="nf-code">404</div>
+    <h1 class="nf-title">Pagina non trovata</h1>
+    <p class="nf-sub">L'indirizzo che hai cercato non esiste nell'app.</p>
+    <button class="nf-btn" (click)="vaiHome()">
+      <ion-icon name="home-outline"></ion-icon>
+      Torna alla Home
+    </button>
+  </div>
+</ion-content>

@@ -1,13 +1,13 @@
 import {
   menuController
-} from "./chunk-T4PTUMI7.js";
+} from "./chunk-DZF6PLSR.js";
 import {
   getTimeGivenProgression
 } from "./chunk-TA2MDBQV.js";
 import {
   IonicSafeString,
   setupConfig
-} from "./chunk-W4HEWFPL.js";
+} from "./chunk-OVWRE3IY.js";
 import {
   actionSheetController,
   alertController,
@@ -16,38 +16,38 @@ import {
   pickerController,
   popoverController,
   toastController
-} from "./chunk-6K6MVHNK.js";
-import "./chunk-BDYT2CJU.js";
+} from "./chunk-AENTZWH5.js";
+import "./chunk-GZAMZNMB.js";
 import {
   openURL
 } from "./chunk-CWFJQ66L.js";
-import "./chunk-EH455ROR.js";
+import {
+  createGesture
+} from "./chunk-W2DH2WGQ.js";
+import "./chunk-D32SLB5J.js";
+import "./chunk-WU6PFHHJ.js";
 import {
   iosTransitionAnimation
-} from "./chunk-7MCYQ7LL.js";
+} from "./chunk-YQTBQJLP.js";
 import {
   mdTransitionAnimation
-} from "./chunk-ZBXUTO3A.js";
+} from "./chunk-3ISJPAQG.js";
 import {
   getIonPageElement
-} from "./chunk-WHZRRGER.js";
+} from "./chunk-DAGK5NDN.js";
 import {
   createAnimation
-} from "./chunk-D7ASAEXG.js";
+} from "./chunk-GXQC2GQG.js";
 import "./chunk-DWC2MENN.js";
 import {
   getPlatforms,
   initialize,
   isPlatform
-} from "./chunk-GJI7XTAL.js";
-import "./chunk-O22TAHPR.js";
+} from "./chunk-HXFSFEZN.js";
+import "./chunk-PXWPXQ72.js";
 import {
   bootstrapLazy
-} from "./chunk-OJWZRFMR.js";
-import {
-  createGesture
-} from "./chunk-W2DH2WGQ.js";
-import "./chunk-D32SLB5J.js";
+} from "./chunk-JJCLVCTU.js";
 import {
   AngularDelegate,
   Config,
@@ -85,14 +85,14 @@ import {
   ActivatedRoute,
   Router
 } from "./chunk-7ZKPYBV6.js";
+import "./chunk-WPUAP5CL.js";
+import "./chunk-4OOQXHPY.js";
 import {
   MaxValidator,
   MinValidator,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR
 } from "./chunk-ZIUU5FOS.js";
-import "./chunk-WPUAP5CL.js";
-import "./chunk-4OOQXHPY.js";
 import {
   CommonModule,
   Location,
@@ -156,10 +156,10 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-QCIKNNMQ.js";
+import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
-import "./chunk-UQGLAMHP.js";
 import {
   __decorate
 } from "./chunk-2K3BB2X3.js";

@@ -64,6 +64,9 @@ db.serialize(() => {
   db.run(`ALTER TABLE box ADD COLUMN descrizione TEXT`, (err) => {
     if (err && !err.message.includes('duplicate column')) console.error("Migrazione descrizione box:", err.message);
   });
+  db.run(`ALTER TABLE box ADD COLUMN dimensione TEXT DEFAULT 'piccola'`, (err) => {
+    if (err && !err.message.includes('duplicate column')) console.error("Migrazione dimensione box:", err.message);
+  });
 
   // 4. Tabella OGGETTI
   db.run(`CREATE TABLE IF NOT EXISTS oggetti (

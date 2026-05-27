@@ -300,7 +300,14 @@ app.get('/api/box/:utenteId', verificaToken, (req, res) => {
 });
 
 app.post('/api/box', verificaToken, (req, res) => {
-    const { nome, descrizione = null, rif_armadio, is_preferito, moving_mode = 0 } = req.body;
+    const { nome, descrizione = null, rif_armadio, is_preferito, moving_mode = 0, dimensione = 'piccola' } = req.body;
+    const dimensioniValide = ['piccola', 'media', 'grande', 'pallet'];
+    if (!dimensioniValide.includes(dimensione)) {
+        return res.status(400).json({ error: "Dimensione non valida. Usa: piccola, media, grande o pallet." });
+    }
+    if (dimensione === 'pallet' && req.user.tipo_profilo !== 'business') {
+        return res.status(403).json({ error: "Dimensione pallet riservata ai profili Business." });
+    }
 
     db.get('SELECT id, rif_utente FROM armadi WHERE id = ?', [rif_armadio], (err, armadio) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -322,8 +329,8 @@ app.post('/api/box', verificaToken, (req, res) => {
 
         function inserisciBox() {
             db.run(
-                'INSERT INTO box (nome, descrizione, rif_armadio, is_preferito, moving_mode) VALUES (?, ?, ?, ?, ?)',
-                [nome, descrizione, rif_armadio, is_preferito ? 1 : 0, moving_mode ? 1 : 0],
+                'INSERT INTO box (nome, descrizione, rif_armadio, is_preferito, moving_mode, dimensione) VALUES (?, ?, ?, ?, ?, ?)',
+                [nome, descrizione, rif_armadio, is_preferito ? 1 : 0, moving_mode ? 1 : 0, dimensione],
                 function(err) {
                     if (err) return res.status(500).json({ error: err.message });
                     res.status(201).json({ id: this.lastID });
@@ -853,56 +860,65 @@ app.post('/api/box/:boxId/catalogo/:catalogoId/aggiungi', verificaToken, (req, r
                 if (catalogErr) return res.status(500).json({ error: catalogErr.message });
                 if (!catalogo) return res.status(404).json({ error: "Elemento catalogo non trovato." });
 
-                db.get(
-                    `SELECT id, quantita FROM oggetti WHERE rif_box = ? AND rif_catalogo = ?`,
-                    [boxId, catalogoId],
-                    (existingErr, esistente) => {
-                        if (existingErr) return res.status(500).json({ error: existingErr.message });
+                verificaCapienzaBox(boxId, quantita, (capErr, consentito, maxCap, totAttuale) => {
+                    if (capErr) return res.status(500).json({ error: capErr.message });
+                    if (!consentito) {
+                        return res.status(400).json({
+                            error: `Limite di capienza raggiunto. La box può contenere al massimo ${maxCap} elementi (attualmente ${totAttuale}). Rimuovi qualche oggetto prima di aggiungerne altri.`
+                        });
+                    }
 
-                        if (esistente) {
-                            const nuovaQuantita = Number(esistente.quantita || 1) + quantita;
+                    db.get(
+                        `SELECT id, quantita FROM oggetti WHERE rif_box = ? AND rif_catalogo = ?`,
+                        [boxId, catalogoId],
+                        (existingErr, esistente) => {
+                            if (existingErr) return res.status(500).json({ error: existingErr.message });
+
+                            if (esistente) {
+                                const nuovaQuantita = Number(esistente.quantita || 1) + quantita;
+                                db.run(
+                                    `UPDATE oggetti SET quantita = ? WHERE id = ?`,
+                                    [nuovaQuantita, esistente.id],
+                                    function(updateErr) {
+                                        if (updateErr) return res.status(500).json({ error: updateErr.message });
+                                        return res.json({
+                                            id: esistente.id,
+                                            quantita: nuovaQuantita,
+                                            action: 'incremented',
+                                            message: "Quantita aggiornata."
+                                        });
+                                    }
+                                );
+                                return;
+                            }
+
                             db.run(
-                                `UPDATE oggetti SET quantita = ? WHERE id = ?`,
-                                [nuovaQuantita, esistente.id],
-                                function(updateErr) {
-                                    if (updateErr) return res.status(500).json({ error: updateErr.message });
-                                    return res.json({
-                                        id: esistente.id,
-                                        quantita: nuovaQuantita,
-                                        action: 'incremented',
-                                        message: "Quantita aggiornata."
+                                `INSERT INTO oggetti
+                                  (nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo)
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                                [
+                                    catalogo.nome,
+                                    catalogo.descrizione,
+                                    catalogo.categoria_slug,
+                                    catalogo.fragile ? 1 : 0,
+                                    quantita,
+                                    catalogo.foto,
+                                    boxId,
+                                    catalogoId
+                                ],
+                                function(insertErr) {
+                                    if (insertErr) return res.status(500).json({ error: insertErr.message });
+                                    res.status(201).json({
+                                        id: this.lastID,
+                                        quantita,
+                                        action: 'created',
+                                        message: "Elemento aggiunto alla box."
                                     });
                                 }
                             );
-                            return;
                         }
-
-                        db.run(
-                            `INSERT INTO oggetti
-                              (nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo)
-                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                            [
-                                catalogo.nome,
-                                catalogo.descrizione,
-                                catalogo.categoria_slug,
-                                catalogo.fragile ? 1 : 0,
-                                quantita,
-                                catalogo.foto,
-                                boxId,
-                                catalogoId
-                            ],
-                            function(insertErr) {
-                                if (insertErr) return res.status(500).json({ error: insertErr.message });
-                                res.status(201).json({
-                                    id: this.lastID,
-                                    quantita,
-                                    action: 'created',
-                                    message: "Elemento aggiunto alla box."
-                                });
-                            }
-                        );
-                    }
-                );
+                    );
+                });
             }
         );
     });
@@ -921,6 +937,28 @@ app.get('/api/oggetti/:boxId', verificaToken, (req, res) => {
     });
 });
 
+const CAPACITA_MAP = { piccola: 10, media: 20, grande: 30, pallet: 100 };
+
+function verificaCapienzaBox(boxId, nuovaQuantita, callback) {
+    db.get('SELECT dimensione FROM box WHERE id = ?', [boxId], (err, box) => {
+        if (err) return callback(err);
+        if (!box) return callback(new Error("Box non trovata."));
+        const maxCapienza = CAPACITA_MAP[box.dimensione] || 10;
+        db.get(
+            'SELECT COALESCE(SUM(oggetti.quantita), 0) as totale FROM oggetti WHERE oggetti.rif_box = ? AND oggetti.data_eliminazione IS NULL',
+            [boxId],
+            (err2, row) => {
+                if (err2) return callback(err2);
+                const nuovoTotale = (row?.totale || 0) + Number(nuovaQuantita);
+                if (nuovoTotale > maxCapienza) {
+                    return callback(null, false, maxCapienza, row?.totale || 0);
+                }
+                callback(null, true, maxCapienza, row?.totale || 0);
+            }
+        );
+    });
+}
+
 app.post('/api/oggetti', verificaToken, (req, res) => {
     try {
         const bodySize = JSON.stringify(req.body).length;
@@ -931,11 +969,19 @@ app.post('/api/oggetti', verificaToken, (req, res) => {
         if (!nome || !rif_box) return res.status(400).json({ error: "nome e rif_box obbligatori." });
         if (foto && foto.length > 10000000) return res.status(400).json({ error: "Foto troppo grande (max 10MB)." });
         verificaAccessoBoxScrittura(rif_box, req.user.id, res, () => {
-            db.run(`INSERT INTO oggetti (nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                [nome, descrizione, tipo, fragile ? 1 : 0, quantita || 1, foto, rif_box, rif_catalogo], function(err) {
+            verificaCapienzaBox(rif_box, quantita || 1, (err, consentito, maxCap, totAttuale) => {
                 if (err) return res.status(500).json({ error: err.message });
-                inserisciLogBox(rif_box, 'oggetto_aggiunto', `Aggiunto "${nome}" (q.tà: ${quantita || 1})`, { oggetto_id: this.lastID, nome, quantita: quantita || 1 });
-                res.status(201).json({ id: this.lastID });
+                if (!consentito) {
+                    return res.status(400).json({
+                        error: `Limite di capienza raggiunto. La box può contenere al massimo ${maxCap} elementi (attualmente ${totAttuale}). Rimuovi qualche oggetto prima di aggiungerne altri.`
+                    });
+                }
+                db.run(`INSERT INTO oggetti (nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [nome, descrizione, tipo, fragile ? 1 : 0, quantita || 1, foto, rif_box, rif_catalogo], function(err2) {
+                    if (err2) return res.status(500).json({ error: err2.message });
+                    inserisciLogBox(rif_box, 'oggetto_aggiunto', `Aggiunto "${nome}" (q.tà: ${quantita || 1})`, { oggetto_id: this.lastID, nome, quantita: quantita || 1 });
+                    res.status(201).json({ id: this.lastID });
+                });
             });
         });
     } catch (err) {
@@ -955,53 +1001,81 @@ app.put('/api/oggetti/sposta', verificaToken, (req, res) => {
     verificaAccessoBoxScrittura(box_destinazione_id, req.user.id, res, () => {
         const placeholders = oggetti_ids.map(() => '?').join(', ');
         db.all(
-            `SELECT id, nome, rif_box FROM oggetti WHERE id IN (${placeholders})`,
+            `SELECT id, nome, quantita, rif_box FROM oggetti WHERE id IN (${placeholders})`,
             [...oggetti_ids],
             (selErr, oggetti) => {
                 if (selErr) return res.status(500).json({ error: selErr.message });
-                db.run(
-                    `UPDATE oggetti SET rif_box = ? WHERE id IN (${placeholders})`,
-                    [box_destinazione_id, ...oggetti_ids],
-                    function(err) {
-                        if (err) return res.status(500).json({ error: err.message });
-                        const names = (oggetti || []).map(o => o.nome).join(', ');
-                        const sorgenteIds = [...new Set((oggetti || []).map(o => o.rif_box).filter(Boolean))];
-                        inserisciLogBox(box_destinazione_id, 'oggetto_spostato', `Arrivati: ${names}`, { oggetti_ids, provenienti: sorgenteIds });
-                        sorgenteIds.forEach(srcId => {
-                            if (srcId && Number(srcId) !== Number(box_destinazione_id)) {
-                                inserisciLogBox(srcId, 'oggetto_spostato_via', `Partiti: ${names}`, { oggetti_ids, destinazione: box_destinazione_id });
-                            }
+
+                const totaleDaSpostare = (oggetti || []).reduce((sum, o) => sum + (Number(o.quantita) || 1), 0);
+                verificaCapienzaBox(box_destinazione_id, totaleDaSpostare, (capErr, consentito, maxCap, totAttuale) => {
+                    if (capErr) return res.status(500).json({ error: capErr.message });
+                    if (!consentito) {
+                        return res.status(400).json({
+                            error: `Limite di capienza raggiunto. La box può contenere al massimo ${maxCap} elementi (attualmente ${totAttuale}). Rimuovi oggetti prima di spostarne altri.`
                         });
-                        res.json({ message: `${this.changes} oggetti spostati.`, changes: this.changes });
                     }
-                );
+
+                    db.run(
+                        `UPDATE oggetti SET rif_box = ? WHERE id IN (${placeholders})`,
+                        [box_destinazione_id, ...oggetti_ids],
+                        function(err) {
+                            if (err) return res.status(500).json({ error: err.message });
+                            const names = (oggetti || []).map(o => o.nome).join(', ');
+                            const sorgenteIds = [...new Set((oggetti || []).map(o => o.rif_box).filter(Boolean))];
+                            inserisciLogBox(box_destinazione_id, 'oggetto_spostato', `Arrivati: ${names}`, { oggetti_ids, provenienti: sorgenteIds });
+                            sorgenteIds.forEach(srcId => {
+                                if (srcId && Number(srcId) !== Number(box_destinazione_id)) {
+                                    inserisciLogBox(srcId, 'oggetto_spostato_via', `Partiti: ${names}`, { oggetti_ids, destinazione: box_destinazione_id });
+                                }
+                            });
+                            res.json({ message: `${this.changes} oggetti spostati.`, changes: this.changes });
+                        }
+                    );
+                });
             }
         );
     });
 });
 
 app.put('/api/oggetti/:id', verificaToken, (req, res) => {
-    db.get('SELECT rif_box, nome FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
+    db.get('SELECT rif_box, nome, quantita FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
         if (err) return res.status(500).json({ error: err.message });
         if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
 
         verificaAccessoBoxScrittura(oggetto.rif_box, req.user.id, res, () => {
             const { nome, descrizione, tipo, fragile, quantita, foto } = req.body;
             if (foto && foto.length > 10000000) return res.status(400).json({ error: "Foto troppo grande (max 10MB)." });
-            db.run(
-                `UPDATE oggetti SET nome = COALESCE(?, nome), descrizione = COALESCE(?, descrizione),
-                 tipo = COALESCE(?, tipo), fragile = COALESCE(?, fragile),
-                 quantita = COALESCE(?, quantita), foto = COALESCE(?, foto)
-                 WHERE id = ?`,
-                [nome || null, descrizione || null, tipo || null,
-                 fragile !== undefined ? (fragile ? 1 : 0) : null,
-                 quantita || null, foto || null, req.params.id],
-                function(err) {
-                    if (err) return res.status(500).json({ error: err.message });
-                    inserisciLogBox(oggetto.rif_box, 'oggetto_modificato', `Modificato "${nome || oggetto.nome}"`, { oggetto_id: Number(req.params.id) });
-                    res.json({ message: "Oggetto aggiornato!" });
-                }
-            );
+            const nuovaQuantita = quantita !== undefined ? Number(quantita) : (oggetto.quantita || 1);
+            const delta = nuovaQuantita - (oggetto.quantita || 1);
+            if (delta > 0) {
+                verificaCapienzaBox(oggetto.rif_box, delta, (capErr, consentito, maxCap, totAttuale) => {
+                    if (capErr) return res.status(500).json({ error: capErr.message });
+                    if (!consentito) {
+                        return res.status(400).json({
+                            error: `Limite di capienza raggiunto. La box può contenere al massimo ${maxCap} elementi (attualmente ${totAttuale}).`
+                        });
+                    }
+                    eseguiAggiornamento();
+                });
+            } else {
+                eseguiAggiornamento();
+            }
+            function eseguiAggiornamento() {
+                db.run(
+                    `UPDATE oggetti SET nome = COALESCE(?, nome), descrizione = COALESCE(?, descrizione),
+                     tipo = COALESCE(?, tipo), fragile = COALESCE(?, fragile),
+                     quantita = COALESCE(?, quantita), foto = COALESCE(?, foto)
+                     WHERE id = ?`,
+                    [nome || null, descrizione || null, tipo || null,
+                     fragile !== undefined ? (fragile ? 1 : 0) : null,
+                     quantita || null, foto || null, req.params.id],
+                    function(err) {
+                        if (err) return res.status(500).json({ error: err.message });
+                        inserisciLogBox(oggetto.rif_box, 'oggetto_modificato', `Modificato "${nome || oggetto.nome}"`, { oggetto_id: Number(req.params.id) });
+                        res.json({ message: "Oggetto aggiornato!" });
+                    }
+                );
+            }
         });
     });
 });

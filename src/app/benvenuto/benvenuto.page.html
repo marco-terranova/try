@@ -1,0 +1,179 @@
+<ion-content [fullscreen]="true" class="welcome-content">
+
+  <div #stageRef class="welcome-stage">
+
+    <!-- ════════════════════════════════════════════════ HERO ══════ -->
+    <section class="hero-section">
+      <div class="hero-bg">
+        <div class="hb-blob hb-blob--1"></div>
+        <div class="hb-blob hb-blob--2"></div>
+        <div class="hb-blob hb-blob--3"></div>
+        <div class="hb-blob hb-blob--4"></div>
+      </div>
+
+      <header class="topbar">
+        <div class="topbar-logo">
+          <img src="assets/icon/logoTitolo1.png" alt="" class="topbar-img" />
+          <span class="topbar-txt"><span class="pk">Peek</span><span class="bx">Box</span></span>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn-accedi-top" routerLink="/login">
+            Accedi
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+          <a href="https://t.me/peekbox" target="_blank" rel="noopener" class="btn-telegram-top" title="Contattaci su Telegram">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 11.96c-.72-.24-.73-.72.16-1.07l16.3-6.28c.6-.24 1.18.14.95 1.05l-2.78 13.1c-.14.7-.56.87-1.13.55l-3.1-2.29-1.5 1.45c-.16.16-.3.3-.65.3z"/></svg>
+          </a>
+        </div>
+      </header>
+
+      <div class="hero-body">
+        <div class="hc-circuit">
+          <div class="hcc-rail"></div>
+          <div class="hcc-orbit">
+            <div class="hcc-dot"></div>
+          </div>
+        </div>
+        <div class="hero-center">
+          <h1 class="hero-title">
+            Il tuo inventario.<br>
+            <span class="ht-accent">Sempre con te.</span>
+          </h1>
+          <p class="hero-sub">Benvenuto su PeekBox. Il posto pi&ugrave; sicuro per i tuoi oggetti, sempre a portata di mano.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"><div class="sd-led"></div></div>
+
+    <!-- ═══════════════════════════════════════════ FEATURES ══════ -->
+    <section class="features-section">
+      <div class="features-header" [class.fh-hidden]="showCarousel">
+        <p class="sec-sub">Dimentica l'inventario cartaceo. Con PeekBox ogni scatola ha un profilo digitale completo, sempre a portata di scansione.</p>
+      </div>
+
+      @if (!showCarousel) {
+        <div class="features-grid">
+          <div class="feat-card" tabindex="0">
+            <div class="feat-bar feat-bar--blue"></div>
+            <div class="feat-body">
+              <span class="feat-icon">📦</span>
+              <h3>Box digitali</h3>
+              <p>Cataloga ogni scatola con nome, foto e categoria. Ogni box ha un profilo digitale completo.</p>
+            </div>
+          </div>
+          <div class="feat-card" tabindex="0">
+            <div class="feat-bar feat-bar--green"></div>
+            <div class="feat-body">
+              <span class="feat-icon">🔍</span>
+              <h3>Ricerca istantanea</h3>
+              <p>Trova qualsiasi oggetto filtrando per nome, categoria o posizione. Zero perdite di tempo.</p>
+            </div>
+          </div>
+          <div class="feat-card" tabindex="0">
+            <div class="feat-bar feat-bar--teal"></div>
+            <div class="feat-body">
+              <span class="feat-icon">📲</span>
+              <h3>QR Code integrato</h3>
+              <p>Stampa e attacca i QR Code sulle scatole. Una scansione e sai tutto del contenuto.</p>
+            </div>
+          </div>
+          <div class="feat-card" tabindex="0">
+            <div class="feat-bar feat-bar--purple"></div>
+            <div class="feat-body">
+              <span class="feat-icon">📍</span>
+              <h3>Tracciamento GPS</h3>
+              <p>Geolocalizza ogni box in tempo reale. Ogni spostamento viene registrato automaticamente.</p>
+            </div>
+          </div>
+        </div>
+        <button class="feat-toggle" (click)="toggleCarousel()">
+          <span>Scopri le schermate</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      } @else {
+        <button class="feat-toggle feat-toggle--top" (click)="toggleCarousel()">
+          <span>Mostra funzionalità</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="features-carousel">
+          <div class="fc-split">
+            <div class="fc-visual">
+              <div class="fc-box">
+                <img [src]="slides[current].img" [alt]="slides[current].title" />
+              </div>
+              <div class="fc-nav">
+                @for (s of slides; track $index) {
+                  <button class="fc-seg" [class.fc-seg--active]="$index === current" (click)="goTo($index)">
+                    <span class="fc-seg-fill"></span>
+                  </button>
+                }
+              </div>
+            </div>
+            <div class="fc-meta">
+              <h3 class="fc-title">{{ slides[current].title }}</h3>
+              <p class="fc-desc">{{ slides[current].desc }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+
+    <div class="section-divider"><div class="sd-led"></div></div>
+
+    <!-- ════════════════════════════════════════════════ STATS ════════ -->
+    <section class="stats-section">
+      <div class="stats-bg-orb stats-bg-orb--1"></div>
+      <div class="stats-bg-orb stats-bg-orb--2"></div>
+
+      <div class="stats-inner">
+        <div class="stats-left">
+          <div class="sl-glow"></div>
+          <div class="sl-card">
+            <div class="slc-icon-wrap">
+              <img src="assets/icon/logoApp.jpg" alt="PeekBox" class="slc-logo" />
+              <div class="slc-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            </div>
+            <div class="slc-brand"><span class="pk">Peek</span><span class="bx">Box</span></div>
+            <div class="slc-stars">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+              <span class="slc-rating">4.9</span>
+            </div>
+            <div class="slc-meta">
+              <span class="slc-users">+12.000 utenti attivi</span>
+              <span class="slc-dot"></span>
+              <span class="slc-boxes">50.000+ box</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-right">
+          <div class="sr-grid">
+            <div class="sr-card">
+              <span class="src-num">📦 50k+</span>
+              <span class="src-lbl">Box digitalizzati</span>
+              <div class="src-bar"><div class="srcb-fill" style="width:98%"></div></div>
+            </div>
+            <div class="sr-card">
+              <span class="src-num">⭐ 4.9★</span>
+              <span class="src-lbl">Valutazione media</span>
+              <div class="src-bar"><div class="srcb-fill" style="width:95%"></div></div>
+            </div>
+            <div class="sr-card">
+              <span class="src-num">👥 12k+</span>
+              <span class="src-lbl">Utenti attivi</span>
+              <div class="src-bar"><div class="srcb-fill" style="width:85%"></div></div>
+            </div>
+            <div class="sr-card">
+              <span class="src-num">📍 150+</span>
+              <span class="src-lbl">Posizioni tracciate</span>
+              <div class="src-bar"><div class="srcb-fill" style="width:75%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</ion-content>

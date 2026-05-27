@@ -1,0 +1,29 @@
+<button class="chat-fab" (click)="toggleChat()" [class.chat-fab--active]="showChat">
+  <svg *ngIf="!showChat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <svg *ngIf="showChat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+
+<div class="chat-panel" [class.chat-panel--open]="showChat">
+  <div class="cph">
+    <span class="cph-ico">🤖</span>
+    <div class="cph-i">
+      <span class="cph-n">Assistente</span>
+      <span class="cph-s">Online</span>
+    </div>
+  </div>
+  <div class="chat-body" #chatBody>
+    <div *ngFor="let msg of chatMessages" class="cm" [class.cm--u]="msg.isUser">
+      <span class="cm-a">{{ msg.isUser ? '👤' : '🤖' }}</span>
+      <div class="cm-b">{{ msg.text }}</div>
+    </div>
+    <div *ngIf="isTyping" class="cm-t">
+      <div class="ctd"></div><div class="ctd"></div><div class="ctd"></div>
+    </div>
+  </div>
+  <div class="chat-f">
+    <input class="cfi" #chatInputRef (keydown.enter)="sendMessage(chatInputRef.value); chatInputRef.value = ''" placeholder="Scrivi..." [disabled]="isTyping" />
+    <button class="cfs" (click)="sendMessage(chatInputRef.value); chatInputRef.value = ''" [disabled]="isTyping">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>

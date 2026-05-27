@@ -1,0 +1,750 @@
+@import '../../theme/variables';
+
+$text-primary: $dark;
+$text-muted:   $mid;
+$accent-blue:  $blue;
+$border-light: rgba(58,171,219,0.12);
+$radius-card:  20px;
+$shadow-card:  0 4px 20px rgba(0,0,0,0.06);
+
+// ═══ Header ═══════════════════════════════════════════════
+ion-header { background: $white; }
+
+ion-toolbar.peek-toolbar {
+  --background: #{$page};
+  --border-width: 0;
+}
+
+.header-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px clamp(20px, 3.5vw, 56px) 6px;
+}
+
+.header-greet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  &:hover  { opacity: 0.75; }
+  &:active { opacity: 0.55; }
+}
+
+.header-greeting {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: $dark;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1;
+}
+
+.nome-verde {
+  background: linear-gradient(135deg, $green, $green-d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba($green, 0.25);
+}
+
+.users-counter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: $mid;
+}
+
+ion-content {
+  --background: #{$page} !important;
+  --overflow: auto;
+}
+
+// ── WRAPPER ──────────────────────────────────────
+.admin-dashboard-wrapper {
+  padding: 40px clamp(20px, 3.5vw, 56px);
+  box-sizing: border-box;
+}
+
+// ── LISTA ────────────────────────────────────────
+.users-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ── CARD UTENTE ──────────────────────────────────
+.user-premium-card {
+  background: $white;
+  border-radius: 24px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03), 0 1px 4px rgba(0,0,0,0.02);
+  border: 1px solid $brd-light;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba($blue, 0.08);
+    border-color: rgba($blue, 0.12);
+  }
+}
+
+// ── IDENTITÀ ─────────────────────────────────────
+.user-identity {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+.avatar-circle {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $blue, $blue-d);
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 8px 16px rgba($sky, 0.20);
+}
+
+.user-details {
+  min-width: 0;
+
+  h3 {
+    margin: 0;
+    color: $dark;
+    font-size: 1.05rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    white-space: normal;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: $mid;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// ── BADGES ───────────────────────────────────────
+.role-badge {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+
+  &.admin {
+    background: rgba($blue, 0.12);
+    color: $blue-d;
+  }
+
+  &.personal {
+    background: rgba($green, 0.12);
+    color: $green-d;
+  }
+
+  &.business {
+    background: rgba($blue-dk, 0.12);
+    color: $blue-dk;
+  }
+}
+
+// ── STATISTICHE ──────────────────────────────────
+.user-stats-pills {
+  display: flex;
+  gap: 12px;
+  flex: 1.2;
+  justify-content: center;
+}
+
+.stat-pill {
+  background: $surf;
+  padding: 10px 16px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 110px;
+  transition: background 0.2s ease;
+
+  &:hover { background: rgba($blue, 0.12); }
+
+  ion-icon {
+    font-size: 1.3rem;
+    color: $blue;
+    --color: #{$blue};
+    flex-shrink: 0;
+  }
+
+  .stat-data {
+    display: flex;
+    flex-direction: column;
+
+    strong {
+      color: $dark;
+      font-size: 1.1rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    span {
+      color: $mid;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+  }
+}
+
+// ── AZIONI ───────────────────────────────────────
+.user-actions {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  padding-left: 16px;
+}
+
+.btn-delete-ghost {
+  background: rgba($red, 0.06);
+  color: $red;
+  border: none;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  ion-icon {
+    font-size: 1.3rem;
+    color: $red;
+    --color: $red;
+  }
+
+  &:hover {
+    background: $red;
+    transform: scale(1.10);
+    box-shadow: 0 8px 20px rgba($red, 0.25);
+
+    ion-icon {
+      color: $white;
+      --color: #{$white};
+    }
+  }
+}
+
+// ── RESPONSIVE ───────────────────────────────────
+@media (max-width: 900px) {
+  .admin-header {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .users-counter {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .user-premium-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px 24px;
+  }
+
+  .user-identity { width: 100%; }
+
+  .user-stats-pills {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .stat-pill { min-width: calc(33% - 8px); }
+
+  .user-actions {
+    width: 100%;
+    justify-content: flex-end;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-pill { min-width: calc(50% - 6px); }
+}
+
+// ── TAB SEGMENT ────────────────────────────────────
+.tabs-segment-container {
+  display: flex;
+  background: $surf;
+  padding: 4px;
+  border-radius: 50px;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  outline: none;
+
+  &.active {
+    background: $white;
+    color: $blue;
+    box-shadow: 0 4px 12px rgba($blue, 0.12);
+  }
+}
+
+// ── SEGNALAZIONI LISTA ─────────────────────────────
+.segnalazioni-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section-header {
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: $text-primary;
+  margin: 0 0 8px 0;
+}
+
+.section-description {
+  color: $text-muted;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.segnalazioni-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.segnalazione-card {
+  background: $white;
+  border-radius: $radius-card;
+  padding: 20px;
+  box-shadow: $shadow-card;
+  border: 1px solid $brd-light;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+
+  &.segnalazione-nuova {
+    border-left: 4px solid $amber;
+    background: rgba($amber, 0.02);
+  }
+}
+
+.segnalazione-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.segnalazione-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.segnalazione-info h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0 0 4px 0;
+}
+
+.segnalazione-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.segnalazione-tipo,
+.segnalazione-data {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $text-muted;
+}
+
+.tipo-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.tipo-feedback {
+  background: rgba($blue, 0.1);
+  color: $blue;
+}
+
+.tipo-report {
+  background: rgba($red, 0.1);
+  color: $red;
+}
+
+.tipo-suggerimento {
+  background: rgba($green, 0.1);
+  color: $green;
+}
+
+.priorita-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+.priorita-alta {
+  background: rgba($red, 0.1);
+  color: $red;
+}
+
+.priorita-media {
+  background: rgba($amber, 0.1);
+  color: $amber;
+}
+
+.priorita-bassa {
+  background: rgba($green, 0.1);
+  color: $green;
+}
+
+.segnalazione-descrizione {
+  margin: 12px 0;
+  padding: 0;
+}
+
+.segnalazione-descrizione p {
+  color: $text-muted;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.segnalazione-utente-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  padding-top: 16px;
+  border-top: 1px solid $brd-light;
+}
+
+.utente-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba($blue, 0.1);
+  color: $blue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.utente-dettagli {
+  flex: 1;
+}
+
+.utente-dettagli h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0 0 4px 0;
+}
+
+.utente-dettagli p {
+  color: $text-muted;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.segnalazione-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.stato-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.stato-nuova {
+  background: rgba($blue, 0.1);
+  color: $blue;
+}
+
+.stato-in-lavorazione {
+  background: rgba($amber, 0.1);
+  color: $amber;
+}
+
+.stato-risolta {
+  background: rgba($green, 0.1);
+  color: $green;
+}
+
+.stato-chiusa {
+  background: rgba($red, 0.1);
+  color: $red;
+}
+
+.stato-select {
+  position: relative;
+  min-width: 120px;
+}
+
+.stato-select ion-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: $text-muted;
+  font-size: 1rem;
+}
+
+.stato-select select {
+  appearance: none;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  background: $white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  color: $text-primary;
+  background-image: none;
+  background-color: $white;
+}
+
+.stato-select select:focus {
+  outline: none;
+  border-color: $accent-blue;
+  box-shadow: 0 0 0 2px rgba($accent-blue, 0.2);
+}
+
+.btn-elimina-segnalazione {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: $red;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  ion-icon {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    background: rgba($red, 0.1);
+    color: $red;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ── STATI ──────────────────────────────────────────
+.loading-state,
+.error-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.loading-state ion-spinner {
+  margin-bottom: 16px;
+}
+
+.error-state,
+.empty-state {
+  ion-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 12px 0;
+  }
+
+  p {
+    color: $text-muted;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+.error-state ion-icon {
+  color: $red;
+}
+
+.empty-state ion-icon {
+  color: $text-muted;
+}
+
+.hint {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: $text-muted;
+  margin-top: 16px;
+}
+
+// ── RESPONSIVE ───────────────────────────────────
+@media (max-width: 900px) {
+  .admin-header {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .users-counter {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .user-premium-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px 24px;
+  }
+
+  .user-identity { width: 100%; }
+
+  .user-stats-pills {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .stat-pill { min-width: calc(33% - 8px); }
+
+  .user-actions {
+    width: 100%;
+    justify-content: flex-end;
+    padding-left: 0;
+  }
+
+  .segnalazione-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .segnalazione-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-pill { min-width: calc(50% - 6px); }
+  
+  .segnalazione-card {
+    padding: 16px;
+  }
+  
+  .segnalazione-utente-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
