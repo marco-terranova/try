@@ -26,19 +26,37 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
   password: string = '';
 
   isRegister: boolean = false;
+  registerSuccess: boolean = false;
   nomeProfilo: string = '';
   emailReg: string = '';
   passwordReg: string = '';
   tipoProfilo: 'personal' | 'business' = 'personal';
 
-  get loginValido(): boolean {
-    return !!this.email?.trim() && !!this.password?.trim();
+  loginError: boolean = false;
+  showRecupero: boolean = false;
+  recuperoEmail: string = '';
+  recuperoMessaggio: string = '';
+  recuperoInviato: boolean = false;
+
+  get recuperoValido(): boolean {
+    return this.emailValida(this.recuperoEmail);
   }
+
+  get loginValido(): boolean {
+    return this.emailValida(this.email) && !!this.password?.trim();
+  }
+  private emailValida(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  }
+
   get registerValido(): boolean {
-    return !!this.nomeProfilo?.trim() && !!this.emailReg?.trim() && !!this.passwordReg?.trim();
+    return !!this.nomeProfilo?.trim()
+        && this.emailValida(this.emailReg)
+        && !!this.passwordReg?.trim() && this.passwordReg.length >= 8;
   }
 
   @ViewChild('tiltCard', { static: false }) cardRef!: ElementRef<HTMLElement>;
+  @ViewChild('overlayCard', { static: false }) overlayCardRef!: ElementRef<HTMLElement>;
   @ViewChild('stageRef', { static: false }) stageRef!: ElementRef<HTMLElement>;
 
   private cardRect: DOMRect | null = null;
@@ -56,7 +74,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
   // ── Card Tilt + Scene Parallax ───────────────────────
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
-    const card = this.cardRef?.nativeElement;
+    const card = this.cardRef?.nativeElement ?? this.overlayCardRef?.nativeElement;
     if (card) {
       this.cardRect = card.getBoundingClientRect();
       const x = (event.clientX - this.cardRect.left) / this.cardRect.width;
@@ -77,7 +95,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('mouseleave')
   onMouseLeave() {
-    const card = this.cardRef?.nativeElement;
+    const card = this.cardRef?.nativeElement ?? this.overlayCardRef?.nativeElement;
     if (card) {
       card.style.setProperty('--tilt-x', '0deg');
       card.style.setProperty('--tilt-y', '0deg');
@@ -112,12 +130,8 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
         );
       }),
       catchError(() => {
-        this.alertController.create({
-          cssClass: 'peekbox-alert',
-          header: 'Accesso Negato',
-          message: 'Email o password errati. Riprova.',
-          buttons: ['OK']
-        }).then(a => a.present());
+        this.loginError = true;
+        setTimeout(() => this.loginError = false, 4000);
         return EMPTY;
       })
     ).subscribe((res: PendingResponse) => {
@@ -128,12 +142,30 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
 
   async recuperaPassword(event: Event) {
     event.preventDefault();
-    (await this.alertController.create({
-      cssClass: 'peekbox-alert',
-      header: 'Recupero Password',
-      message: 'Funzionalità non ancora disponibile sul database fisico.',
-      buttons: ['OK']
-    })).present();
+    this.recuperoEmail = (this.emailReg || this.email || '');
+    this.recuperoMessaggio = '';
+    this.recuperoInviato = false;
+    this.showRecupero = true;
+  }
+
+  chiudiRecupero() {
+    this.showRecupero = false;
+  }
+
+  async inviaRichiesta() {
+    if (!this.recuperoEmail?.trim()) return;
+    this.dbService.inviaSegnalazione({
+      titolo: 'Recupero Password',
+      descrizione: this.recuperoMessaggio?.trim()
+        ? `Richiesta recupero password da ${this.recuperoEmail}\n\nMessaggio: ${this.recuperoMessaggio}`
+        : `Richiesta recupero password da ${this.recuperoEmail}`,
+      tipo: 'report',
+      priorita: 'media',
+      email: this.recuperoEmail
+    }).subscribe({
+      next: () => { this.recuperoInviato = true; },
+      error: () => { this.recuperoInviato = true; }
+    });
   }
 
   tornaBenvenuto() {
@@ -146,7 +178,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async registrati() {
-    if (!this.nomeProfilo || !this.emailReg || !this.passwordReg) {
+    if (!this.nomeProfilo?.trim() || !this.emailReg?.trim() || !this.passwordReg?.trim()) {
       (await this.alertController.create({
         cssClass: 'peekbox-alert',
         header: 'Errore',
@@ -155,25 +187,27 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
       })).present();
       return;
     }
+    if (!this.emailValida(this.emailReg)) {
+      (await this.alertController.create({
+        cssClass: 'peekbox-alert',
+        header: 'Email non valida',
+        message: 'Inserisci un indirizzo email valido (es. nome@dominio.com).',
+        buttons: ['OK']
+      })).present();
+      return;
+    }
+    if (this.passwordReg.length < 8) {
+      (await this.alertController.create({
+        cssClass: 'peekbox-alert',
+        header: 'Password troppo corta',
+        message: 'La password deve contenere almeno 8 caratteri.',
+        buttons: ['OK']
+      })).present();
+      return;
+    }
     this.dbService.registraUtente(this.nomeProfilo, this.emailReg, this.passwordReg, this.tipoProfilo).subscribe({
       next: async () => {
-        const label = this.tipoProfilo === 'personal' ? 'Personale' : 'Business';
-        const alert = await this.alertController.create({
-          cssClass: 'peekbox-alert',
-          header: 'Registrazione completata',
-          message: `Account ${label} creato con successo.`,
-          buttons: [
-            {
-              text: 'Accedi',
-              handler: () => {
-                this.email = this.emailReg;
-                this.password = this.passwordReg;
-                this.isRegister = false;
-              }
-            }
-          ]
-        });
-        alert.present();
+        this.registerSuccess = true;
       },
       error: async () => {
         (await this.alertController.create({
@@ -184,5 +218,12 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
         })).present();
       }
     });
+  }
+
+  vaiAlLoginDaReg() {
+    this.email = this.emailReg;
+    this.password = this.passwordReg;
+    this.registerSuccess = false;
+    this.isRegister = false;
   }
 }

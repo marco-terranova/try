@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true" class="welcome-content">
 
-  <div #stageRef class="welcome-stage">
+  <div class="welcome-stage">
 
     <!-- ════════════════════════════════════════════════ HERO ══════ -->
     <section class="hero-section">
@@ -21,156 +21,109 @@
             Accedi
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </button>
-          <a href="https://t.me/peekbox" target="_blank" rel="noopener" class="btn-telegram-top" title="Contattaci su Telegram">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 11.96c-.72-.24-.73-.72.16-1.07l16.3-6.28c.6-.24 1.18.14.95 1.05l-2.78 13.1c-.14.7-.56.87-1.13.55l-3.1-2.29-1.5 1.45c-.16.16-.3.3-.65.3z"/></svg>
-          </a>
         </div>
       </header>
 
       <div class="hero-body">
-        <div class="hc-circuit">
-          <div class="hcc-rail"></div>
-          <div class="hcc-orbit">
-            <div class="hcc-dot"></div>
-          </div>
-        </div>
         <div class="hero-center">
           <h1 class="hero-title">
-            Il tuo inventario.<br>
+            Il tuo inventario<br>
             <span class="ht-accent">Sempre con te.</span>
           </h1>
-          <p class="hero-sub">Benvenuto su PeekBox. Il posto pi&ugrave; sicuro per i tuoi oggetti, sempre a portata di mano.</p>
+          <p class="hero-sub">Organizza, traccia e ritrova ogni tuo oggetto con PeekBox.</p>
         </div>
       </div>
     </section>
 
-    <div class="section-divider"><div class="sd-led"></div></div>
+    <div class="section-divider"></div>
 
-    <!-- ═══════════════════════════════════════════ FEATURES ══════ -->
-    <section class="features-section">
-      <div class="features-header" [class.fh-hidden]="showCarousel">
-        <p class="sec-sub">Dimentica l'inventario cartaceo. Con PeekBox ogni scatola ha un profilo digitale completo, sempre a portata di scansione.</p>
+    <!-- ═══════════════════════════════════════════ ABOUT 1 ══════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner">
+        <div class="about-visual">
+          <div class="av-frame">
+            <img src="assets/icon/slide3.jpg" alt="Catalogo organizzato" />
+          </div>
+        </div>
+        <div class="about-content">
+          <h2 class="ac-title">Il tuo inventario diventa digitale</h2>
+          <p class="ac-text">
+            PeekBox trasforma il modo in cui gestisci i tuoi oggetti. Ogni scatola fisica diventa un profilo digitale completo: puoi catalogarla con un nome, una foto, una categoria e assegnarla a uno spazio specifico come un armadio o una mensola. Non pi&ugrave; etichette scritte a mano o fogli Excel dimenticati: il tuo inventario vive nel cloud, accessibile da telefono, tablet o PC in qualsiasi momento.
+          </p>
+          <p class="ac-text">
+            La dashboard principale ti accoglie con una panoramica istantanea: il numero di box tracciate, gli ultimi aggiornamenti e le statistiche essenziali del tuo archivio. Ogni dato &egrave; sincronizzato in tempo reale, cos&igrave; hai sempre sotto controllo la situazione. Puoi filtrare le box per armadio, per categoria o per preferiti, trovando ci&ograve; che cerchi in pochi tap.
+          </p>
+          <p class="ac-text">
+            Il sistema di ricerca intelligente ti permette di digitare il nome di un oggetto e ottenere immediatamente la sua posizione esatta: armadio, box e persino la scansione QR per aprirlo al volo. Niente pi&ugrave; tempo perso a frugare tra gli scatoloni. Con PeekBox ogni cosa ha un posto preciso e lo ritrovi in pochi secondi.
+          </p>
+        </div>
       </div>
-
-      @if (!showCarousel) {
-        <div class="features-grid">
-          <div class="feat-card" tabindex="0">
-            <div class="feat-bar feat-bar--blue"></div>
-            <div class="feat-body">
-              <span class="feat-icon">📦</span>
-              <h3>Box digitali</h3>
-              <p>Cataloga ogni scatola con nome, foto e categoria. Ogni box ha un profilo digitale completo.</p>
-            </div>
-          </div>
-          <div class="feat-card" tabindex="0">
-            <div class="feat-bar feat-bar--green"></div>
-            <div class="feat-body">
-              <span class="feat-icon">🔍</span>
-              <h3>Ricerca istantanea</h3>
-              <p>Trova qualsiasi oggetto filtrando per nome, categoria o posizione. Zero perdite di tempo.</p>
-            </div>
-          </div>
-          <div class="feat-card" tabindex="0">
-            <div class="feat-bar feat-bar--teal"></div>
-            <div class="feat-body">
-              <span class="feat-icon">📲</span>
-              <h3>QR Code integrato</h3>
-              <p>Stampa e attacca i QR Code sulle scatole. Una scansione e sai tutto del contenuto.</p>
-            </div>
-          </div>
-          <div class="feat-card" tabindex="0">
-            <div class="feat-bar feat-bar--purple"></div>
-            <div class="feat-body">
-              <span class="feat-icon">📍</span>
-              <h3>Tracciamento GPS</h3>
-              <p>Geolocalizza ogni box in tempo reale. Ogni spostamento viene registrato automaticamente.</p>
-            </div>
-          </div>
-        </div>
-        <button class="feat-toggle" (click)="toggleCarousel()">
-          <span>Scopri le schermate</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-      } @else {
-        <button class="feat-toggle feat-toggle--top" (click)="toggleCarousel()">
-          <span>Mostra funzionalità</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="features-carousel">
-          <div class="fc-split">
-            <div class="fc-visual">
-              <div class="fc-box">
-                <img [src]="slides[current].img" [alt]="slides[current].title" />
-              </div>
-              <div class="fc-nav">
-                @for (s of slides; track $index) {
-                  <button class="fc-seg" [class.fc-seg--active]="$index === current" (click)="goTo($index)">
-                    <span class="fc-seg-fill"></span>
-                  </button>
-                }
-              </div>
-            </div>
-            <div class="fc-meta">
-              <h3 class="fc-title">{{ slides[current].title }}</h3>
-              <p class="fc-desc">{{ slides[current].desc }}</p>
-            </div>
-          </div>
-        </div>
-      }
     </section>
 
-    <div class="section-divider"><div class="sd-led"></div></div>
+    <div class="section-divider"></div>
 
-    <!-- ════════════════════════════════════════════════ STATS ════════ -->
-    <section class="stats-section">
-      <div class="stats-bg-orb stats-bg-orb--1"></div>
-      <div class="stats-bg-orb stats-bg-orb--2"></div>
-
-      <div class="stats-inner">
-        <div class="stats-left">
-          <div class="sl-glow"></div>
-          <div class="sl-card">
-            <div class="slc-icon-wrap">
-              <img src="assets/icon/logoApp.jpg" alt="PeekBox" class="slc-logo" />
-              <div class="slc-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-            </div>
-            <div class="slc-brand"><span class="pk">Peek</span><span class="bx">Box</span></div>
-            <div class="slc-stars">
-              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-              <span class="slc-rating">4.9</span>
-            </div>
-            <div class="slc-meta">
-              <span class="slc-users">+12.000 utenti attivi</span>
-              <span class="slc-dot"></span>
-              <span class="slc-boxes">50.000+ box</span>
-            </div>
+    <!-- ═══════════════════════════════════════════ ABOUT 2 ══════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--alt">
+        <div class="about-content">
+          <h2 class="ac-title">Tracciato, geolocalizzato, sempre al sicuro</h2>
+          <p class="ac-text">
+            Ogni box PeekBox genera un QR Code univoco, scaricabile e stampabile. Attaccalo sulla scatola e il gioco &egrave; fatto: basta inquadrare con la fotocamera del telefono per aprire immediatamente il profilo digitale della box, con tutti i dettagli, le foto e la posizione. La scansione funziona anche offline, grazie alla decodifica locale, e non richiede connessione internet.
+          </p>
+          <p class="ac-text">
+            Il tracciamento GPS &egrave; il cuore della sicurezza. Ogni scansione del QR Code registra automaticamente la posizione del box e aggiorna la mappa in tempo reale. Puoi attivare la Modalit&agrave; Movimento per monitorare ogni spostamento, con una timeline completa di checkpoint che mostra data, coordinate e accuratezza. Basta un click per aprire il percorso su Google Maps.
+          </p>
+          <p class="ac-text">
+            La geolocalizzazione si spinge oltre con il Geofence: imposti un perimetro virtuale attorno ai tuoi armadi e ricevi una notifica se una box esce dall&rsquo;area consentita. Perfetto per cantine, magazzini e depositi. E se commetti un errore, nessun problema: il Cestino conserva box e oggetti eliminati per 30 giorni, con la possibilit&agrave; di recuperarli in qualsiasi momento.
+          </p>
+        </div>
+        <div class="about-visual">
+          <div class="av-frame">
+            <img src="assets/icon/slide6.jpg" alt="Tracciamento GPS" />
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="stats-right">
-          <div class="sr-grid">
-            <div class="sr-card">
-              <span class="src-num">📦 50k+</span>
-              <span class="src-lbl">Box digitalizzati</span>
-              <div class="src-bar"><div class="srcb-fill" style="width:98%"></div></div>
-            </div>
-            <div class="sr-card">
-              <span class="src-num">⭐ 4.9★</span>
-              <span class="src-lbl">Valutazione media</span>
-              <div class="src-bar"><div class="srcb-fill" style="width:95%"></div></div>
-            </div>
-            <div class="sr-card">
-              <span class="src-num">👥 12k+</span>
-              <span class="src-lbl">Utenti attivi</span>
-              <div class="src-bar"><div class="srcb-fill" style="width:85%"></div></div>
-            </div>
-            <div class="sr-card">
-              <span class="src-num">📍 150+</span>
-              <span class="src-lbl">Posizioni tracciate</span>
-              <div class="src-bar"><div class="srcb-fill" style="width:75%"></div></div>
-            </div>
+    <div class="section-divider"></div>
+
+    <!-- ═══════════════════════════════════════════ ABOUT 3 ══════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner">
+        <div class="about-visual">
+          <div class="av-frame">
+            <img src="assets/icon/slide5.jpg" alt="Dettaglio contenuti" />
           </div>
         </div>
+        <div class="about-content">
+          <h2 class="ac-title">Condividi, esporta, controlla tutto</h2>
+          <p class="ac-text">
+            PeekBox &egrave; pensato per adattarsi sia all&rsquo;uso personale che a quello professionale. Puoi condividere il tuo archivio con chi vuoi: inviti un ospite via email e scegli se dargli accesso come Visualizzatore (sola lettura) o come Editor (co-gestione completa). Ogni richiesta pu&ograve; essere accettata o rifiutata, e puoi revocare l&rsquo;accesso in qualsiasi momento.
+          </p>
+          <p class="ac-text">
+            Hai bisogno di un report cartaceo o di un backup? Il modulo di esportazione ti permette di scaricare l&rsquo;intero archivio in formato PDF con report brandizzato, CSV per Excel o JSON per backup strutturati. Puoi esportare tutto, solo le box attive o una singola box. Inoltre, la Transit Zone ti consente di spostare oggetti da una box all&rsquo;altra con un semplice click o con il drag & drop, con la possibilit&agrave; di stampare le etichette aggiornate.
+          </p>
+          <p class="ac-text">
+            Ogni account ha un&rsquo;Area Personale completa: puoi modificare i tuoi dati, cambiare password, inviare feedback e consultare un chatbot intelligente integrato che risponde a tutte le domande frequenti. I profili Business sbloccano funzionalit&agrave; avanzate come il tracking GPS dettagliato e il geofence. I tuoi dati sono protetti con password crittografate, connessione SSL e piena conformit&agrave; GDPR. PeekBox &egrave; il posto pi&ugrave; sicuro per il tuo inventario.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ════════════════════════════════════════════════ CTA ════════ -->
+    <section class="cta-section">
+      <div class="cta-inner">
+        <h2 class="cta-title">Pronto a organizzare il tuo inventario?</h2>
+        <p class="cta-text">
+          Oltre 12.000 utenti hanno gi&agrave; scelto PeekBox per digitalizzare, tracciare e gestire i propri oggetti.
+          <br>Inizia anche tu, senza impegno.
+        </p>
+        <button class="cta-btn" routerLink="/login">Crea il tuo account gratuito</button>
       </div>
     </section>
 
