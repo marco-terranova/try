@@ -23,7 +23,6 @@ import {
 } from 'ionicons/icons';
 import { DatabaseService } from '../services/database';
 import { NavigationHistoryService } from '../services/navigation-history';
-import { DIMENSIONI_BOX } from '../../types/models';
 import * as QRCode from 'qrcode';
 
 @Component({
@@ -37,6 +36,8 @@ import * as QRCode from 'qrcode';
   ]
 })
 export class DettaglioBoxPage implements OnInit, AfterViewInit {
+
+  readonly MAX_OGGETTI = 20;
 
   tipoProfilo: string = 'personal';
   boxId!: number;
@@ -123,20 +124,8 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
 
   // ─── Computed ─────────────────────────────────────────────────────
 
-  get maxCapienza(): number {
-    return DIMENSIONI_BOX[this.box?.dimensione || 'piccola'] || 10;
-  }
-
-  get totaleElementi(): number {
-    return this.oggetti.reduce((sum, o) => sum + (Number(o.quantita) || 1), 0);
-  }
-
   get saturazionePercent(): number {
-    return Math.min(100, Math.round((this.totaleElementi / this.maxCapienza) * 100));
-  }
-
-  get isSatura(): boolean {
-    return this.totaleElementi >= this.maxCapienza;
+    return Math.min(100, Math.round((this.oggetti.length / this.MAX_OGGETTI) * 100));
   }
 
   get numFragili(): number {
@@ -204,10 +193,6 @@ export class DettaglioBoxPage implements OnInit, AfterViewInit {
 
   salvaOggetto() {
     if (!this.nomeOggetto.trim()) { this.toast('Il nome è obbligatorio.', 'warning'); return; }
-    if (this.isSatura) {
-      this.toast(`Box satura (${this.totaleElementi}/${this.maxCapienza}). Elimina oggetti per aggiungerne nuovi.`, 'danger');
-      return;
-    }
     this.isSaving = true;
     const dati: any = {
       nome:        this.nomeOggetto.trim(),

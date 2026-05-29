@@ -74,8 +74,8 @@ export class DatabaseService {
     return this.http.get<BoxListResponse>(`${this.apiUrl}/box/${utenteId}`, { headers: this.getAuthHeaders() });
   }
 
-  creaBox(nome: string, rif_armadio: string, is_preferito: boolean, moving_mode: boolean = false, descrizione: string = '', dimensione: string = 'piccola') {
-    return this.http.post(`${this.apiUrl}/box`, { nome, descrizione: descrizione || null, rif_armadio, is_preferito, moving_mode, dimensione }, { headers: this.getAuthHeaders() });
+  creaBox(nome: string, rif_armadio: string, is_preferito: boolean, moving_mode: boolean = false, descrizione: string = '') {
+    return this.http.post(`${this.apiUrl}/box`, { nome, descrizione: descrizione || null, rif_armadio, is_preferito, moving_mode }, { headers: this.getAuthHeaders() });
   }
 
   updatePreferito(id: number, is_preferito: boolean) {
@@ -249,7 +249,7 @@ export class DatabaseService {
 
   cercaOggetti(utenteId: string, termine: string) {
     return this.http.get(
-      `${this.apiUrl}/cerca?q=${encodeURIComponent(termine)}`,
+      `${this.apiUrl}/cerca/${utenteId}?q=${encodeURIComponent(termine)}`,
       { headers: this.getAuthHeaders() }
     );
   }
@@ -388,32 +388,12 @@ export class DatabaseService {
   }
 
   // ─── ADMIN ────────────────────────────────────────────────
+
   adminGetUtenti() {
     return this.http.get(`${this.apiUrl}/admin/utenti`, { headers: this.getAuthHeaders() });
   }
 
   adminEliminaUtente(id: number) {
     return this.http.delete(`${this.apiUrl}/admin/utenti/${id}`, { headers: this.getAuthHeaders() });
-  }
-
-  // ─── SEGNALAZIONI UTENTI ─────────────────────────────────
-  inviaSegnalazione(dati: any) {
-    return this.http.post(`${this.apiUrl}/segnalazioni`, dati, { headers: this.getAuthHeaders() });
-  }
-
-  adminGetSegnalazioni() {
-    return this.http.get(`${this.apiUrl}/admin/segnalazioni`, { headers: this.getAuthHeaders() });
-  }
-
-  adminAggiornaStatoSegnalazione(id: number, stato: string) {
-    return this.http.patch(`${this.apiUrl}/admin/segnalazioni/${id}/stato`, { stato }, { headers: this.getAuthHeaders() });
-  }
-
-  adminEliminaSegnalazione(id: number) {
-    return this.http.delete(`${this.apiUrl}/admin/segnalazioni/${id}`, { headers: this.getAuthHeaders() });
-  }
-
-  getMieSegnalazioni() {
-    return this.http.get(`${this.apiUrl}/segnalazioni/mie`, { headers: this.getAuthHeaders() });
   }
 }

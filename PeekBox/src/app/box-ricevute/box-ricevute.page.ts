@@ -40,7 +40,7 @@ import * as L from 'leaflet';
 })
 export class BoxRicevutePage implements OnInit {
 
-  activeTab: 'richieste' | 'spazi' | 'geofence' = 'richieste';
+  mostraSpazi = false;
   isLoading = true;
   utenteId: string | null = null;
   nomeUtente: string = '';
@@ -117,18 +117,8 @@ export class BoxRicevutePage implements OnInit {
     this.caricaTutto();
   }
 
-  cambiaTab(tab: 'richieste' | 'spazi' | 'geofence') {
-    if (tab === 'geofence' && this.tipoProfilo !== 'business') return;
-    this.activeTab = tab;
-    if (tab === 'geofence') {
-      setTimeout(() => {
-        if (!this.map) {
-          this.inizializzaMappa();
-        }
-        this.caricaCheckpointMappa();
-        if (this.map) this.map.invalidateSize();
-      }, 200);
-    }
+  toggleView() {
+    this.mostraSpazi = !this.mostraSpazi;
   }
 
   caricaTutto() {

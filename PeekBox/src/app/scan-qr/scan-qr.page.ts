@@ -9,27 +9,15 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  add,
   alertCircleOutline,
-  apertureOutline,
   arrowForwardOutline,
-  cameraReverseOutline,
-  chatbubblesOutline,
-  home,
-  homeOutline,
+  camera,
   imageOutline,
   keypadOutline,
-  optionsOutline,
-  personOutline,
-  qrCodeOutline,
-  scan,
-  searchOutline,
   shieldCheckmarkOutline,
   stopCircleOutline,
   videocamOutline,
 } from 'ionicons/icons';
-
-declare const jsQR: any;
 
 @Component({
   selector: 'app-scan-qr',
@@ -51,7 +39,7 @@ export class ScanQrPage implements OnInit, OnDestroy {
   isScanning = false;
   manualCode = '';
   cameraError: string | null = null;
-  nomeUtente = '';
+  qrReady = false;
 
   private stream: MediaStream | null = null;
   private animFrameId: number | null = null;
@@ -59,24 +47,14 @@ export class ScanQrPage implements OnInit, OnDestroy {
   constructor(private router: Router,
     private navHistory: NavigationHistoryService) {
     addIcons({
-      add,
-      alertCircleOutline,
-      apertureOutline,
-      arrowForwardOutline,
-      cameraReverseOutline,
-      chatbubblesOutline,
-      home,
-      homeOutline,
-      imageOutline,
-      keypadOutline,
-      optionsOutline,
-      personOutline,
-      qrCodeOutline,
-      scan,
-      searchOutline,
-      shieldCheckmarkOutline,
-      stopCircleOutline,
-      videocamOutline,
+      'alert-circle-outline': alertCircleOutline,
+      'arrow-forward-outline': arrowForwardOutline,
+      'camera': camera,
+      'image-outline': imageOutline,
+      'keypad-outline': keypadOutline,
+      'shield-checkmark-outline': shieldCheckmarkOutline,
+      'stop-circle-outline': stopCircleOutline,
+      'videocam-outline': videocamOutline,
     });
   }
 
@@ -84,18 +62,18 @@ export class ScanQrPage implements OnInit, OnDestroy {
     this.loadJsQR();
   }
 
-  ionViewWillEnter() {
-    this.nomeUtente = (localStorage.getItem('utente_nome') || '').toUpperCase();
-  }
-
   ngOnDestroy() {
     this.stopScanning();
   }
 
   private loadJsQR() {
-    if ((window as any).jsQR) return;
+    if ((window as any).jsQR) {
+      this.qrReady = true;
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+    script.onload = () => { this.qrReady = true; };
     document.head.appendChild(script);
   }
 
@@ -133,15 +111,13 @@ export class ScanQrPage implements OnInit, OnDestroy {
 
     this.isScanning = true;
 
-    // Aspetta il prossimo ciclo per assicurarsi che *ngIf abbia renderizzato il <video>
     setTimeout(() => {
       const video = this.videoElRef?.nativeElement;
-      if (video) {
-        video.srcObject = this.stream;
-        video.play();
-        this.scheduleQrTick();
-      }
-    }, 50);
+      if (!video) return;
+      video.srcObject = this.stream;
+      video.play().catch(() => {});
+      this.scheduleQrTick();
+    }, 100);
   }
 
   stopScanning() {
@@ -170,9 +146,7 @@ export class ScanQrPage implements OnInit, OnDestroy {
       try {
         const urlParams = new URLSearchParams(trimmed.substring(trimmed.indexOf('?')));
         const boxParam = urlParams.get('box');
-        if (boxParam) {
-          return boxParam;
-        }
+        if (boxParam) return boxParam;
       } catch (e) {
         console.error('Error parsing scanned URL:', e);
       }
@@ -192,25 +166,61 @@ export class ScanQrPage implements OnInit, OnDestroy {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const jsQRFn = (window as any).jsQR;
-      if (jsQRFn) {
-        const code = jsQRFn(imageData.data, imageData.width, imageData.height, {
-          inversionAttempts: 'dontInvert',
-        });
-        if (code?.data) {
-          this.stopScanning();
-          const boxId = this.extractBoxId(code.data);
-          this.router.navigate(['/dettaglio-box', boxId.toUpperCase()]);
-          return;
+      if (this.qrReady) {
+        const jsQRFn = (window as any).jsQR;
+        if (jsQRFn) {
+          const code = jsQRFn(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: 'dontInvert',
+          });
+          if (code?.data) {
+            this.stopScanning();
+            const boxId = this.extractBoxId(code.data);
+            this.router.navigate(['/dettaglio-box', boxId.toUpperCase()]);
+            return;
+          }
         }
       }
     }
-
     if (this.isScanning) this.scheduleQrTick();
   }
 
   openGallery() {
-    // Logica galleria o picker immagine.
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      this.stopScanning();
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d')!;
+        const maxDim = 1024;
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          const ratio = Math.min(maxDim / w, maxDim / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+        canvas.width = w;
+        canvas.height = h;
+        ctx.drawImage(img, 0, 0, w, h);
+        const imageData = ctx.getImageData(0, 0, w, h);
+        const jsQRFn = (window as any).jsQR;
+        if (jsQRFn) {
+          const code = jsQRFn(imageData.data, w, h, { inversionAttempts: 'dontInvert' });
+          if (code?.data) {
+            const boxId = this.extractBoxId(code.data);
+            this.router.navigate(['/dettaglio-box', boxId.toUpperCase()]);
+            return;
+          }
+        }
+        this.cameraError = 'Nessun QR Code trovato nell\'immagine.';
+      };
+      img.src = URL.createObjectURL(file);
+    };
+    input.click();
   }
 
   submitManualCode() {

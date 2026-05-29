@@ -72,54 +72,6 @@
             </div>
           </div>
 
-          <div class="input-gruppo">
-            <label>Dimensione Box</label>
-            <div class="dimensioni-grid">
-              <label class="dim-card" [class.active]="dimensione === 'piccola'">
-                <input type="radio" name="dimensione" value="piccola" [(ngModel)]="dimensione">
-                <div class="dim-visual">
-                  <div class="stack-3d">
-                    <div class="cube p"></div>
-                  </div>
-                </div>
-                <span class="dim-nome">Piccola</span>
-                <span class="dim-cap">max 10</span>
-                <div class="dim-glow"></div>
-              </label>
-              <label class="dim-card" [class.active]="dimensione === 'media'">
-                <input type="radio" name="dimensione" value="media" [(ngModel)]="dimensione">
-                <div class="dim-visual">
-                  <div class="stack-3d">
-                    <div class="cube m"></div>
-                  </div>
-                </div>
-                <span class="dim-nome">Media</span>
-                <span class="dim-cap">max 20</span>
-                <div class="dim-glow"></div>
-              </label>
-              <label class="dim-card" [class.active]="dimensione === 'grande'">
-                <input type="radio" name="dimensione" value="grande" [(ngModel)]="dimensione">
-                <div class="dim-visual">
-                  <div class="stack-3d">
-                    <div class="cube g"></div>
-                  </div>
-                </div>
-                <span class="dim-nome">Grande</span>
-                <span class="dim-cap">max 30</span>
-                <div class="dim-glow"></div>
-              </label>
-              <label class="dim-card" [class.active]="dimensione === 'pallet'" *ngIf="tipoProfilo === 'business'">
-                <input type="radio" name="dimensione" value="pallet" [(ngModel)]="dimensione">
-                <div class="dim-visual">
-                  <div class="pallet-3d"></div>
-                </div>
-                <span class="dim-nome">Pallet</span>
-                <span class="dim-cap">max 100</span>
-                <div class="dim-glow"></div>
-              </label>
-            </div>
-          </div>
-
           <div class="box-preview-render-frame giant-view">
             <div class="glow-effect"></div>
             <img src="assets/icon/box-icon.png" alt="Box Preview" class="box-render-asset-giant">

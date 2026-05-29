@@ -1,4 +1,4 @@
-@import '../../theme/variables';
+@use '../../theme/variables' as *;
 
 $bg-saas:     $page;
 $dark-text:   $dark;

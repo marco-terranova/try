@@ -67,7 +67,7 @@
           <div style="font-size: 3rem; margin-bottom: 15px;">📥</div>
           <h3 style="margin: 0; font-size: 1.1rem; color: #1E293B;">Nessun oggetto</h3>
           <p style="color: #64748B; font-size: 0.9rem; margin: 10px 0 20px;">Il box è vuoto, aggiungi il primo articolo!</p>
-          <button *ngIf="!isViewer" class="btn-save-oggetto" [class.btn--disabled]="isSatura" (click)="!isSatura && apriModale('aggiungi')" style="width: auto; padding: 12px 24px; margin: 0 auto;">
+          <button *ngIf="!isViewer" class="btn-save-oggetto" (click)="apriModale('aggiungi')" style="width: auto; padding: 12px 24px; margin: 0 auto;">
             <ion-icon name="add-circle-outline"></ion-icon>
             Aggiungi Oggetto
           </button>
@@ -78,7 +78,7 @@
       <div class="right-col">
         
         <div class="actions-grid">
-          <div class="action-btn-card" *ngIf="!isViewer" [class.action-btn-card--disabled]="isSatura" (click)="!isSatura && apriModale('aggiungi')" [title]="isSatura ? 'Box satura. Elimina oggetti per aggiungerne di nuovi.' : ''">
+          <div class="action-btn-card" *ngIf="!isViewer" (click)="apriModale('aggiungi')">
             <div class="action-icon" style="background: rgba(125,199,64,0.1); color: #7DC740;">➕</div>
             <span class="action-label">Aggiungi</span>
           </div>
@@ -120,7 +120,7 @@
           <div class="stat-row" style="margin-top: 10px;">
             <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748B;">
               <span>Oggetti totali:</span>
-              <span style="font-weight: 700; color: #1E293B;">{{ totaleElementi }} / {{ maxCapienza }}</span>
+              <span style="font-weight: 700; color: #1E293B;">{{ oggetti.length }} / {{ MAX_OGGETTI }}</span>
             </div>
           </div>
         </div>

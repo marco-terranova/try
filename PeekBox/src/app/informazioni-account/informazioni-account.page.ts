@@ -121,23 +121,11 @@ export class InformazioniAccountPage implements OnInit {
     });
   }
 
-   async inviaFeedback() {
-     if (!this.feedbackText.trim()) return;
-     
-     try {
-       await this.dbService.inviaSegnalazione({
-         tipo: 'feedback',
-         titolo: 'Feedback dall\'app',
-         descrizione: this.feedbackText.trim(),
-         priorita: 'bassa'
-       }).toPromise();
-       
-       this.feedbackText = '';
-       await this.mostraToast('Grazie per il tuo feedback! 🙏', 'success');
-     } catch (error) {
-       await this.mostraToast('Errore nell\'invio del feedback. Riprova.', 'danger');
-     }
-   }
+  async inviaFeedback() {
+    if (!this.feedbackText.trim()) return;
+    this.feedbackText = '';
+    await this.mostraToast('Grazie per il tuo feedback! 🙏', 'success');
+  }
 
   private async mostraToast(messaggio: string, color: string) {
     const toast = await this.toastCtrl.create({

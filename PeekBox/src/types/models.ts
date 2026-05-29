@@ -27,15 +27,7 @@ export interface Box {
   moving_mode: boolean;
   num_oggetti?: number;
   data_eliminazione?: string;
-  dimensione?: 'piccola' | 'media' | 'grande' | 'pallet';
 }
-
-export const DIMENSIONI_BOX: Record<string, number> = {
-  piccola: 10,
-  media: 20,
-  grande: 30,
-  pallet: 100,
-};
 
 export interface BoxListResponse {
   box: Box[];

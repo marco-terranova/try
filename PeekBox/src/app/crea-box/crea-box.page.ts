@@ -56,10 +56,8 @@ export class CreaBoxPage implements OnInit {
   descrizione: string = '';
   rif_armadio: string = '';
   is_preferito: boolean = false;
-  dimensione: string = 'piccola';
   armadi_disponibili: any[] = [];
   utenteId: string = '';
-  tipoProfilo: string = 'personal';
 
   constructor(
     private alertController: AlertController,
@@ -84,7 +82,6 @@ export class CreaBoxPage implements OnInit {
 
   ngOnInit() {
     this.utenteId = localStorage.getItem('utente_id') || '';
-    this.tipoProfilo = localStorage.getItem('tipo_profilo') || 'personal';
     if (this.utenteId) {
       this.caricaArmadi();
     }
@@ -126,7 +123,7 @@ export class CreaBoxPage implements OnInit {
 
   salvaNuovaBox() {
     if (!this.nome_box || !this.rif_armadio) return;
-    this.dbService.creaBox(this.nome_box, this.rif_armadio, this.is_preferito, false, this.descrizione, this.dimensione).subscribe({
+    this.dbService.creaBox(this.nome_box, this.rif_armadio, this.is_preferito, false, this.descrizione).subscribe({
       next: () => { this.navHistory.navTo('/home'); },
       error: (err: any) => console.error(err)
     });

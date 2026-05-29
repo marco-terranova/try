@@ -1,4 +1,4 @@
-@import '../../theme/variables';
+@use '../../theme/variables' as *;
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
 // ═══ Design Tokens ═══════════════════════════════════════════════
@@ -270,25 +270,6 @@ ion-toolbar.peek-toolbar {
     filter: drop-shadow(0 0 10px rgba($red, 0.2));
     .action-label { color: $red; }
   }
-
-  &--disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    pointer-events: auto;
-    &:hover {
-      transform: none;
-      box-shadow: $shadow-soft;
-      border-color: rgba(0,0,0,0.03);
-      filter: none;
-      .action-icon { transform: none; }
-    }
-  }
-}
-
-.btn--disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 // ═══ STATS & NOTES ═══════════════════════════════════════════════

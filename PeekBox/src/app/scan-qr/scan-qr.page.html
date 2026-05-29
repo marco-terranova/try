@@ -1,135 +1,119 @@
-<ion-content [fullscreen]="true" class="bg-light-saas">
-  <div class="page-wrapper">
+<ion-content [fullscreen]="true" class="scan-content">
+  <div #stageRef class="scan-stage">
 
-    <div class="top-compact-bar">
-      <div class="logo-group">
-        <img
-          src="assets/icon/logoTitolo1.png"
-          alt="PeekBox"
-          class="header-logo"
-          (click)="navTo('/home')"
-          style="cursor: pointer;"
-        />
-      </div>
-      <div class="title-group">
-        <h1 class="header-greeting">SCANSIONE <span class="nome-verde">RAPIDA</span></h1>
-      </div>
-      <div class="profile-compact">
-        <div class="avatar-compact">
-          <ion-icon name="qr-code-outline"></ion-icon>
-        </div>
-      </div>
+    <div class="hero-bg">
+      <div class="hb-blob hb-blob--1"></div>
+      <div class="hb-blob hb-blob--2"></div>
+      <div class="hb-blob hb-blob--3"></div>
+      <div class="hb-blob hb-blob--4"></div>
     </div>
 
-    <div class="scan-plancia-grid">
-
-      <div class="quadrante-card viewport-card">
-        <div class="quadrante-header">
-          <div class="icon-cerchio verde">
-            <ion-icon name="aperture-outline"></ion-icon>
-          </div>
-          <h3>Inquadra il QR Code</h3>
-        </div>
-
-        <div class="camera-preview-container">
-          <!-- Video stream reale -->
-          <video #videoEl autoplay playsinline muted
-            class="camera-video-stream"
-            [class.hidden]="!isScanning"></video>
-
-          <!-- Canvas nascosto usato da jsQR per decodificare -->
-          <canvas #canvasEl class="hidden"></canvas>
-
-          <!-- Mirino animato sopra il video -->
-          <div class="scanner-target-box" *ngIf="isScanning">
-            <div class="laser-line-anim"></div>
-          </div>
-
-          <!-- Placeholder fotocamera spenta -->
-          <div class="camera-off-placeholder" *ngIf="!isScanning">
-            <ion-icon name="camera-reverse-outline"></ion-icon>
-            <p>La fotocamera è spenta</p>
-          </div>
-
-          <!-- Errore permesso -->
-          <div class="camera-error-placeholder" *ngIf="cameraError">
-            <ion-icon name="alert-circle-outline"></ion-icon>
-            <p>{{ cameraError }}</p>
-          </div>
-        </div>
-
-        <button class="btn-fotocamera-toggle" [class.active]="isScanning" (click)="toggleCamera()">
-          <ion-icon [name]="isScanning ? 'stop-circle-outline' : 'videocam-outline'"></ion-icon>
-          <span>{{ isScanning ? 'Spegni Fotocamera' : 'Accendi Fotocamera' }}</span>
+    <header class="topbar">
+      <div class="topbar-logo" (click)="navTo('/home')">
+        <img src="assets/icon/logoTitolo1.png" alt="" class="topbar-img" />
+        <span class="topbar-txt"><span class="pk">Peek</span><span class="bx">Box</span></span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-back" (click)="navTo('/home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          Home
         </button>
       </div>
+    </header>
 
-      <div class="quadrante-card controls-card">
-        <div class="quadrante-header">
-          <div class="icon-cerchio azzurro">
-            <ion-icon name="options-outline"></ion-icon>
-          </div>
-          <h3>Opzioni Alternative</h3>
+    <div class="scan-body">
+
+      <div class="scan-card">
+        <div class="card-glare"></div>
+        <div class="card-accent"></div>
+        <div class="card-pattern"></div>
+        <div class="card-bubble card-bubble--1"></div>
+        <div class="card-bubble card-bubble--2"></div>
+        <div class="card-bubble card-bubble--3"></div>
+
+        <div class="card-header card-header--center">
+          <h1 class="card-title">Scansiona QR</h1>
+          <p class="card-sub">Inquadra il codice QR della box</p>
         </div>
 
-        <div class="utility-actions-layout">
-          <div class="quick-tools-row">
-            <button class="tool-btn-premium" (click)="openGallery()">
-              <ion-icon name="image-outline"></ion-icon>
-              <span>Galleria</span>
-            </button>
+        <div class="card-body">
+          <div class="viewfinder-section">
+
+            <div class="camera-preview-container" [class.scan-active]="isScanning" [class.camera-off]="!isScanning && !cameraError">
+              <video #videoEl autoplay playsinline muted
+                class="camera-video-stream"
+                [class.hidden]="!isScanning"></video>
+              <canvas #canvasEl class="hidden"></canvas>
+
+              <div class="scanner-overlay" *ngIf="isScanning">
+                <div class="laser-line"></div>
+                <div class="laser-glow"></div>
+                <div class="scanning-indicator">
+                  <div class="si-dot"></div>
+                  <span>Scansione in corso...</span>
+                </div>
+              </div>
+
+              <div class="camera-off-placeholder" *ngIf="!isScanning && !cameraError">
+                <div class="cop-icon-wrap">
+                  <ion-icon name="camera"></ion-icon>
+                </div>
+                <h3>Fotocamera spenta</h3>
+                <p>Attiva la fotocamera per scansionare un codice QR</p>
+              </div>
+
+              <div class="camera-error-placeholder" *ngIf="cameraError">
+                <div class="cep-icon-wrap">
+                  <ion-icon name="alert-circle-outline"></ion-icon>
+                </div>
+                <h3>Errore fotocamera</h3>
+                <p>{{ cameraError }}</p>
+              </div>
+            </div>
+
+            <div class="scan-actions-row">
+              <button class="sa-btn sa-btn--action" (click)="openGallery()" title="Galleria">
+                <ion-icon name="image-outline"></ion-icon>
+                <span>Galleria</span>
+              </button>
+
+              <button class="sa-btn sa-btn--action" [class.active]="isScanning" (click)="toggleCamera()">
+                <ion-icon [name]="isScanning ? 'stop-circle-outline' : 'videocam-outline'"></ion-icon>
+                <span>{{ isScanning ? 'Spegni' : 'Scansiona' }}</span>
+              </button>
+
+        </div>
           </div>
 
-          <div class="manual-input-section">
-            <label class="section-mini-title">Inserimento Manuale</label>
-            <div class="custom-input-group-premium">
-              <ion-icon name="keypad-outline" class="prefix-icon"></ion-icon>
-              <input type="text" placeholder="Codice Box (es. PBX-9812)" [(ngModel)]="manualCode" (keyup.enter)="submitManualCode()">
-              <button class="btn-submit-code-green" (click)="submitManualCode()" [disabled]="!manualCode">
+          <div class="manual-section">
+            <div class="manual-card">
+              <div class="mc-icon">
+                <ion-icon name="keypad-outline"></ion-icon>
+              </div>
+              <div class="mc-input-wrap">
+                <input #manualCodeInput type="text" placeholder="Inserisci codice box..." [(ngModel)]="manualCode" (keyup.enter)="submitManualCode()">
+              </div>
+              <button class="mc-go-btn" (click)="submitManualCode()" [disabled]="!manualCode">
                 <ion-icon name="arrow-forward-outline"></ion-icon>
               </button>
             </div>
+            <p class="manual-hint">Non hai il QR Code? Inserisci il codice manualmente</p>
           </div>
-        </div>
-
-        <div class="info-footer-box">
-          <ion-icon name="shield-checkmark-outline" class="color-green"></ion-icon>
-          <p>Sincronizzazione cifrata e istantanea con l'inventario database di PeekBox.</p>
         </div>
       </div>
 
     </div>
-  </div>
-</ion-content>
 
-<div class="floating-nav">
-  <div class="nav-glow"></div>
-
-  <div class="nav-item" (click)="navTo('/home')">
-    <ion-icon name="home"></ion-icon>
-    <span>Home</span>
-  </div>
-
-  <div class="nav-item" (click)="navTo('/box-ricevute')">
-    <ion-icon name="chatbubbles-outline"></ion-icon>
-    <span>Avvisi</span>
-  </div>
-
-  <div class="nav-fab-wrapper">
-    <button class="nav-fab" (click)="navTo('/crea-box')">
-      <ion-icon name="add"></ion-icon>
-    </button>
-  </div>
-
-  <div class="nav-item active">
-    <ion-icon name="qr-code-outline"></ion-icon>
-    <span>Scan</span>
-  </div>
-
-  <div class="nav-item" (click)="navTo('/area-personale')">
-    <div class="avatar-circle-nav">
-      {{ nomeUtente ? nomeUtente.charAt(0).toUpperCase() : 'U' }}
+    <div class="scan-footer">
+      <div class="sf-shield">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+      </div>
+      <div class="sf-text">
+        <span class="sf-title">Connessione sicura</span>
+        <span class="sf-sub">Dati crittografati &middot; Realtime</span>
+      </div>
     </div>
-    <span>Profilo</span>
+
   </div>
-</div>
+
+</ion-content>

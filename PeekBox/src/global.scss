@@ -1,4 +1,4 @@
-@import './theme/variables';
+@use './theme/variables' as *;
 @import 'leaflet/dist/leaflet.css';
 
 /*
@@ -121,54 +121,60 @@ ion-popover[trigger] {
 // ===== ALERT PEEKBOX STYLE =====
 ion-alert {
   --background: #{$white};
-  --border-radius: 20px;
-  --box-shadow: 0 24px 64px rgba($dark, .15);
-  --backdrop-opacity: 0.5;
-  --min-width: 300px;
+  --border-radius: 24px;
+  --box-shadow: 0 32px 80px rgba($dark, .2);
+  --backdrop-opacity: 0.6;
+  --min-width: 380px;
 }
 
 ion-alert .alert-wrapper {
   background: #{$white} !important;
-  border: 1px solid #{$brd-light} !important;
-  border-radius: 20px !important;
+  border: none !important;
+  border-radius: 24px !important;
   overflow: hidden !important;
+  box-shadow: 0 0 0 1px rgba($green, .08), 0 32px 80px rgba($dark, .18) !important;
 }
 
 ion-alert .alert-head {
-  background: #{$white} !important;
-  padding: 22px 22px 8px !important;
+  background: linear-gradient(135deg, rgba($green, .04) 0%, rgba($blue, .04) 100%) !important;
+  padding: 28px 28px 10px !important;
+  position: relative;
+  &::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, $green, $blue);
+  }
 }
 
 ion-alert .alert-title {
   color: #{$dark} !important;
   font-family: 'Outfit', sans-serif !important;
-  font-size: 1.1rem !important;
+  font-size: 1.35rem !important;
   font-weight: 900 !important;
-  letter-spacing: -0.3px !important;
+  letter-spacing: -0.4px !important;
 }
 
 ion-alert .alert-message {
   color: #{$mid} !important;
   font-family: 'DM Sans', sans-serif !important;
-  font-size: .88rem !important;
-  line-height: 1.55 !important;
-  padding: 4px 22px 18px !important;
+  font-size: .95rem !important;
+  line-height: 1.6 !important;
+  padding: 8px 28px 22px !important;
   background: #{$white} !important;
 }
 
 ion-alert .alert-input-group {
   background: #{$white} !important;
-  padding: 0 18px 14px !important;
+  padding: 0 22px 16px !important;
 }
 
 ion-alert .alert-input {
   background: rgba($dark, .03) !important;
   color: #{$dark} !important;
-  border: 1px solid #{$brd-light} !important;
-  border-radius: 12px !important;
-  padding: 11px 14px !important;
+  border: 1.5px solid #{$brd-light} !important;
+  border-radius: 14px !important;
+  padding: 13px 16px !important;
   font-family: 'DM Sans', sans-serif !important;
-  font-size: .92rem !important;
+  font-size: .95rem !important;
   margin: 0 !important;
   caret-color: #{$blue} !important;
 }
@@ -180,9 +186,9 @@ ion-alert .alert-input::placeholder {
 ion-alert .alert-button-group {
   background: #{$page} !important;
   border-top: 1px solid #{$brd-light} !important;
-  padding: 10px 12px 12px !important;
+  padding: 14px 16px 16px !important;
   display: flex !important;
-  gap: 8px !important;
+  gap: 10px !important;
   flex-wrap: nowrap !important;
 }
 
@@ -190,12 +196,13 @@ ion-alert .alert-button {
   background: rgba($dark, .04) !important;
   color: #{$mid} !important;
   font-family: 'Outfit', sans-serif !important;
-  font-size: .88rem !important;
+  font-size: .95rem !important;
   font-weight: 700 !important;
-  border-radius: 12px !important;
+  border-radius: 14px !important;
   flex: 1 !important;
-  min-height: 42px !important;
+  min-height: 48px !important;
   border: none !important;
+  letter-spacing: 0.2px;
 }
 
 ion-alert .alert-button .alert-button-inner {
@@ -216,8 +223,13 @@ ion-alert .alert-button.alert-button-role-cancel .alert-button-inner {
 }
 
 ion-alert .alert-button:not(.alert-button-role-cancel):not(.alert-button-role-destructive) {
-  background: linear-gradient(135deg, #{$blue} 0%, #{$blue-d} 100%) !important;
-  box-shadow: 0 4px 14px rgba($blue, .25) !important;
+  background: linear-gradient(135deg, #{$green} 0%, #{$blue} 100%) !important;
+  box-shadow: 0 6px 20px rgba($green, .28) !important;
+  transition: transform .2s, box-shadow .2s;
+}
+
+ion-alert .alert-button:not(.alert-button-role-cancel):not(.alert-button-role-destructive):active {
+  transform: scale(.97);
 }
 
 ion-alert .alert-button:not(.alert-button-role-cancel):not(.alert-button-role-destructive) .alert-button-inner {
@@ -243,6 +255,8 @@ ion-toast {
   font-family: 'Outfit', sans-serif;
   font-weight: 600;
 }
+
+
 // ═══════════════════════════════════════════════════════════════════
 //  FLOATING BOTTOM NAV — Componente globale condiviso tra le pagine
 // ═══════════════════════════════════════════════════════════════════
